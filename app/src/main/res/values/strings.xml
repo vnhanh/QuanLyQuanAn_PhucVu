@@ -1,0 +1,124 @@
+<resources>
+    <string name="app_name">BỘ PHẬN PHỤC VỤ</string>
+
+    <!--AUTHENTICATION-->
+    <string name="validate_email">Email không hợp lệ</string>
+    <string name="validate_password">Mật khẩu phải có ít nhất 1 ký tự</string>
+    <string name="validate_confirm_password">Mật khẩu xác nhận phải trùng khớp</string>
+    <string name="validate_username">Tên đăng nhập phải có ít nhất 1 ký tự, nhiều nhất 30 ký tự là số hoặc chữ cái</string>
+    <string name="validate_username_exist">Tên đăng nhập đã tồn tại</string>
+    <string name="validate_fullname">Tên đầy đủ phải có ít nhất 1 ký tự, và phải là ký tự chữ cái</string>
+    <string name="validate_phone">Số điện thoại không hợp lệ</string>
+    <string name="validate_identity_number">Số chứng minh thư không hợp lệ</string>
+    <string name="validate_birthdate_err">Người dùng phải lớn hơn %1$d tuổi</string>
+    <string name="validate_birthdate_err2">Ngày tháng không hợp lệ</string>
+
+    <!--IMAGE PICKER HELPER-->
+    <string name="tilte_pick_image_dialog">CHỌN ẢNḤ</string>
+
+    <!--ACTIVITY LOGIN-->
+    <string name="action_login">ĐĂNG NHẬP</string>
+    <string name="message_logining">Đang đăng nhập &#8230;</string>
+    <string name="message_login_success">Đăng nhập thành công</string>
+    <string name="message_login_failed">Đăng nhập thất bại</string>
+    <string name="message_login_error">Đăng nhập bị lỗi</string>
+    <string name="message_disconnect_server">Mất kết nối tới server</string>
+    <string name="message_network_disconnect">* Mất kết nối internet</string>
+    <string name="hint_password">Mật khẩu *</string>
+
+    <!--ACTIVITY HOME-->
+    <string name="error_extra_get_username">Không lấy được thông tin người dùng</string>
+    <string name="title_receipt">ORDER</string>
+    <string name="title_account">TÀI KHOẢN</string>
+    <string name="user_data_is_null">Dữ liệu người dùng rỗng</string>
+
+    <!--FRAGMENT ACCOUNT-->
+    <string name="hint_username">Tên đăng nhập *</string>
+    <string name="hint_fullname">Tên đầy đủ *</string>
+    <string name="hint_email">Email *</string>
+    <string name="hint_phone">Số điện thoại *</string>
+    <string name="hint_identitty_number">Số chứng minh thư *</string>
+    <string name="hint_address">Địa chỉ</string>
+    <string name="label_birthdate">Ngày sinh:</string>
+    <string name="label_gender">Giới tính:</string>
+    <string name="action_save">LƯU</string>
+    <string name="action_reset">RESET</string>
+    <string name="update_profile_success">Update thông tin thành công</string>
+    <string name="update_profile_failed">Update thông tin thất bại</string>
+    <string name="message_not_change_profile">Thông tin người dùng chưa thay đổi</string>
+    <string name="message_processing">Đang xử lý &#8230;</string>
+    <string name="menu_item_change_password">ĐỔI MẬT KHẨU</string>
+    <string name="menu_item_logout">ĐĂNG XUẤT</string>
+    <string name="title_verify_account">XÁC THỰC TÀI KHOẢN</string>
+    <string name="hint_verify_password">Mật khẩu xác thực *</string>
+    <string name="action_verify_password">XÁC THỰC</string>
+    <string name="action_cancel">HỦY</string>
+    <string name="wrong_password">Sai mật khẩu</string>
+    <string name="title_enter_new_password">NHẬP MẬT KHẨU MỚI</string>
+    <string name="hint_confirm_password">Mật khẩu xác nhận *</string>
+    <string name="action_submit">LƯU</string>
+    <string name="update_password_success">Đổi mật khẩu thành công</string>
+    <string name="update_password_failed">Đổi mật khẩu thất bại</string>
+    <string-array name="genders">
+        <item>Nam</item>
+        <item>Nữ</item>
+    </string-array>
+    <string name="title_activity_add_edit_order">AddEditOrderActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="title_fragment_list_tables_order">BÀN</string>
+    <string name="title_fragment_list_foods_order">MÓN</string>
+    <string name="action_create_order">TẠO</string>
+    <string name="action_edit_order">SỬA</string>
+    <string name="internet_disconnect">Mất kết nối internet</string>
+    <string name="title_select_region">Chọn khu vực</string>
+    <string name="title_select_tables">CHỌN BÀN</string>
+    <string name="found_error">Lỗi</string>
+    <string name="message_setting_ordered_table">Đang thêm bàn vào order &#8230;</string>
+    <string name="message_removing_ordered_table">Đang hủy bàn ra khỏi order &#8230;</string>
+    <string name="mode_table_order_show">XEM BÀN ĐÃ ĐẶT</string>
+    <string name="mode_table_order_select">CHỌN BÀN</string>
+    <string name="mode_food_order_show">XEM MÓN ĐÃ ĐẶT</string>
+    <string name="mode_food_order_select">CHỌN MÓN</string>
+    <string name="action_prev_page">TRƯỚC</string>
+    <string name="action_next_page">TIẾP</string>
+    <string name="message_process_error">Lỗi xử lý</string>
+    <string name="message_loading_list">Đang tải danh sách &#8230;</string>
+    <string name="action_yes">CÓ</string>
+    <string name="action_no">KHÔNG</string>
+    <string name="title_exit">THOÁT</string>
+    <string name="message_exit_add_edit_order_activity">Bạn đã thao tác với dữ liệu. Chương trình sẽ phục hồi chúng trước khi thoát.\nCó muốn thoát không ?</string>
+    <string name="title_finish">HOÀN THÀNH</string>
+    <string name="msg_restore_processed_data_success">Phục hồi thành công dữ liệu đã thao tác</string>
+    <string name="msg_restore_processed_data_has_failed">Phục hồi dữ liệu đã thao tác.\nCó một số item phục hồi thất bại.\n%1$s</string>
+    <string name="list_failed_restore_data_item">Danh sách các item phục hồi thất bại: \n</string>
+    <string name="frag_table_order_failed_restore_data">Không thể phục hồi các bàn đã thao tác.\n</string>
+    <string name="frag_table_food_failed_restore_data">Không thể phục hồi các món đã thao tác.\n</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <string name="description_image">ảnh</string>
+    <string name="description_icon">icon</string>
+
+    <!--ACTIVITY SETUP ORDER-->
+    <string name="suggestion_select_foods">CHỌN MÓN</string>
+    <string name="suggestion_select_tables">CHỌN BÀN</string>
+    <string name="title_toolbar_create_order">TẠO ORDER</string>
+    <string name="title_toolbar_edit_order">SỬA ORDER</string>
+    <string name="loading_local_date_time">Đang lấy ngày giờ từ server &#8230;</string>
+    <string name="content_created_date">Ngày lập: %1$s</string>
+    <string name="get_date_time_error">Không lấy được ngày giờ từ server</string>
+    <string name="no_table">Chưa có bàn</string>
+    <string name="title_select_foods">CHỌN MÓN</string>
+    <string name="title_select_category">Chọn loại món</string>
+    <string name="no_region_item">Chưa có khu vực</string>
+    <string name="no_category_food_item">Chưa có loại món</string>
+
+    <string name="content_food_inventory_count">Tồn kho: %1$d</string>
+    <string name="content_food_price_unit">Đơn giá: %1$d</string>
+    <string name="content_food_discount">Khuyến mãi: %1$d</string>
+    <string name="content_food_count">Số lượng: %1$d</string>
+    <string name="content_food_cash">Tiền: %1$d</string>
+    <string name="add_table_to_order_failed">Thêm bàn vào order thất bại</string>
+    <string name="remove_table_from_order_failed">Xóa bàn ra khỏi order thất bại</string>
+
+</resources>

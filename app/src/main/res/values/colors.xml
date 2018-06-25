@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#5161c6</color>
+
+    <!--FRAGMENT ACCOUNT-->
+    <color name="colorTextFragAcc">#2d2d2d</color>
+
+    <color name="colorIndigo">#3B4DB3</color>
+    <color name="colorBlack">#000</color>
+    <color name="colorDarkGray">#707070</color>
+    <color name="colorGray">#a8a8a8</color>
+    <color name="colorLightGray">#cccccc</color>
+    <color name="colorExtraLightGray">#dedede</color>
+    <color name="colorTeal">#00796B</color>
+    <color name="colorGreen">#38a33d</color>
+    <color name="colorLightGreen">#92E843</color>
+    <color name="colorOrange">#FA8502</color>
+    <color name="colorLightOrange">#FFDAB2</color>
+    <color name="colorPink">#F93E7E</color>
+    <color name="colorLightPink">#FBC0D5</color>
+    <color name="colorTopDialog">#666666</color>
+    <color name="colorNormalDarkRed">#bf0000</color>
+
+</resources>

@@ -1,0 +1,194 @@
+package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivitySetupOrderBinding;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISetupOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderMode;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.TableForSelectAdapter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.SelectTableDialogFragment;
+
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_ORDER_ID;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_PROCESS_MODE;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_USER;
+
+public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, ISetupOrder.View, SetupOrderViewModel>
+        implements ISetupOrder.View{
+
+    public static void startActivity(@NonNull Activity context, User waiter, @OrderMode int processMode, String orderID) {
+        Intent intent = new Intent(context, SetupOrderActivity.class);
+        // chế độ xử lý order :  tạo hoặc sửa
+        intent.putExtra(EXTRA_PROCESS_MODE, processMode);
+        Gson gson = new Gson();
+        intent.putExtra(EXTRA_USER, gson.toJson(waiter));
+        if (!StringUtils.isEmpty(orderID)) {
+            intent.putExtra(EXTRA_ORDER_ID, orderID);
+        }
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        readIntent();
+        // sau khi đọc intent
+        // nếu vẫn chưa xác định được mode xử lý order hoặc order id
+        int orderMode = viewModel.getProcessMode();
+        if ((orderMode != OrderMode.ADD && orderMode != OrderMode.VIEW)
+                || viewModel.getWaiter() == null
+                || StringUtils.isEmpty(viewModel.getOrderID())) {
+            Log.d("LOG", getClass().getSimpleName() + ":onCreate(): not has orderID");
+            // trở về màn hình cũ
+            onBackPressed();
+            return;
+        }
+
+        initToolbar();
+        initRecyclerViews();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        binding.setActivity(this);
+    }
+
+    // TODO : cần làm gì với nó ?
+    private void initToolbar() {
+
+    }
+
+    private TableForSelectAdapter tablesAdapter;
+
+    // TODO: thiếu foodsAdapter
+    private void initRecyclerViews() {
+        LinearLayoutManager manager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        binding.recyclerviewTables.setLayoutManager(manager);
+        tablesAdapter = new TableForSelectAdapter();
+        binding.recyclerviewTables.setAdapter(tablesAdapter);
+
+        viewModel.setTableDataListener(tablesAdapter);
+    }
+
+    // TODO : kiểm tra dữ liệu đã thao tác
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    private void readIntent() {
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_PROCESS_MODE)) {
+            int processMode = getIntent().getIntExtra(EXTRA_PROCESS_MODE, -1);
+            viewModel.setProcessMode(processMode);
+            if (getIntent().hasExtra(EXTRA_USER)) {
+                String waiterJson = getIntent().getStringExtra(EXTRA_USER);
+                Gson gson = new Gson();
+                User waiter = gson.fromJson(waiterJson, new TypeToken<User>() {}.getType());
+                viewModel.setWaiter(waiter);
+            }
+            if (getIntent().hasExtra(EXTRA_ORDER_ID)) {
+                viewModel.setOrderID(getIntent().getStringExtra(EXTRA_ORDER_ID));
+            }
+        }
+    }
+
+    /*
+    * BaseActivity
+    * */
+
+    @Override
+    protected ActivitySetupOrderBinding initBinding() {
+        return DataBindingUtil.setContentView(this, R.layout.activity_setup_order);
+    }
+
+    @Override
+    protected SetupOrderViewModel initViewModel() {
+        return new SetupOrderViewModel();
+    }
+
+    @Override
+    protected void onAttachViewModel() {
+        viewModel.onViewAttach(this);
+        if (tablesAdapter != null) {
+            tablesAdapter.setCenterViewModel(viewModel);
+        }
+    }
+
+    /*
+    * End BaseActivity
+    * */
+
+    /*
+    * DataBinding
+    * */
+
+    public void onClickAddTables() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev).commit();
+        }
+        ft.addToBackStack(null);
+
+        SelectTableDialogFragment fragment = SelectTableDialogFragment.newInstance();
+        fragment.setChangeNetworkStateContainer(this);
+        fragment.setCenterViewModel(viewModel);
+        fragment.show(ft, "dialog");
+    }
+
+    // TODO
+    public void onClickSelectFoods() {
+
+    }
+
+    /*
+    * End DataBinding
+    * */
+
+    /*
+    * ISetupOrder
+    * */
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void onShowLoadTablesByOrderIDProgress() {
+        binding.recyclerviewTables.setEnabled(false);
+    }
+
+    @Override
+    public void onHideLoadTablesByOrderIDProgress() {
+        binding.recyclerviewTables.setEnabled(true);
+    }
+
+    /*
+    * End ISetupOrder
+    * */
+}

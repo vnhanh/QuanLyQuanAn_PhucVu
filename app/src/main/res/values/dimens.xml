@@ -1,0 +1,37 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="txtSize_xsmall">12sp</dimen>
+    <dimen name="txtSize_small">13sp</dimen>
+    <dimen name="txtSize_normal">14sp</dimen>
+    <dimen name="txtSize_large">16sp</dimen>
+    <dimen name="txtSize_xlarge">18sp</dimen>
+    <dimen name="txtSize_xxlarge">20sp</dimen>
+
+    <dimen name="xsmall_space">3dp</dimen>
+    <dimen name="small_space">5dp</dimen>
+    <dimen name="normal_space">8dp</dimen>
+    <dimen name="large_space">12dp</dimen>
+    <dimen name="xlarge_space">16dp</dimen>
+    <dimen name="txtSize_acc_button">17sp</dimen>
+    <dimen name="xxlarge_space">20dp</dimen>
+    <dimen name="xxxlarge_space">24dp</dimen>
+    <dimen name="huge_large_space">30dp</dimen>
+    <dimen name="xhuge_large_space">36dp</dimen>
+    <dimen name="xxhuge_large_space">40dp</dimen>
+
+    <dimen name="height_top_dialog">80dp</dimen>
+
+    <!--FRAGMENT ACCOUNT-->
+    <dimen name="max_size_profile_image">220dp</dimen>
+    <dimen name="corner_profile_image">10dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
+
+    <dimen name="min_width_switch_compat">50dp</dimen>
+    <dimen name="size_image_food">100dp</dimen>
+    <dimen name="width_input_food_count_order">80dp</dimen>
+
+</resources>

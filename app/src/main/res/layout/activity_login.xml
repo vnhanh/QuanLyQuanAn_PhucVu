@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="data"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest" />
+
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login.LoginViewModel" />
+
+        <variable
+            name="validation"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login.LoginValidation" />
+
+    </data>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/gradient_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <RelativeLayout
+            android:id="@+id/login_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/img"
+                android:background="@drawable/ic_login_150dp_15dp"
+                android:layout_marginBottom="@dimen/xxlarge_space"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!--USERNAME-->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_username"
+                app:addErrorViewer="@{validation.usernameValidator}"
+                app:errorEnabled="true"
+                app:errorTextAppearance="@style/ErrorTextInputLayoutStyle"
+                app:hintTextAppearance="@style/TextInputLayoutStyle"
+                style="@style/TextInputLayoutLogin"
+                android:layout_above="@+id/horizontal_line"
+                android:layout_marginBottom="-16dp">
+
+                <EditText
+                    android:id="@+id/edt_username"
+                    android:inputType="text"
+                    android:text="@={data.username}"
+                    app:addTextWatcher="@{validation.usernameValidator}"
+                    android:hint="@string/hint_username"
+                    style="@style/EditTextLoginView"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:id="@+id/horizontal_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"/>
+
+            <!--PASSWORD-->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_password"
+                app:addErrorViewer="@{validation.passwordValidator}"
+                style="@style/BaseTextInputLayout"
+                android:layout_marginBottom="@dimen/xxlarge_space"
+                app:errorEnabled="true"
+                app:errorTextAppearance="@style/ErrorTextInputLayoutStyle"
+                app:hintTextAppearance="@style/TextInputLayoutStyle"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="16dp"
+                android:layout_below="@+id/til_username">
+
+                <EditText
+                    android:id="@+id/edt_password"
+                    android:text="@={data.password}"
+                    app:addTextWatcher="@{validation.passwordValidator}"
+                    android:inputType="textPassword"
+                    android:hint="@string/hint_password"
+                    style="@style/EditTextLoginView"  />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/txt_network_disconnect"
+                android:visibility="@{viewmodel.isNetworkConnected ? View.INVISIBLE : View.VISIBLE}"
+                android:text="@string/message_network_disconnect"
+                android:textColor="#fa2d2d"
+                android:textSize="@dimen/txtSize_normal"
+                android:paddingStart="@dimen/normal_space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/til_password"/>
+
+            <Button
+                android:id="@+id/btn_login"
+                android:text="@string/action_login"
+                android:enabled="@{validation.valid &amp;&amp; viewmodel.isNetworkConnected}"
+                android:onClick="@{()->viewmodel.onSubmit(data)}"
+                android:background="@{validation.valid &amp;&amp; viewmodel.isNetworkConnected ? @drawable/bg_button_submit : @drawable/bg_button_submit_disabled}"
+                style="@style/AutheticationSubmitButton"
+                android:layout_below="@+id/txt_network_disconnect"
+                android:layout_marginTop="@dimen/normal_space"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</layout>

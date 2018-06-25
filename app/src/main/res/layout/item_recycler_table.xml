@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.viewholder.TableVHViewModel" />
+
+        <variable
+            name="table"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table" />
+
+    </data>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:onClick="@{()->viewmodel.onClickItem()}"
+        android:background="@drawable/selector_item_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/normal_space"
+        android:paddingBottom="@dimen/normal_space"
+        android:layout_marginTop="@dimen/xsmall_space"
+        android:layout_marginBottom="@dimen/xsmall_space">
+
+        <TextView
+            android:id="@+id/txt_table_name"
+            android:text="@{table.id}"
+            android:textSize="@dimen/txtSize_large"
+            android:textColor="@{viewmodel.isSelected ? @color/colorBlack : @color/colorDarkGray}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_space"
+            android:layout_marginEnd="0dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/checkbox"/>
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:onClick="@{()->viewmodel.onClickItem()}"
+            android:clickable="false"
+            android:checked="@{viewmodel.isSelected}"
+            android:theme="@style/MyCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/large_space"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+</layout>
