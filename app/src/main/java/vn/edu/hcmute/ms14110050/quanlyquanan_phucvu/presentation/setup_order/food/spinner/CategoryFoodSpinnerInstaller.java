@@ -25,8 +25,6 @@ public class CategoryFoodSpinnerInstaller {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("LOG", CategoryFoodSpinnerInstaller.class.getSimpleName()
-                        + ":spinnerRegion is selected:position:" + position);
                 if (adapter != null) {
                     adapter.onSelectItemIndex(position);
                 }
@@ -34,12 +32,10 @@ public class CategoryFoodSpinnerInstaller {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.d("LOG", CategoryFoodSpinnerInstaller.class.getSimpleName()
-                        + ":spinnerRegion:onNothingSelected");
+
             }
         });
         spinner.setAdapter(adapter);
-        spinner.setSelection(0);
 
         return adapter;
     }
@@ -50,26 +46,21 @@ public class CategoryFoodSpinnerInstaller {
                                                     OnSpinnerStateListener.DataProcessor dataProcessor) {
 
         OnSpinnerStateListener.View viewListener = new OnSpinnerStateListener.View() {
+            // Khóa spinner và recyclerview khi đang xử lý dữ liệu vừa được thay đổi của spinner
             @Override
             public void onStartProcessDataChanged() {
-                Log.d("LOG", CategoryFoodSpinnerInstaller.class.getSimpleName()
-                        + ":viewListener:onStartProcessDataChanged()");
                 spinner.setEnabled(false);
                 recyclerView.setEnabled(false);
             }
 
             @Override
             public void onEndProcessDataChanged() {
-                Log.d("LOG", CategoryFoodSpinnerInstaller.class.getSimpleName()
-                        + ":viewListener:onEndProcessDataChanged()");
                 spinner.setEnabled(true);
                 recyclerView.setEnabled(true);
             }
 
             @Override
             public void onSelectSpinnerItemIndex(int index) {
-                Log.d("LOG", CategoryFoodSpinnerInstaller.class.getSimpleName()
-                        + ":viewListener:onSelectSpinnerItemIndex():index:" + index);
                 spinner.setSelection(index);
             }
         };

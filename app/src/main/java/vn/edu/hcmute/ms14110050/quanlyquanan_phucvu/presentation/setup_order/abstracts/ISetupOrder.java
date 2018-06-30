@@ -1,6 +1,9 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts;
 
 
+import android.support.annotation.StringRes;
+
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 
 /**
@@ -13,5 +16,16 @@ public interface ISetupOrder {
         void onShowLoadTablesByOrderIDProgress();
 
         void onHideLoadTablesByOrderIDProgress();
+
+        void onBackPrevActivity();
+
+        void showProgress(@StringRes int messageIdRes);
+
+        void hideProgress();
+
+        void openInputNumberCustomerView(int customerNumber, InputCallback numberCustomerListener);
+
+        void onAnimationShowStatus();
+
     }
 }

@@ -62,6 +62,14 @@
         <item name="android:textColor">#000</item>
     </style>
 
+    <style name="NormalTextView.Padding" parent="@android:style/TextAppearance">
+        <item name="android:textSize">@dimen/txtSize_large</item>
+        <item name="android:paddingStart">@dimen/large_space</item>
+        <item name="android:paddingEnd">@dimen/large_space</item>
+        <item name="android:paddingTop">@dimen/small_space</item>
+        <item name="android:paddingBottom">@dimen/small_space</item>
+    </style>
+
     <style name="NetworkDisconnectTextView" parent="@android:style/TextAppearance">
         <item name="android:background">#ff0000</item>
         <item name="android:textColor">#fff</item>
@@ -210,6 +218,23 @@
         <item name="android:paddingEnd">@dimen/large_space</item>
         <item name="android:paddingTop">@dimen/normal_space</item>
         <item name="android:paddingBottom">@dimen/normal_space</item>
+    </style>
+
+    <!--ACTIVITY VIEW FOOD-->
+    <style name="BlurTextView" parent="@android:style/TextAppearance">
+        <item name="android:background">@drawable/bg_light_gray</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:padding">@dimen/normal_space</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">@dimen/txtSize_large</item>
+    </style>
+
+    <style name="ColoredButton.Corner" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@drawable/bg_rectangle_accent_corner</item>
+    </style>
+
+    <style name="ColoredButton.Orange" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@drawable/bg_orange_rectangle</item>
     </style>
 
 </resources>

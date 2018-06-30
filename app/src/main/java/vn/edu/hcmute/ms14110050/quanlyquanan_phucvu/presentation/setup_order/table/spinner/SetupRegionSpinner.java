@@ -25,8 +25,6 @@ public class SetupRegionSpinner {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("LOG", SetupRegionSpinner.class.getSimpleName()
-                        + ":spinnerRegion is selected:position:" + position);
                 if (adapter != null) {
                     adapter.onSelectItemIndex(position);
                 }
@@ -34,8 +32,7 @@ public class SetupRegionSpinner {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.d("LOG", SetupRegionSpinner.class.getSimpleName()
-                        + ":spinnerRegion:onNothingSelected");
+
             }
         });
         spinner.setAdapter(adapter);
@@ -52,24 +49,18 @@ public class SetupRegionSpinner {
         OnSpinnerStateListener.View viewListener = new OnSpinnerStateListener.View() {
             @Override
             public void onStartProcessDataChanged() {
-                Log.d("LOG", SetupRegionSpinner.class.getSimpleName()
-                        + ":viewListener:onStartProcessDataChanged()");
                 spinner.setEnabled(false);
                 recyclerView.setEnabled(false);
             }
 
             @Override
             public void onEndProcessDataChanged() {
-                Log.d("LOG", SetupRegionSpinner.class.getSimpleName()
-                        + ":viewListener:onEndProcessDataChanged()");
                 spinner.setEnabled(true);
                 recyclerView.setEnabled(true);
             }
 
             @Override
             public void onSelectSpinnerItemIndex(int index) {
-                Log.d("LOG", SetupRegionSpinner.class.getSimpleName()
-                        + ":viewListener:onSelectSpinnerItemIndex():index:" + index);
                 spinner.setSelection(index);
             }
         };

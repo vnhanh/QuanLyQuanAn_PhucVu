@@ -9,14 +9,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.ContainerViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseProgressVH;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseViewHolder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressVH;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerTableBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.RegionTableRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.ITableVM;
 
@@ -24,14 +28,14 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.tab
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class TableViewHolder extends BaseViewHolder<ItemRecyclerTableBinding, TableVHViewModel> implements IProgressVH {
+public class TableVH extends BaseProgressVH<ItemRecyclerTableBinding, TableVHViewModel>{
 
-    public TableViewHolder(View view) {
+    public TableVH(View view) {
         super(view);
     }
 
-    public TableViewHolder(ItemRecyclerTableBinding binding,
-                           @NonNull ITableVM containerViewModel) {
+    public TableVH(ItemRecyclerTableBinding binding,
+                   @NonNull ITableVM containerViewModel) {
         super(binding);
         viewmodel.setContainerViewModel(containerViewModel);
     }
@@ -51,34 +55,5 @@ public class TableViewHolder extends BaseViewHolder<ItemRecyclerTableBinding, Ta
         binding.getRoot().startAnimation(alphaAnim);
         viewmodel.setTable(table);
         binding.setTable(table);
-    }
-
-    @Override
-    public Context getContext() {
-        return super.getContext();
-    }
-
-    /*
-    * Contract
-    * */
-
-    @Override
-    public void onShowMessage(int strIdRes) {
-        Toast.makeText(getContext(), getString(strIdRes), Toast.LENGTH_SHORT).show();
-    }
-
-    private AlertDialog progressDialog;
-
-    @Override
-    public void showProgress(@StringRes int idRes) {
-        progressDialog = MyProgressDialog.create(getContext(), idRes);
-        progressDialog.show();
-    }
-
-    @Override
-    public void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
     }
 }

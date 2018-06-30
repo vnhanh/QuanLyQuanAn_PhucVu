@@ -18,9 +18,9 @@ public class SOCKET {
     public static String SOCKET_EVENT_DELETE_REGION = "server-delete-region";
 
     public static String SOCKET_EVENT_ADD_TABLE = "server-add-table";
-    public static String SOCKET_EVENT_UPDATE_TABLE = "server-update-table";
+    public static String SOCKET_EVENT_ADD_TABLE_TO_ORDER = "server-add-table-to-order";
+    public static String SOCKET_EVENT_REMOVE_ORDER_TABLE = "server-remove-table-from-order";
     public static String SOCKET_EVENT_UPDATE_ACTIVED_TABLE = "server-update-active-table";
-    public static String SOCKET_EVENT_REMOVE_ORDER_TABLE = "server-remove-order-table";
     public static String SOCKET_EVENT_DELTE_TABLE = "server-delete-table";
 
     public static String SOCKET_EVENT_ADD_CATEGORY_FOOD = "server-add-categoryFood";
@@ -29,8 +29,10 @@ public class SOCKET {
 
     public static String SOCKET_EVENT_ADD_FOOD = "server-add-food";
     public static String SOCKET_EVENT_UPDATE_FOOD = "server-update-food";
+    public static String SOCKET_EVENT_ORDER_FOOD = "server-order-food";
     public static String SOCKET_EVENT_ADD_IMAGE_FOOD = "server-add-image-food";
     public static String SOCKET_EVENT_DELETE_IMAGE_FOOD = "server-delete-image-food";
     public static String SOCKET_EVENT_UPDATE_ACTIVE_FOOD = "server-update-ative-food";
 
+    public static String SOCKET_EVENT_UPDATE_STATUS_ORDER = "server-update-status-order";
 }

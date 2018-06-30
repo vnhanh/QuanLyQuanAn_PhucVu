@@ -66,7 +66,7 @@ public class SocketManager {
                 });
             }
         }else{
-            Log.d("LOG", getClass().getSimpleName() + ":onSocket:add listener for event:" + event);
+//            Log.d("LOG", getClass().getSimpleName() + ":onSocket:add listener for event:" + event);
             ArrayList<Emitter.Listener> listeners = eventListeners.get(event);
             if (!listeners.contains(listener)) {
                 listeners.add(listener);

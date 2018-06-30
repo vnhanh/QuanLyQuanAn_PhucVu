@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/xlarge_space">
+
+    <TextView
+        android:id="@+id/title"
+        android:text="@string/title_order_food_count"
+        android:textSize="@dimen/txtSize_large"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/til"
+        app:errorEnabled="true"
+        android:layout_marginTop="@dimen/xxlarge_space"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <EditText
+            android:id="@+id/edt"
+            android:inputType="number"
+            android:textSize="@dimen/txtSize_large"
+            android:textColor="#000"
+            android:hint="@string/hint_ordered_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/btn_ok"
+        android:text="@string/action_ok"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:textSize="@dimen/txtSize_large"
+        android:background="@drawable/bg_white_rectangle_border_accent"
+        android:paddingStart="@dimen/xlarge_space"
+        android:paddingEnd="@dimen/xlarge_space"
+        android:paddingTop="@dimen/normal_space"
+        android:paddingBottom="@dimen/normal_space"
+        android:layout_marginTop="@dimen/large_space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til"/>
+
+    <TextView
+        android:id="@+id/btn_cancel"
+        android:text="@string/action_cancel"
+        android:textColor="@color/colorDarkGray"
+        android:textStyle="bold"
+        android:textSize="@dimen/txtSize_large"
+        android:paddingStart="@dimen/xlarge_space"
+        android:paddingEnd="@dimen/xlarge_space"
+        android:paddingTop="@dimen/normal_space"
+        android:paddingBottom="@dimen/normal_space"
+        android:layout_marginEnd="@dimen/xxxlarge_space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/btn_ok"
+        app:layout_constraintTop_toTopOf="@id/btn_ok"/>
+
+</android.support.constraint.ConstraintLayout>

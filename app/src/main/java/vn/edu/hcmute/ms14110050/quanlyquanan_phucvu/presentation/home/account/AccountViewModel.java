@@ -3,6 +3,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account;
 import android.databinding.ObservableField;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -15,6 +16,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.Ba
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.databinding.BindableFieldTarget;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.RectangleImageTransform;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.ScaleType;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.account.ChangePasswordRequest;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest;
@@ -134,16 +136,19 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
     }
 
     private void onUpdateProfileImage() {
+        int size = getContext().getResources().getDimensionPixelSize(R.dimen.max_size_profile_image);
+        int corner = getContext().getResources().getDimensionPixelSize(R.dimen.normal_space);
+        int bgColor = ContextCompat.getColor(getContext(), R.color.colorExtraLightGray);
+
+        RectangleImageTransform transform =
+                new RectangleImageTransform(size, size, corner, ScaleType.CENTER_INSIDE);
+        transform.setBackgroundColor(bgColor);
+
         Picasso.get()
                 .load(user.getUrlImgProfile())
                 .placeholder(R.drawable.ic_account_120dp_0dp)
                 .error(R.drawable.ic_account_120dp_0dp)
-                .transform(
-                        new RectangleImageTransform(
-                                getView().getContext().getResources(),
-                                R.dimen.max_size_profile_image,
-                                R.dimen.corner_profile_image)
-                ).into(profileTarget);
+                .transform(transform).into(profileTarget);
     }
     /*
     * END

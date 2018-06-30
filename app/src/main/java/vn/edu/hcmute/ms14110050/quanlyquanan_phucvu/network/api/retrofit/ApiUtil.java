@@ -19,4 +19,8 @@ public class ApiUtil {
     public static FoodService getFoodService() {
         return RetrofitClient.getClient(BASE_URL).create(FoodService.class);
     }
+
+    public static OrderService getOrderService() {
+        return RetrofitClient.getClient(BASE_URL).create(OrderService.class);
+    }
 }

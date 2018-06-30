@@ -20,15 +20,15 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStat
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.asynctask.SortTask;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ICategoryFoodDataListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDataListener{
+public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataListener<CategoryFood>{
     private ArrayList<CategoryFood> categories;
-    private String selectedCategoryID;
+    private String selectedCatID;
 
     @NonNull
     private OnSpinnerStateListener.View viewListener;
@@ -40,7 +40,7 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
     * */
 
     public String getSelectedCategoryID() {
-        return selectedCategoryID;
+        return selectedCatID;
     }
 
     /*
@@ -60,7 +60,7 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
     * Thao tác với View UI
     * */
     private boolean isEmptyList() {
-        return categories != null && categories.size() > 0;
+        return categories == null || categories.size() == 0;
     }
 
     @Override
@@ -104,8 +104,7 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
     * */
 
     @Override
-    public void onGetCategories(ArrayList<CategoryFood> cats) {
-        Log.d("LOG", getClass().getSimpleName() + ":setCategories()");
+    public void onGetList(ArrayList<CategoryFood> cats) {
         this.categories = cats;
         onDataChanged();
     }
@@ -119,6 +118,9 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
         onDataChanged();
     }
 
+    /**
+     * Server update tên (name) loại món
+     */
     @Override
     public void onUpdateItem(CategoryFood cat) {
         String id = cat.getId();
@@ -136,10 +138,15 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
             categories.remove(index);
 
             // xóa đúng item đang được chọn
-            if (catID.equals(selectedCategoryID)) {
+            if (catID.equals(selectedCatID)) {
                 // quay về loại món đầu tiên trong danh sách
-                selectedCategoryID = categories.size() > 0 ? categories.get(0).getId() : "";
+                selectedCatID = categories.size() > 0 ? categories.get(0).getId() : "";
+                if (categories.size() > 0) {
+                    viewListener.onSelectSpinnerItemIndex(0);
+                }
+                dataProcessorListener.onSelectSpinnerItemId(selectedCatID);
             }
+
             onDataChanged();
         }
     }
@@ -185,6 +192,10 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
         return -1;
     }
 
+    /**
+     * Khi spinner được bấm (bởi người dùng hoặc code)
+     * @param position
+     */
     public void onSelectItemIndex(int position) {
         if (categories == null || position < 0 || position >= categories.size()) {
             return;
@@ -192,27 +203,30 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
 
         String selectedID = (position < 0 || isEmptyList()) ? "" : categories.get(position).getId();
 
-        if (!selectedID.equals(selectedCategoryID)) {
-            selectedCategoryID = selectedID;
-            dataProcessorListener.onSelectSpinnerItemId(selectedCategoryID);
+        if (!selectedID.equals(selectedCatID)) {
+            selectedCatID = selectedID;
+            dataProcessorListener.onSelectSpinnerItemId(selectedCatID);
         }
     }
 
     // Tái xác định item được chọn sau khi sortList()
     private void onResetSelectItem() {
-        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem()");
         int index = 0;
         // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
         boolean isChangeItem = false;
-
-        if (!StringUtils.isEmpty(selectedCategoryID)) {
+        if (StringUtils.isEmpty(selectedCatID)) {
+            if (categories != null && categories.size() > 0) {
+                isChangeItem = true;
+                selectedCatID = categories.get(0).getId();
+            }
+        } else {
             Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item was existed");
 
             // tìm vị trí của item đang select
             int _index = 0;
             int size = categories.size();
             for (; _index < size; _index++) {
-                if (categories.get(_index).getId().equals(selectedCategoryID)) {
+                if (categories.get(_index).getId().equals(selectedCatID)) {
                     index = _index;
                     break;
                 }
@@ -221,16 +235,16 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ICategoryFoodDa
             if (_index == size) {
                 Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item just change");
                 isChangeItem = true;
-                selectedCategoryID = "";
+                selectedCatID = "";
             }
         }
         // kết thúc việc xử lý khi dữ liệu thay đổi
         viewListener.onEndProcessDataChanged();
         // set selected index cho spinner
         viewListener.onSelectSpinnerItemIndex(index);
-        // truyền region id cho viewmodel load list table theo region
+        // truyền region id cho viewmodel load list món theo loại món
         if (isChangeItem) {
-            dataProcessorListener.onSelectSpinnerItemId(selectedCategoryID);
+            dataProcessorListener.onSelectSpinnerItemId(selectedCatID);
         }
     }
 }

@@ -4,15 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/img_face"
-        android:src="@drawable/ic_face01_72dp_6dp"
-        android:layout_marginStart="@dimen/large_space"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"/>
-
     <TextView
         android:id="@+id/txt_message"
         android:text="@string/no_data"
@@ -23,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/img_face"/>
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>

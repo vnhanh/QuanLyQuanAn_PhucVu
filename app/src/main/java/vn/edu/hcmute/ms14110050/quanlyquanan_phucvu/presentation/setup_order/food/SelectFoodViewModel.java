@@ -1,9 +1,12 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food;
 
+import android.content.Context;
+import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStateListener;
@@ -13,9 +16,14 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderSocketData;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ICategoryFoodDataListener;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IFoodDataListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
@@ -23,41 +31,47 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abs
 
 public class SelectFoodViewModel
         extends BaseNetworkViewModel<IFoodView>
-        implements OnSpinnerStateListener.DataProcessor  {
+        implements OnSpinnerStateListener.DataProcessor, IFoodVM  {
+
+    private IOrderVM centerVM;
 
     private FoodRequestManger requestManager;
     // lắng nghe dữ liệu food và category food thay đổi
     private FoodSocketService socketService;
 
-    private String selectedID;
+    private String selectedCatID;
 
     protected String token;
-    protected String orderID;
-    private ICategoryFoodDataListener catDataListener;
-    private IFoodDataListener foodsDataListener;
+    private Order order;
+
+    private ISpinnerDataListener<CategoryFood> catDataListener;
+    private IListViewAdapterListener<Food> foodsDataListener;
+
+    public final ObservableBoolean isLoadingFoods = new ObservableBoolean();
 
     /*
     * Property
     * */
 
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
-
-    public String getOrderID() {
-        return orderID;
+    public void setCenterViewModel(IOrderVM centerVM) {
+        this.centerVM = centerVM;
+        this.order = centerVM.getOrder();
+        this.token = centerVM.getToken();
+        this.requestManager = centerVM.getFoodRequestManager();
+        this.socketService = centerVM.getFoodSocketService();
     }
 
     // spinner adapter
-    public void setCatDataListener(ICategoryFoodDataListener catDataListener) {
+    public void setCatDataListener(ISpinnerDataListener<CategoryFood> catDataListener) {
         this.catDataListener = catDataListener;
     }
 
     // recyclerview adapter
-    public void setFoodsDataListener(IFoodDataListener foodsDataListener) {
+    public void setFoodsDataListener(IListViewAdapterListener<Food> foodsDataListener) {
         this.foodsDataListener = foodsDataListener;
     }
-/*
+
+    /*
     * End Property
     * */
 
@@ -72,31 +86,16 @@ public class SelectFoodViewModel
 
     @Override
     public void onViewDetached() {
-        socketService.destroy();
+        requestManager = null;
+        socketService = null;
+        order = null;
+        token = null;
         super.onViewDetached();
     }
 
     private void onSetupServerConnection() {
-        createRequestManager();
-        createSocketService();
         listenCatFoodValue();
         listenFoodValue();
-    }
-
-    public FoodRequestManger getRequestManager() {
-        return requestManager;
-    }
-
-    private void createSocketService() {
-        if (socketService == null) {
-            socketService = new FoodSocketService();
-        }
-    }
-
-    private void createRequestManager() {
-        if (requestManager == null) {
-            requestManager = new FoodRequestManger();
-        }
     }
 
     private void listenCatFoodValue() {
@@ -131,7 +130,7 @@ public class SelectFoodViewModel
             @Override
             public void onFinish(Food food) {
                 if (food.isActived() && foodsDataListener != null) {
-                    if (selectedID.equals(food.getCategoryID())) {
+                    if (selectedCatID.equals(food.getCategoryID())) {
                         foodsDataListener.onAddItem(food);
                     }
                 }
@@ -141,13 +140,17 @@ public class SelectFoodViewModel
             @Override
             public void onFinish(Food food) {
                 if (food.isActived() && foodsDataListener != null) {
-                    if (selectedID.equals(food.getCategoryID())) {
-                        // update hoặc add
+                    if (selectedCatID.equals(food.getCategoryID())) {
                         foodsDataListener.onUpdateItem(food);
-                    }else{
-                        //remove nếu lúc trước có tồn tại
-                        foodsDataListener.onRemoveItem(food.getId());
                     }
+                }
+            }
+        });
+        socketService.onEventOrderFood(new GetCallback<FoodOrderSocketData>() {
+            @Override
+            public void onFinish(FoodOrderSocketData data) {
+                if (data.getOrderID() != null && !data.getOrderID().equals(getOrderID())) {
+                    onOrderFood(data.getFood());
                 }
             }
         });
@@ -155,8 +158,8 @@ public class SelectFoodViewModel
             @Override
             public void onFinish(Food food) {
                 if (food.isActived() && foodsDataListener != null) {
-                    if (selectedID.equals(food.getCategoryID())) {
-                        foodsDataListener.onAddImageItem(food);
+                    if (selectedCatID.equals(food.getCategoryID())) {
+                        foodsDataListener.onUpdateItem(food);
                     }
                 }
             }
@@ -165,8 +168,8 @@ public class SelectFoodViewModel
             @Override
             public void onFinish(Food food) {
                 if (food.isActived() && foodsDataListener != null) {
-                    if (selectedID.equals(food.getCategoryID())) {
-                        foodsDataListener.onDeleteImageItem(food);
+                    if (selectedCatID.equals(food.getCategoryID())) {
+                        foodsDataListener.onUpdateItem(food);
                     }
                 }
             }
@@ -175,7 +178,7 @@ public class SelectFoodViewModel
             @Override
             public void onFinish(Food food) {
                 if (food.isActived() && foodsDataListener != null) {
-                    if (selectedID.equals(food.getCategoryID())) {
+                    if (selectedCatID.equals(food.getCategoryID())) {
                         if (food.isActived()) {
                             foodsDataListener.onAddItem(food);
                         }else{
@@ -185,6 +188,14 @@ public class SelectFoodViewModel
                 }
             }
         });
+    }
+
+    private void onOrderFood(Food food) {
+        if (food != null && food.isActived() && foodsDataListener != null) {
+            if (selectedCatID.equals(food.getCategoryID())) {
+                foodsDataListener.onUpdateItem(food);
+            }
+        }
     }
 
     private void loadCategories() {
@@ -198,22 +209,13 @@ public class SelectFoodViewModel
         requestManager.loadCategories(token, new GetCallback<ArrayList<CategoryFood>>() {
             @Override
             public void onFinish(ArrayList<CategoryFood> categories) {
-                int i = 0;
-                while (categories != null && i < categories.size()) {
-                    // nếu loại món không còn actived
-                    if (!categories.get(i).isActived()) {
-                        categories.remove(i);
-                    }else{
-                        i++;
-                    }
-                }
                 onGetCategories(categories);
             }
         });
     }
 
     private void onGetCategories(ArrayList<CategoryFood> categoryFoods) {
-        catDataListener.onGetCategories(categoryFoods);
+        catDataListener.onGetList(categoryFoods);
         if (isViewAttached()) {
             getView().onEndLoadingCategories();
         }
@@ -222,32 +224,83 @@ public class SelectFoodViewModel
     // Khi spinner được select
     @Override
     public void onSelectSpinnerItemId(String id) {
-        selectedID = id != null ? id : "";
+        selectedCatID = id != null ? id : "";
         if (StringUtils.isEmpty(id)) {
             if (isViewAttached()) {
-                catDataListener.onGetCategories(new ArrayList<CategoryFood>());
+                catDataListener.onGetList(new ArrayList<CategoryFood>());
             }
             return;
         }
-        if (isViewAttached()) {
-            getView().onLoadingFoods();
-        }
+        showLoadingFoods();
         if (StringUtils.isEmpty(token)) {
             token = SSharedReference.getToken(getView().getContext());
         }
-        requestManager.loadFoodsByCatID(token, selectedID, new GetCallback<ArrayList<Food>>() {
+        requestManager.loadFoodsByCatID(token, selectedCatID, new GetCallback<ArrayList<Food>>() {
             @Override
             public void onFinish(ArrayList<Food> foods) {
                 if (foods == null) {
                     foods = new ArrayList<>();
                 }
                 if (foodsDataListener != null) {
-                    foodsDataListener.onGetFoods(foods);
+                    foodsDataListener.onGetList(foods);
                 }
-                if (isViewAttached()) {
-                    getView().onEndLoadingFoods();
-                }
+                hideLoadingFoods();
             }
         });
     }
+
+    private void showLoadingFoods() {
+        isLoadingFoods.set(true);
+    }
+
+    private void hideLoadingFoods() {
+        isLoadingFoods.set(false);
+    }
+
+    /*
+    * IFoodVM
+    * */
+
+    @Override
+    public int getDetailOrderIndexByFood(String foodID) {
+        return centerVM.getDetailOrderIndexByFood(foodID);
+    }
+
+    @Override
+    public DetailOrder getDetailOrderByFood(String foodID) {
+        return centerVM.getDetailOrderByFood(foodID);
+    }
+
+    @Override
+    public FoodRequestManger getFoodRequestManager() {
+        return requestManager;
+    }
+
+    @Override
+    public FoodSocketService getFoodSocketService() {
+        return socketService;
+    }
+
+    @Override
+    public String getOrderID() {
+        return centerVM != null ? centerVM.getOrderID() : "";
+    }
+
+    @Override
+    public String getToken() {
+        if (StringUtils.isEmpty(token)) {
+            token = centerVM.getToken();
+        }
+        return token;
+    }
+
+    @Override
+    public Context getContext() {
+        return centerVM != null ? centerVM.getContext() : null;
+    }
+
+    /*
+    * End IFoodVM
+    * */
+
 }

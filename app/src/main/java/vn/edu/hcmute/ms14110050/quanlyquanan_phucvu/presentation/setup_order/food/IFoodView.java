@@ -11,8 +11,4 @@ public interface IFoodView extends LifeCycle.View {
     void onLoadingCategories();
 
     void onEndLoadingCategories();
-
-    void onLoadingFoods();
-
-    void onEndLoadingFoods();
 }

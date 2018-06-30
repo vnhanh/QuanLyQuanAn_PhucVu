@@ -57,6 +57,16 @@ public abstract class BaseNetworkDialogFragment<B extends ViewDataBinding, V ext
         viewModel = initViewModel();
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        binding = initBinding(inflater, container);
+        binding.setVariable(BR.viewmodel, viewModel);
+
+        return binding.getRoot();
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

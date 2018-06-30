@@ -28,6 +28,11 @@ public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCy
         this.view = null;
     }
 
+    @Override
+    public void onDestroy() {
+
+    }
+
     public final boolean isViewAttached() {
         return view != null;
     }

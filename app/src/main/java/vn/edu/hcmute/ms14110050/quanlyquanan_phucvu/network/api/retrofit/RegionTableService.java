@@ -1,11 +1,14 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import io.reactivex.Completable;
+import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -33,13 +36,11 @@ public interface RegionTableService {
 
     @POST("table/addTableToOrder")
     @FormUrlEncoded
-    Observable<TableResponse> addTableToOrder(@Header("Authorization") String token,
-                                              @Field("id") String tableID, @Field("order_id") String orderID);
+    Observable<TableResponse> addTableToOrder(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
 
     @POST("table/removeTableFromOrder")
     @FormUrlEncoded
-    Observable<TableResponse> removeTableFromOrder(@Header("Authorization") String token,
-                                                 @Field("id") String tableID, @Field("order_id") String orderID);
+    Observable<TableResponse> removeOrderIDFromTable(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
 
     @GET("table/getTables/{orderID}")
     Observable<TablesResponse> loadTablesByOrderID(@Header("Authorization") String token, @Path("orderID") String orderID);

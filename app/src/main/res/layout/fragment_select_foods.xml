@@ -15,69 +15,43 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         tools:context=".presentation.setup_order.food.SelectFoodDialogFragment"
         android:background="@drawable/bg_white_rectangle_corner"
-        android:padding="@dimen/large_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/txt_error_msg"
-            android:visibility="@{viewmodel.isNetworkConnected ? View.GONE : View.VISIBLE}"
-            android:text="@string/internet_disconnect"
-            android:textSize="@dimen/txtSize_normal"
-            android:textColor="#fff"
-            android:gravity="center"
-            android:background="#ea0000"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="3dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/txt_title"
-            android:text="@string/title_select_foods"
-            android:textColor="#000"
-            android:textSize="@dimen/txtSize_large"
-            android:textStyle="bold"
-            android:layout_marginTop="@dimen/normal_space"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_goneMarginTop="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_error_msg" />
 
         <Spinner
             android:id="@+id/spinner_category_foods"
             android:background="@null"
+            android:layout_marginStart="@dimen/normal_space"
+            android:layout_marginEnd="@dimen/normal_space"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xxlarge_space"
-            app:layout_goneMarginTop="@dimen/normal_space"
+            android:layout_marginTop="@dimen/normal_space"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_title" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
+            android:visibility="@{viewmodel.isLoadingFoods ? View.INVISIBLE : View.VISIBLE}"
             android:paddingTop="@dimen/normal_space"
             android:paddingBottom="@dimen/normal_space"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_goneMarginTop="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_category_foods"/>
+            app:layout_constraintTop_toBottomOf="@+id/spinner_category_foods"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <View
-            android:background="@color/colorAccent"
-            android:layout_marginTop="@dimen/xlarge_space"
+        <include
+            android:visibility="@{viewmodel.isLoadingFoods ? View.VISIBLE : View.GONE}"
+            layout="@layout/progress_view"
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recyclerview"/>
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/recyclerview"
+            app:layout_constraintBottom_toBottomOf="@id/recyclerview"
+            app:layout_constraintStart_toStartOf="@id/recyclerview"
+            app:layout_constraintEnd_toEndOf="@id/recyclerview"/>
 
     </android.support.constraint.ConstraintLayout>
 

@@ -35,18 +35,16 @@
             android:exported="true" />
 
         <activity
-            android:name=".presentation.order.activity.AddEditOrderActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_add_edit_order"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".presentation.setup_order.SetupOrderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"/>
 
-        </activity>
+        <activity android:name=".presentation.view_food.ViewFoodActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

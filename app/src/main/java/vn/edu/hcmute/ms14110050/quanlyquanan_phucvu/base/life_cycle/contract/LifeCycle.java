@@ -18,5 +18,7 @@ public interface LifeCycle {
         void onViewResumed();
 
         void onViewDetached();
+
+        void onDestroy();
     }
 }

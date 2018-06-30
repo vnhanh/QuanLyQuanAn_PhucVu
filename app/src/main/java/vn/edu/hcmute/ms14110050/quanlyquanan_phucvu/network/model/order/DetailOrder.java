@@ -29,6 +29,9 @@ public class DetailOrder {
     int count;
 
     public String getFoodId() {
+        if (foodId == null) {
+            foodId = "";
+        }
         return foodId;
     }
 

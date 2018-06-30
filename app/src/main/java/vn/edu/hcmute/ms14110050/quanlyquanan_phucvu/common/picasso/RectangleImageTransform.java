@@ -1,5 +1,6 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -8,8 +9,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DimenRes;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 
 import com.squareup.picasso.Transformation;
 
@@ -23,52 +25,82 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
  */
 
 public class RectangleImageTransform implements Transformation {
-    WeakReference<Resources> weakResources;
-    int maxSize, corner;
+    private int width, height, corner;
+    @ScaleType
+    private int scaleType;
+    @ColorInt
+    private int bgColor = -1;
 
-    public RectangleImageTransform(Resources resources, @DimenRes int idRes, @DimenRes int cornerIdRes) {
-        weakResources = new WeakReference<Resources>(resources);
-        maxSize = resources.getDimensionPixelSize(idRes);
-        corner = resources.getDimensionPixelSize(cornerIdRes);
+    // Có 2 mode hiện tại là CENTER_CROP và CENTER_INSIDE
+    public RectangleImageTransform(int widthView, int heightView, int corner, @ScaleType int scaleType) {
+        width = widthView;
+        height = heightView;
+        this.corner = corner;
+        this.scaleType = scaleType;
+    }
+
+    // Set màu nền (chỉ dùng cho CENTER_INSIDE)
+    public void setBackgroundColor(@ColorInt int color) {
+        this.bgColor = color;
     }
 
     @Override
     public Bitmap transform(Bitmap source) {
-        if (maxSize < 100) {
-            maxSize = 100;
+        if (scaleType != ScaleType.CENTER_CROP && scaleType != ScaleType.CENTER_INSIDE) {
+            return null;
         }
-        int size = Math.max(source.getWidth(), source.getHeight());
-//        Log.d("LOG", getClass().getSimpleName() + ":size:" + size);
-        int actualSize = Math.min(size, maxSize);
-//        Log.d("LOG", getClass().getSimpleName() + ":actualSize:" + actualSize);
-        float scale = (float) (actualSize * 1.0 / size);
-//        Log.d("LOG", getClass().getSimpleName() + ":scale:" + scale);
+
+        float widthScale = width * 1.0f / source.getWidth();
+        float heightScale = height * 1.0f/ source.getHeight();
+        float scale = 0;
         Matrix matrix = new Matrix();
+
+        // 2 chiều của imageview sẽ bằng hoặc nhỏ hơn cả 2 chiều của ảnh bitmap được return
+        if (scaleType == ScaleType.CENTER_CROP) {
+            // chọn scale lớn nhất
+            scale = Math.max(widthScale, heightScale);
+        } else if (scaleType == ScaleType.CENTER_INSIDE) {
+            scale = Math.min(widthScale, heightScale);
+        }
+
         matrix.postScale(scale, scale);
-        Bitmap _bitmap01 = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, false);
-        if (_bitmap01 != source) {
+
+        //thu nhỏ hoặc phóng to bức ảnh theo tỉ lệ scale
+        Bitmap bitmap01 = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, false);
+        if (bitmap01 != source) {
             source.recycle();
         }
+
+        // chỉnh lại phạm vi của ảnh bitmap (vẽ từ đâu đến đâu)
+        Bitmap bitmap02 = Bitmap.createBitmap(width, height, bitmap01.getConfig());
+        Canvas canvas02 = new Canvas(bitmap02);
+        if (scaleType == ScaleType.CENTER_INSIDE && bgColor > -1) {
+            canvas02.drawColor(bgColor);
+        }
+        canvas02.drawBitmap(bitmap01, (width - bitmap01.getWidth())/2, (height - bitmap01.getHeight())/2, null);
+
+        if (!bitmap01.equals(bitmap02)) {
+            bitmap01.recycle();
+        }
+
         // không bo góc
         if (corner == 0) {
-            return _bitmap01;
+            return bitmap02;
         }
         // có bo góc
         else{
-            int _w = (int) (source.getWidth() * scale);
-            int _h = (int) (source.getHeight() * scale);
-
-            Bitmap _bitmap02 = Bitmap.createBitmap(_w, _h, _bitmap01.getConfig());
-            Canvas canvas = new Canvas(_bitmap02);
+            Bitmap bitmap03 = Bitmap.createBitmap(width, height, bitmap02.getConfig());
+            Canvas canvas03 = new Canvas(bitmap03);
             Paint paint = new Paint();
             paint.setAntiAlias(true);
-            paint.setShader(new BitmapShader(_bitmap01, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
-            canvas.drawRoundRect(new RectF(0,0,_w,_h), corner, corner, paint);
-            if (!_bitmap01.equals(_bitmap02)) {
-                _bitmap01.recycle();
+            paint.setShader(new BitmapShader(bitmap02, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+            canvas03.drawRoundRect(new RectF(0,0,width,height), corner, corner, paint);
+
+            if (!bitmap02.equals(bitmap03)) {
+                bitmap02.recycle();
             }
 
-            return _bitmap02;
+            return bitmap03;
         }
     }
 

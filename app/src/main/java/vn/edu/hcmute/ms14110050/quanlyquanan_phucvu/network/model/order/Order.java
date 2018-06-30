@@ -1,18 +1,25 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order;
 
+import android.support.annotation.StringRes;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
  */
 
-public class Order {
+public class Order{
     @SerializedName("id")
     @Expose
     String id;
+    @SerializedName("number_customer")
+    @Expose
+    int customerNumber;
     @SerializedName("customer_name")
     @Expose
     String customerName;
@@ -32,9 +39,9 @@ public class Order {
     @Expose
     @OrderFlag
     int statusFlag;
-    @SerializedName("time_creadted")
+    @SerializedName("time_created")
     @Expose
-    long createdTime;
+    String createdTime;
     @SerializedName("paid_cost")
     @Expose
     long paidCost;
@@ -50,6 +57,12 @@ public class Order {
     @SerializedName("tables")
     @Expose
     ArrayList<String> tables;
+    @SerializedName("region_id")
+    @Expose
+    String regionId;
+    @SerializedName("region_name")
+    @Expose
+    String regionName;
 
     public String getId() {
         return id;
@@ -59,7 +72,18 @@ public class Order {
         this.id = id;
     }
 
+    public int getCustomerNumber() {
+        return customerNumber;
+    }
+
+    public void setCustomerNumber(int customerNumber) {
+        this.customerNumber = customerNumber;
+    }
+
     public String getCustomerName() {
+        if (customerName == null) {
+            customerName = "";
+        }
         return customerName;
     }
 
@@ -68,6 +92,9 @@ public class Order {
     }
 
     public String getWaiterUsername() {
+        if (waiterUsername == null) {
+            waiterUsername = "";
+        }
         return waiterUsername;
     }
 
@@ -76,6 +103,9 @@ public class Order {
     }
 
     public String getWaiterFullname() {
+        if (waiterFullname == null) {
+            waiterFullname = "";
+        }
         return waiterFullname;
     }
 
@@ -84,6 +114,9 @@ public class Order {
     }
 
     public String getCashierUsername() {
+        if (cashierUsername == null) {
+            cashierUsername = "";
+        }
         return cashierUsername;
     }
 
@@ -92,6 +125,9 @@ public class Order {
     }
 
     public String getCashierFullname() {
+        if (cashierFullname == null) {
+            cashierFullname = "";
+        }
         return cashierFullname;
     }
 
@@ -103,15 +139,35 @@ public class Order {
         return statusFlag;
     }
 
+    @StringRes
+    public int getStatusValue() {
+        switch (statusFlag) {
+            case OrderFlag.CREATING:
+                return R.string.creating;
+
+            case OrderFlag.PENDING:
+                return R.string.pending;
+
+            case OrderFlag.RUNNING:
+                return R.string.running;
+
+            case OrderFlag.COMPLETE:
+                return R.string.complete;
+
+            default:
+                return 0;
+        }
+    }
+
     public void setStatusFlag(@OrderFlag int statusFlag) {
         this.statusFlag = statusFlag;
     }
 
-    public long getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(long createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
@@ -132,6 +188,9 @@ public class Order {
     }
 
     public String getDescription() {
+        if (description == null) {
+            description = "";
+        }
         return description;
     }
 
@@ -140,6 +199,9 @@ public class Order {
     }
 
     public ArrayList<DetailOrder> getDetailOrders() {
+        if (detailOrders == null) {
+            detailOrders = new ArrayList<>();
+        }
         return detailOrders;
     }
 
@@ -156,5 +218,21 @@ public class Order {
 
     public void setTables(ArrayList<String> tables) {
         this.tables = tables;
+    }
+
+    public String getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 }

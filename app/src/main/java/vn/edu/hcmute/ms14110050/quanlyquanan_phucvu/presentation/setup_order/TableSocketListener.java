@@ -4,16 +4,19 @@ import android.support.annotation.NonNull;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.TableOrderSocket;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ITableDataListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 
 /**
  * Created by Vo Ngoc Hanh on 6/23/2018.
  */
 
 public class TableSocketListener {
-    private ITableDataListener view;
-    private String orderID;
+    private IListViewAdapterListener<Table> tableDataListener;
+    private IOrderVM centerVM;
 
     private RegionTableSocketService socketService;
 
@@ -31,16 +34,20 @@ public class TableSocketListener {
         }
     }
 
-    public void listenSockets(@NonNull ITableDataListener dataListener, @NonNull String orderID) {
-        this.view = dataListener;
-        this.orderID = orderID;
-        socketService.listenAddTableEvent(new GetCallback<Table>() {
-            @Override
-            public void onFinish(Table table) {
-                onAddTable(table);
-            }
-        });
-        socketService.listenUpdateTableEvent(new GetCallback<Table>() {
+    public void destroy() {
+        centerVM = null;
+        socketService.destroy();
+    }
+
+    private Order getOrder() {
+        return centerVM.getOrder();
+    }
+
+    public void listenSockets(@NonNull IListViewAdapterListener<Table> dataListener, @NonNull IOrderVM centerVM) {
+        this.centerVM = centerVM;
+        this.tableDataListener = dataListener;
+
+        socketService.listeneAddTableToOrder(new GetCallback<Table>() {
             @Override
             public void onFinish(Table table) {
                 onAddTableToOrder(table);
@@ -67,29 +74,36 @@ public class TableSocketListener {
     }
 
     /**
-     * Khi có table được add vào CSDL
-     * Chỉ cho phép add table này vào UI nếu khác NULL, các giá trị thuộc tính hợp lệ
-     * và có orderID thuộc order hiện tại
+     * Khi có table được add vào order trên CSDL (chính user đang dùng hoặc user khác) mới kích hoạt event này
+     * Chỉ update UI khi các dữ liệu cần thiết khác NULL, khác rỗng và table này thuộc order hiện tại
+     * @param table
      */
-    private void onAddTable(Table table) {
-        if (view != null && table != null) {
-            if (orderID.equals(table.getOrderID())){
-                view.onAddTable(table);
+    public void onAddTableToOrder(Table table) {
+        Order order = getOrder();
+        if (order != null && tableDataListener != null && table != null) {
+            if (order.getId().equals(table.getOrderID())) {
+                tableDataListener.onAddItem(table);
+                order.getTables().add(table.getId());
+            } else {
+                if (tableDataListener.onRemoveItem(table.getId())) {
+                    order.getTables().remove(table.getId());
+                }
             }
+            centerVM.updateOrder();
         }
     }
 
     /**
-     * Khi có table được update trên CSDL
-     * chỉ khi add table vào order (chính user đang dùng hoặc user khác) mới kích hoạt event này
-     * Chỉ update UI khi các dữ liệu cần thiết khác NULL, khác rỗng và table này thuộc order hiện tại
+     * Khi có table được remove ra khỏi order nào đó
+     * Chỉ update UI khi dữ liệu hợp lệ và table này nằm trong khu vực đang chọn
+     * @param table
      */
-    public void onAddTableToOrder(Table table) {
-        if (view != null && table != null) {
-            if (orderID.equals(table.getOrderID())){
-                view.onUpdateTable(table);
-            }else{
-                view.onDeleteTable(table.getId());
+    public void onRemoveOrderTable(Table table) {
+        if (tableDataListener != null && table != null) {
+            if (tableDataListener.onRemoveItem(table.getId())) {
+                Order order = getOrder();
+                order.getTables().remove(table.getId());
+                centerVM.updateOrder();
             }
         }
     }
@@ -99,31 +113,26 @@ public class TableSocketListener {
      * Chỉ update UI khi dữ liệu hợp lệ và table này nằm trong khu vực đang chọn
      */
     private void onUpdateActivedTable(Table table) {
-        if (view != null && table != null) {
-            if (orderID.equals(table.getOrderID())){
-                if (table.isActived()) {
-                    view.onAddTable(table);
-                }else{
-                    view.onDeleteTable(table.getId());
+        if (tableDataListener != null && table != null) {
+            Order order = getOrder();
+            if (order.getId().equals(table.getOrderID())){
+                if (!table.isActived()) {
+                    tableDataListener.onRemoveItem(table.getId());
+                    order.getTables().remove(table.getId());
+                    centerVM.updateOrder();
                 }
             }
         }
     }
 
-    /**
-     * Khi có table được remove ra khỏi order nào đó
-     * Chỉ update UI khi dữ liệu hợp lệ và table này nằm trong khu vực đang chọn
-     */
-    public void onRemoveOrderTable(Table table) {
-        if (view != null && table != null) {
-            view.onDeleteTable(table.getId());
-        }
-    }
-
     // remove table ra khỏi recyclerview nếu nó tồn tại
     private void onRemoveTable(String tableID) {
-        if (view != null && tableID != null) {
-            view.onDeleteTable(tableID);
+        if (tableDataListener != null && tableID != null) {
+            if (tableDataListener.onRemoveItem(tableID)) {
+                Order order = getOrder();
+                order.getTables().remove(tableID);
+                centerVM.updateOrder();
+            }
         }
     }
 }

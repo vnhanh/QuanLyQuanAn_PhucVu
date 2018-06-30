@@ -7,21 +7,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkDialogFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.ContainerViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.FragmentSelectFoodsBinding;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.TableForSelectAdapter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.recyclerview.FoodAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.spinner.CategoryFoodAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.spinner.CategoryFoodSpinnerInstaller;
-
-import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_ORDER_ID;
 
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
@@ -31,29 +29,25 @@ public class SelectFoodDialogFragment
         extends BaseNetworkDialogFragment<FragmentSelectFoodsBinding, IFoodView, SelectFoodViewModel>
         implements IFoodView {
 
-    private IFoodVM containerVM;
+    private IOrderVM centerVM;
+
+    public void setCenterViewModel(IOrderVM centerViewModel) {
+        this.centerVM = centerViewModel;
+    }
 
     public static SelectFoodDialogFragment newInstance() {
-
         return new SelectFoodDialogFragment();
     }
 
-    @NonNull
+    @Nullable
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
 
         initRegionSpinner();
         initRecyclerView();
 
-        return new AlertDialog.Builder(getActivity())
-                .setView(binding.getRoot())
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+        return view;
     }
 
     private CategoryFoodAdapter catFoodAdapter;
@@ -62,9 +56,16 @@ public class SelectFoodDialogFragment
         catFoodAdapter = CategoryFoodSpinnerInstaller.setup(getContext(), binding, viewModel);
     }
 
-    // TODO
-    private void initRecyclerView() {
+    private FoodAdapter foodAdapter;
 
+    private void initRecyclerView() {
+        final LinearLayoutManager manager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        binding.recyclerview.setLayoutManager(manager);
+        binding.recyclerview.setHasFixedSize(true);
+        foodAdapter = new FoodAdapter();
+        binding.recyclerview.setAdapter(foodAdapter);
+        foodAdapter.setContainerVM(viewModel);
     }
 
     /*
@@ -83,10 +84,9 @@ public class SelectFoodDialogFragment
 
     @Override
     protected void onAttachViewModel() {
-        // TODO : setup foodAdapter and set to viewmodel
         viewModel.setCatDataListener(catFoodAdapter);
-//        viewModel.setFoodsDataListener();
-
+        viewModel.setFoodsDataListener(foodAdapter);
+        viewModel.setCenterViewModel(centerVM);
         viewModel.onViewAttach(this);
     }
 
@@ -100,22 +100,14 @@ public class SelectFoodDialogFragment
 
     @Override
     public void onLoadingCategories() {
-
+        binding.spinnerCategoryFoods.setEnabled(false);
+        binding.recyclerview.setEnabled(false);
     }
 
     @Override
     public void onEndLoadingCategories() {
-
-    }
-
-    @Override
-    public void onLoadingFoods() {
-
-    }
-
-    @Override
-    public void onEndLoadingFoods() {
-
+        binding.spinnerCategoryFoods.setEnabled(true);
+        binding.recyclerview.setEnabled(true);
     }
 
     /*

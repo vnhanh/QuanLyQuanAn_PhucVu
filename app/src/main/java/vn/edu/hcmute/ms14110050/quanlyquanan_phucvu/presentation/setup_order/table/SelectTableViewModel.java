@@ -13,13 +13,14 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.Ba
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.TableOrderSocket;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.RegionTableRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ITableDataListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/22/2018.
@@ -37,7 +38,7 @@ public class SelectTableViewModel
     protected String token;
 
     private ISpinnerDataListener<Region> regionDataListener;
-    private ITableDataListener tableDataListener;
+    private IListViewAdapterListener<Table> tableDataListener;
 
     private IOrderVM centerVM;
 
@@ -53,15 +54,16 @@ public class SelectTableViewModel
         socketService = centerVM.getRegionTableSocketService();
     }
 
+    @Override
     public String getOrderID() {
         return centerVM.getOrderID();
     }
 
-    public void setRegionDataListener(ISpinnerDataListener regionDataListener) {
+    public void setRegionDataListener(ISpinnerDataListener<Region> regionDataListener) {
         this.regionDataListener = regionDataListener;
     }
 
-    public void setTableDataListener(ITableDataListener tableDataListener) {
+    public void setTableDataListener(IListViewAdapterListener tableDataListener) {
         this.tableDataListener = tableDataListener;
     }
 
@@ -92,7 +94,9 @@ public class SelectTableViewModel
 
     @Override
     public void onViewDetached() {
-        socketService.destroy();
+        requestManager = null;
+        socketService = null;
+        token = null;
         super.onViewDetached();
     }
 
@@ -112,7 +116,6 @@ public class SelectTableViewModel
         if (StringUtils.isEmpty(token)) {
             token = SSharedReference.getToken(getView().getContext());
         }
-        Log.d("LOG", getClass().getSimpleName() + ":loadRegions()");
         requestManager.loadRegions(token, new GetCallback<ArrayList<Region>>() {
             @Override
             public void onFinish(ArrayList<Region> _regions) {
@@ -183,7 +186,7 @@ public class SelectTableViewModel
                 onAddTable(table);
             }
         });
-        socketService.listenUpdateTableEvent(new GetCallback<Table>() {
+        socketService.listeneAddTableToOrder(new GetCallback<Table>() {
             @Override
             public void onFinish(Table table) {
                 if (table != null && table.getOrderID().equals(getOrderID())) {
@@ -198,12 +201,6 @@ public class SelectTableViewModel
                 onAddTableToOrder(table);
             }
         });
-        socketService.listenUpdateActivedTableEvent(new GetCallback<Table>() {
-            @Override
-            public void onFinish(Table table) {
-                onUpdateActivedTable(table);
-            }
-        });
         socketService.listenRemoveOrderTable(new GetCallback<Table>() {
             @Override
             public void onFinish(Table table) {
@@ -214,6 +211,12 @@ public class SelectTableViewModel
                     return;
                 }
                 onRemoveOrderTable(table);
+            }
+        });
+        socketService.listenUpdateActivedTableEvent(new GetCallback<Table>() {
+            @Override
+            public void onFinish(Table table) {
+                onUpdateActivedTable(table);
             }
         });
         socketService.listenDeleteTable(new GetCallback<String>() {
@@ -232,7 +235,7 @@ public class SelectTableViewModel
     private void onAddTable(Table table) {
         if (isViewAttached() && table != null && selectedRegionID != null) {
             if (selectedRegionID.equals(table.getRegionID())){
-                tableDataListener.onAddTable(table);
+                tableDataListener.onAddItem(table);
             }
         }
     }
@@ -241,15 +244,31 @@ public class SelectTableViewModel
      * Khi có table được update trên CSDL
      * chỉ khi add table vào order (chính user đang dùng hoặc user khác) mới kích hoạt event này
      * Chỉ update UI khi các dữ liệu cần thiết khác NULL, khác rỗng và table này thuộc khu vực đang chọn
+     * @param table
      */
     private void onAddTableToOrder(Table table) {
         if (isViewAttached() && table != null) {
             if (selectedRegionID.equals(table.getRegionID())){
                 if (getOrderID().equals(table.getOrderID())) {
-                    tableDataListener.onUpdateTable(table);
+                    tableDataListener.onUpdateItem(table);
                 }else{
-                    tableDataListener.onDeleteTable(table.getId());
+                    tableDataListener.onRemoveItem(table.getId());
                 }
+            }
+        }
+    }
+
+    /**
+     * Khi có table được remove ra khỏi order nào đó
+     * Chỉ update UI khi dữ liệu hợp lệ và table này nằm trong khu vực đang chọn
+     * @param table
+     */
+    private void onRemoveOrderTable(Table table) {
+        if (isViewAttached() && table != null) {
+            if (selectedRegionID.equals(table.getRegionID())){
+                // update nếu tìm thấy item
+                // add nếu không tìm thấy
+                tableDataListener.onUpdateOrAddItem(table);
             }
         }
     }
@@ -262,24 +281,10 @@ public class SelectTableViewModel
         if (isViewAttached() && table != null) {
             if (selectedRegionID.equals(table.getRegionID())){
                 if (table.isActived()) {
-                    tableDataListener.onAddTable(table);
+                    tableDataListener.onAddItem(table);
                 }else{
-                    tableDataListener.onDeleteTable(table.getId());
+                    tableDataListener.onRemoveItem(table.getId());
                 }
-            }
-        }
-    }
-
-    /**
-     * Khi có table được remove ra khỏi order nào đó
-     * Chỉ update UI khi dữ liệu hợp lệ và table này nằm trong khu vực đang chọn
-     */
-    private void onRemoveOrderTable(Table table) {
-        if (isViewAttached() && table != null) {
-            if (selectedRegionID.equals(table.getRegionID())){
-                // update nếu tìm thấy item
-                // add nếu không tìm thấy
-                tableDataListener.onUpdateOrAddTable(table);
             }
         }
     }
@@ -287,7 +292,7 @@ public class SelectTableViewModel
     // remove table ra khỏi recyclerview nếu nó tồn tại
     private void onRemoveTable(String tableID) {
         if (isViewAttached() && !StringUtils.isEmpty(tableID)) {
-            tableDataListener.onDeleteTable(tableID);
+            tableDataListener.onRemoveItem(tableID);
         }
     }
 
@@ -299,7 +304,7 @@ public class SelectTableViewModel
     public void onSelectSpinnerItemId(String regionID) {
         selectedRegionID = regionID;
         if (StringUtils.isEmpty(regionID)) {
-            tableDataListener.onGetTablesByOrderID(new ArrayList<Table>());
+            tableDataListener.onGetList(new ArrayList<Table>());
             return;
         }
 
@@ -317,7 +322,7 @@ public class SelectTableViewModel
     private void onGetTables(ArrayList<Table> _tables) {
         if (_tables != null) {
             ArrayList<Table> validTables = copyEmptyTables(_tables);
-            tableDataListener.onGetTablesByOrderID(validTables);
+            tableDataListener.onGetList(validTables);
             hideLoadingTables();
         }
     }

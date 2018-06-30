@@ -3,7 +3,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs;
 import com.google.gson.reflect.TypeToken;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.BaseSocketService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.TableOrderSocket;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 
@@ -14,7 +14,7 @@ import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKE
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_REMOVE_ORDER_TABLE;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_REGION;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_ACTIVED_TABLE;
-import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_TABLE;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_ADD_TABLE_TO_ORDER;
 
 /**
  * Created by Vo Ngoc Hanh on 6/18/2018.
@@ -38,16 +38,16 @@ public class RegionTableSocketService extends BaseSocketService{
         listenEvent(SOCKET_EVENT_ADD_TABLE, callback, "table", new TypeToken<Table>(){}.getType());
     }
 
-    public void listenUpdateTableEvent(GetCallback<Table> callback) {
-        listenEvent(SOCKET_EVENT_UPDATE_TABLE, callback, "table", new TypeToken<Table>(){}.getType());
-    }
-
-    public void listenUpdateActivedTableEvent(GetCallback<Table> callback) {
-        listenEvent(SOCKET_EVENT_UPDATE_ACTIVED_TABLE, callback, "table", new TypeToken<Table>(){}.getType());
+    public void listeneAddTableToOrder(GetCallback<Table> callback) {
+        listenEvent(SOCKET_EVENT_ADD_TABLE_TO_ORDER, callback, "table", new TypeToken<Table>(){}.getType());
     }
 
     public void listenRemoveOrderTable(GetCallback<Table> callback) {
         listenEvent(SOCKET_EVENT_REMOVE_ORDER_TABLE, callback, "table", new TypeToken<Table>(){}.getType());
+    }
+
+    public void listenUpdateActivedTableEvent(GetCallback<Table> callback) {
+        listenEvent(SOCKET_EVENT_UPDATE_ACTIVED_TABLE, callback, "table", new TypeToken<Table>(){}.getType());
     }
 
     public void listenDeleteTable(GetCallback<String> callback) {

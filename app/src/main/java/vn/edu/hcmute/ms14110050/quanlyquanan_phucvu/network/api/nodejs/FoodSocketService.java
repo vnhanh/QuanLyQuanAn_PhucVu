@@ -5,12 +5,14 @@ import com.google.gson.reflect.TypeToken;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderSocketData;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_ADD_CATEGORY_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_ADD_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_ADD_IMAGE_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_DELETE_CATEGORY_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_DELETE_IMAGE_FOOD;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_ORDER_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_ACTIVE_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_CATEGORY_FOOD;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_FOOD;
@@ -39,6 +41,10 @@ public class FoodSocketService extends BaseSocketService{
 
     public void onEventUpdateFood(final GetCallback<Food> callback) {
         listenEvent(SOCKET_EVENT_UPDATE_FOOD, callback, "food",  new TypeToken<Food>(){}.getType());
+    }
+
+    public void onEventOrderFood(final GetCallback<FoodOrderSocketData> callback) {
+        listenEvent(SOCKET_EVENT_ORDER_FOOD, callback, new TypeToken<FoodOrderSocketData>(){}.getType());
     }
 
     public void onEventAddImageFood(final GetCallback<Food> callback) {

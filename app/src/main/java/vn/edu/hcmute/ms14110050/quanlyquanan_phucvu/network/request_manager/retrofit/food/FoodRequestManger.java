@@ -1,21 +1,34 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food;
 
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.ApiUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.FoodService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFoodsResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodsResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
 
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
@@ -93,6 +106,37 @@ public class FoodRequestManger {
                         Log.d("LOG", FoodRequestManger.class.getSimpleName()
                                 + ":loadFoodsByCatID():error:" + e.getMessage());
                         callback.onFinish(null);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void loadFoodByID(String token, final String id, final GetCallback<FoodResponse> callback) {
+        service.getFoodByID(token, id)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<FoodResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(FoodResponse response) {
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", FoodRequestManger.class.getSimpleName() + ":loadFoodByID():id:" + id
+                                + ":onError():" + e.getMessage());
+                        FoodResponse response = new FoodResponse();
+                        response.setSuccess(false);
+                        response.setMessage("Lỗi xử lý");
+                        callback.onFinish(response);
                     }
 
                     @Override

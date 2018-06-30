@@ -1,5 +1,7 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 public class ResponseValue {
     @SerializedName("success")
     @Expose
-    protected Boolean success;
+    protected boolean success;
 
     @SerializedName("message")
     @Expose
@@ -24,20 +26,24 @@ public class ResponseValue {
 
     }
 
-    public ResponseValue(Boolean success, String message) {
+    public ResponseValue(boolean success, String message) {
         this.success = success;
         this.message = message;
     }
 
-    public Boolean getSuccess() {
+    public boolean getSuccess() {
         return success;
     }
 
-    public void setSuccess(Boolean success) {
+    public void setSuccess(boolean success) {
         this.success = success;
     }
 
+    @NonNull
     public String getMessage() {
+        if (message == null) {
+            message = "";
+        }
         return message;
     }
 
@@ -45,7 +51,11 @@ public class ResponseValue {
         this.message = message;
     }
 
+    @NonNull
     public String getError() {
+        if (error == null) {
+            error = "";
+        }
         return error;
     }
 }

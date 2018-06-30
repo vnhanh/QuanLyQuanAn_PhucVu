@@ -17,6 +17,9 @@ public class TablesResponse extends ResponseValue{
     private ArrayList<Table> tables;
 
     public ArrayList<Table> getTables() {
+        if (tables == null) {
+            tables = new ArrayList<>();
+        }
         return tables;
     }
 

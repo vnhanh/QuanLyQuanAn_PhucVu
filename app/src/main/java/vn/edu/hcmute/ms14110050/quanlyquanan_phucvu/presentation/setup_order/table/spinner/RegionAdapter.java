@@ -99,7 +99,6 @@ public class RegionAdapter extends ArrayAdapter implements ISpinnerDataListener<
 
     @Override
     public void onGetList(ArrayList<Region> regions) {
-        Log.d("LOG", getClass().getSimpleName() + ":setRegions()");
         this.regions = regions;
         onDataChanged();
     }
@@ -128,12 +127,15 @@ public class RegionAdapter extends ArrayAdapter implements ISpinnerDataListener<
         int index = findItem(regionID);
         if (index > -1) {
             regions.remove(index);
-
             // xóa đúng item đang được chọn
             if (regionID.equals(currentRegionID)) {
                 currentRegionID = regions.size() > 0 ? regions.get(0).getId() : "";
+                if (regions.size() > 0) {
+                    viewListener.onSelectSpinnerItemIndex(0);
+                }
+                dataProcessorListener.onSelectSpinnerItemId(currentRegionID);
             }
-            onDataChanged();
+            notifyDataSetChanged();
         }
     }
 
@@ -194,7 +196,6 @@ public class RegionAdapter extends ArrayAdapter implements ISpinnerDataListener<
     // Chọn item cho spinner
     // Khi dữ liệu được làm mới lại hoặc item đang chọn đã bị xóa trên database
     private void onResetSelectItem() {
-        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem()");
         int index = 0;
         // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
         boolean isChangeItem = false;

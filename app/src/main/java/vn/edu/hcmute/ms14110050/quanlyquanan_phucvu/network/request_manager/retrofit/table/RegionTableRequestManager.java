@@ -101,68 +101,6 @@ public class RegionTableRequestManager {
                 });
     }
 
-    public void addTableToOrder(String token, final String id, String orderId, final GetCallback<TableResponse> callback) {
-        service.addTableToOrder(token, id, orderId)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TableResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(TableResponse responseValue) {
-                        callback.onFinish(responseValue);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("LOG", RegionTableRequestManager.class.getSimpleName()
-                                + ":addTableToOrder():table id:" + id + ":onError():" + e.getMessage());
-
-                        TableResponse response = new TableResponse();
-                        response.setSuccess(false);
-                        callback.onFinish(response);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void removeTableFromOrder(String token, final String id, String orderID, final GetCallback<TableResponse> callback) {
-        service.removeTableFromOrder(token, id, orderID)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TableResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(TableResponse responseValue) {
-                        callback.onFinish(responseValue);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("LOG", RegionTableRequestManager.class.getSimpleName()
-                                + ":removeTableForOrder():table id:" + id + ":onError():" + e.getMessage());
-
-                        TableResponse response = new TableResponse();
-                        response.setSuccess(false);
-                        callback.onFinish(response);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void loadListSelectedTable(String token, String orderID, final GetCallback<ArrayList<Table>> callback) {
         service.loadTablesByOrderID(token, orderID)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

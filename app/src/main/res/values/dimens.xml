@@ -33,5 +33,6 @@
     <dimen name="min_width_switch_compat">50dp</dimen>
     <dimen name="size_image_food">100dp</dimen>
     <dimen name="width_input_food_count_order">80dp</dimen>
+    <dimen name="height_image_view_food">360dp</dimen>
 
 </resources>

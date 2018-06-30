@@ -8,6 +8,7 @@ import java.util.Comparator;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.asynctask.SortTask;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 
 /**
@@ -25,5 +26,17 @@ public class RegionTableSort {
             }
         };
         new SortTask<Table>(tables, comparator, callback).execute();
+    }
+
+    public static void sortFoods(@NonNull ArrayList<Food> foods, @NonNull GetCallback<ArrayList<Food>> callback) {
+        Comparator<Food> comparator = new Comparator<Food>() {
+            @Override
+            public int compare(Food item1, Food item2) {
+                String id1 = StringUtils.deAccent(item1.getId());
+                String id2 = StringUtils.deAccent(item2.getId());
+                return id1.compareToIgnoreCase(id2);
+            }
+        };
+        new SortTask<Food>(foods, comparator, callback).execute();
     }
 }

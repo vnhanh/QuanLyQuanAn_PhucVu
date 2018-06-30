@@ -40,9 +40,9 @@ public class ConvertSocketResponse<MODEL> extends AsyncTask<String,Void,MODEL> {
         }else{
             gson = new Gson();
         }
-        Log.d("LOG", getClass().getSimpleName() + ":typeParameterClass:" + typeParameterClass);
-        Log.d("LOG", getClass().getSimpleName()
-                + ":input:"+param+":result convert:" + gson.fromJson(param, typeParameterClass));
+//        Log.d("LOG", getClass().getSimpleName() + ":typeParameterClass:" + typeParameterClass);
+//        Log.d("LOG", getClass().getSimpleName()
+//                + ":input:"+param+":result convert:" + gson.fromJson(param, typeParameterClass));
 
         return gson.fromJson(param, typeParameterClass);
     }

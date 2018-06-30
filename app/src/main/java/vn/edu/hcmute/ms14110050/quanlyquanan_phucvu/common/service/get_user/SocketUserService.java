@@ -72,7 +72,7 @@ public class SocketUserService extends Service {
             requestManager = AccountRequestManager.getInstance();
             if (intent.hasExtra(USERNAME)) {
                 username = intent.getStringExtra(USERNAME);
-                Log.d("LOG", getClass().getSimpleName() + ":onStartCommand():intent has username:username:" + username);
+//                Log.d("LOG", getClass().getSimpleName() + ":onStartCommand():intent has username:username:" + username);
                 setupRequestUser();
             }
         }else{
@@ -94,7 +94,6 @@ public class SocketUserService extends Service {
         listener = new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Log.d("LOG", "SocketUserService:socket:on event:server-loadEmployee:" + args[0].toString());
                 JSONObject usernameJsonObj = new JSONObject();
                 try {
                     usernameJsonObj.put("username", username);

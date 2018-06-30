@@ -6,28 +6,19 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkDialogFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.FragmentSelectTableBinding;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.TableForSelectAdapter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.TableAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.spinner.RegionAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.spinner.SetupRegionSpinner;
-
-import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_ORDER_ID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,13 +63,13 @@ public class SelectTableDialogFragment extends BaseNetworkDialogFragment<Fragmen
         regionsAdapter = SetupRegionSpinner.setupSpinner(getContext(), binding, viewModel);
     }
 
-    private TableForSelectAdapter tablesAdapter;
+    private TableAdapter tablesAdapter;
 
     private void initRecyclerView() {
         LinearLayoutManager manager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.recyclerview.setLayoutManager(manager);
-        tablesAdapter = new TableForSelectAdapter();
+        tablesAdapter = new TableAdapter();
         binding.recyclerview.setAdapter(tablesAdapter);
     }
 
@@ -102,7 +93,7 @@ public class SelectTableDialogFragment extends BaseNetworkDialogFragment<Fragmen
         viewModel.setTableDataListener(tablesAdapter);
         viewModel.setCenterViewModel(centerViewModel);
         if (tablesAdapter != null) {
-            tablesAdapter.setCenterViewModel(viewModel);
+            tablesAdapter.setContainerVM(viewModel);
         }
         viewModel.onViewAttach(this);
     }

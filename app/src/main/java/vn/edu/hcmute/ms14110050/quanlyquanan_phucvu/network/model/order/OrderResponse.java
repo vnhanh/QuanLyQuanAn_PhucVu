@@ -1,5 +1,8 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 
 /**
@@ -7,7 +10,16 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.Res
  */
 
 public class OrderResponse extends ResponseValue {
-    private Order order;
+    @SerializedName("order")
+    @Expose
+    protected Order order;
+
+    public OrderResponse() {
+    }
+
+    public OrderResponse(boolean success, String message) {
+        super(success, message);
+    }
 
     public Order getOrder() {
         return order;

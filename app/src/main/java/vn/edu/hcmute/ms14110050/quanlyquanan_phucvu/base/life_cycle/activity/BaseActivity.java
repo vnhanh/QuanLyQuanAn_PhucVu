@@ -83,6 +83,7 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
     @CallSuper
     protected void onDestroy() {
         unregisterReceiver(networkChangeReceiver);
+        viewModel.onDestroy();
         viewModel = null;
         binding = null;
         super.onDestroy();
