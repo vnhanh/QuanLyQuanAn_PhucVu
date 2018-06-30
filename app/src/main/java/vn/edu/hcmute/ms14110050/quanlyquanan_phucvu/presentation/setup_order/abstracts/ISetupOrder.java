@@ -27,5 +27,6 @@ public interface ISetupOrder {
 
         void onAnimationShowStatus();
 
+        void onAnimationNumberCustomer();
     }
 }

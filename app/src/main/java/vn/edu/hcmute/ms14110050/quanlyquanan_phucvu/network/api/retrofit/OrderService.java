@@ -50,5 +50,5 @@ public interface OrderService {
 
     @PUT("order/updateNumberCustomer")
     @FormUrlEncoded
-    Observable<ResponseValue> updateNumberCustomer(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+    Observable<OrderResponse> updateNumberCustomer(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
 }

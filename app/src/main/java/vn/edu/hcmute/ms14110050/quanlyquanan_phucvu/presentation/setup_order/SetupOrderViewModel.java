@@ -296,7 +296,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
             String dateTime = getResources().getString(R.string.content_created_date, dateTimeStr);
             createdDate.set(dateTime);
 
-            numberCustomer.set(getString(R.string.display_number_customer, order.getCustomerNumber()));
+            showNumberCustomer();
             showStatusOrder();
             totalCost.set(getString(R.string.display_total_cost_order, order.getFinalCost()));
             descriptionOrder.set(getString(R.string.display_description_order, order.getDescription()));
@@ -461,15 +461,33 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         getToken();
 
         WeakHashMap<String, Object> map = new WeakHashMap<>();
-        map.put("orderID", order.getId());
-        map.put("numberCustomer", currentNumberCustomerInput);
+        map.put("order_id", order.getId());
+        map.put("number_customer", currentNumberCustomerInput);
 
-        orderRM.updateNumberCustomer(token, map, new GetCallback<ResponseValue>() {
+        orderRM.updateNumberCustomer(token, map, new GetCallback<OrderResponse>() {
             @Override
-            public void onFinish(ResponseValue responseValue) {
-
+            public void onFinish(OrderResponse responseValue) {
+                if (responseValue.getSuccess()) {
+                    onUpdateNumberCustomer(responseValue.getOrder());
+                }else{
+                    if (isViewAttached()) {
+                        Toast.makeText(getContext(), getString(R.string.update_number_customer_failed), Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
+    }
+
+    private void onUpdateNumberCustomer(Order _order) {
+        this.order = _order;
+        showInformationOrder();
+        if (isViewAttached()) {
+            getView().onAnimationNumberCustomer();
+        }
+    }
+
+    private void showNumberCustomer() {
+        numberCustomer.set(getString(R.string.display_number_customer, order.getCustomerNumber()));
     }
 
     private void showProgres(@StringRes int messageResId) {
@@ -604,15 +622,15 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     @Override
     public void onUpdateStatusOrder(Order order) {
-        this.order.setStatusFlag(order.getStatusFlag());
-        showStatusOrder();
+        this.order = order;
+        showInformationOrder();
+        if (isViewAttached()) {
+            getView().onAnimationShowStatus();
+        }
     }
 
     private void showStatusOrder() {
         orderStatus.set(getString(R.string.display_status_order, getString(order.getStatusValue())));
-        if (isViewAttached()) {
-            getView().onAnimationShowStatus();
-        }
     }
 
     @Override

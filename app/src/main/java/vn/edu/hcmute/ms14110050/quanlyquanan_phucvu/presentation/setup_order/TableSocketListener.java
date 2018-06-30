@@ -89,7 +89,6 @@ public class TableSocketListener {
                     order.getTables().remove(table.getId());
                 }
             }
-            centerVM.updateOrder();
         }
     }
 
@@ -103,7 +102,6 @@ public class TableSocketListener {
             if (tableDataListener.onRemoveItem(table.getId())) {
                 Order order = getOrder();
                 order.getTables().remove(table.getId());
-                centerVM.updateOrder();
             }
         }
     }
@@ -119,7 +117,6 @@ public class TableSocketListener {
                 if (!table.isActived()) {
                     tableDataListener.onRemoveItem(table.getId());
                     order.getTables().remove(table.getId());
-                    centerVM.updateOrder();
                 }
             }
         }
@@ -131,7 +128,6 @@ public class TableSocketListener {
             if (tableDataListener.onRemoveItem(tableID)) {
                 Order order = getOrder();
                 order.getTables().remove(tableID);
-                centerVM.updateOrder();
             }
         }
     }

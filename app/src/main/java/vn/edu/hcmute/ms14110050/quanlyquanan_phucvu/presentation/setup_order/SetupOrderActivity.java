@@ -208,6 +208,11 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
     }
 
     @Override
+    public void onAnimationNumberCustomer() {
+        binding.txtNumberCustomer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
+    }
+
+    @Override
     public void onHideLoadTablesByOrderIDProgress() {
         binding.recyclerviewTables.setEnabled(true);
     }
@@ -231,8 +236,6 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
             progressDialog.dismiss();
         }
     }
-
-    private AlertDialog inputNumberCustomerDialog;
 
     @Override
     public void openInputNumberCustomerView(int customerNumber, InputCallback callback) {

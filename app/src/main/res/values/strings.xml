@@ -162,5 +162,6 @@
     <string name="title_input_number_customer">NHẬP SỐ LƯỢN KHÁCH</string>
     <string name="hint_number_customer">Số lượng khách</string>
     <string name="number_customer_must_not_negative">Số lượng khách không thể âm</string>
+    <string name="update_number_customer_failed">Update số lượng khách hàng thất bại</string>
 
 </resources>

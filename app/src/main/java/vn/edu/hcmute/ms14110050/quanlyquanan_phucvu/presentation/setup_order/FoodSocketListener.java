@@ -63,8 +63,6 @@ public class FoodSocketListener {
                     long _newCash = (newUnitPrice - newDiscount) * detail.getCount();
                     long prevCash = order.getFinalCost();
                     order.setFinalCost(prevCash + _newCash - _oldCash);
-                    centerVM.updateOrder();
-
                     detail.setUnitPrice(food.getUnitPrice());
                     detail.setDiscount(food.getDiscount());
                 }
@@ -85,8 +83,6 @@ public class FoodSocketListener {
                 long oldFinalCost = order.getFinalCost();
                 long newFinalCost = oldFinalCost - (detail.getCount() * (detail.getUnitPrice() - detail.getDiscount()));
                 order.setFinalCost(newFinalCost);
-                centerVM.updateOrder();
-
                 details.remove(i);
 
                 return;

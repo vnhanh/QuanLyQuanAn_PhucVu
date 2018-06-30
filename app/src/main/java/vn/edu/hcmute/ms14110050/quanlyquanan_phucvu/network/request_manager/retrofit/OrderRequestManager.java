@@ -350,19 +350,21 @@ public class OrderRequestManager {
                 });
     }
 
-    // TODO
-    public void updateNumberCustomer(String token, WeakHashMap<String,Object> map, GetCallback<ResponseValue> callback) {
+    public void updateNumberCustomer(String token, WeakHashMap<String,Object> map, final GetCallback<OrderResponse> callback) {
         service.updateNumberCustomer(token, map)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<ResponseValue>() {
+                .subscribe(new DisposableObserver<OrderResponse>() {
                     @Override
-                    public void onNext(ResponseValue responseValue) {
-
+                    public void onNext(OrderResponse response) {
+                        callback.onFinish(response);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":updateNumberCustomer():error:" + e.getMessage());
+                        OrderResponse response = new OrderResponse(false, "");
+                        callback.onFinish(response);
                     }
 
                     @Override
