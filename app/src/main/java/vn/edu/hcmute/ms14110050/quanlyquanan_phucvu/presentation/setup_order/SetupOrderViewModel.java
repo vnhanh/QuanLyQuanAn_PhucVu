@@ -429,7 +429,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     // Khi người dùng bấm nút OK trong hộp thoại confirm restore data trước khi thoát
     public void onRemoveOrderAndRestoreData() {
-        showProgres(R.string.restoring_tables_and_foods_in_order);
+        showProgress(R.string.restoring_tables_and_foods_in_order);
         // thực hiện request tới server để remove order và restore data
         removeOrderAndRestoreData();
     }
@@ -442,7 +442,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 Toast.makeText(getContext(), R.string.must_select_tables_and_foods_for_order, Toast.LENGTH_SHORT).show();
                 return;
             }
-            showProgres(R.string.message_creating);
+            showProgress(R.string.message_creating);
             createOrderRequestManager();
             getToken();
             WeakHashMap<String, Object> map = new WeakHashMap<>();
@@ -457,7 +457,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                             getView().onExit();
                         }
                     }else{
-                        showProgres(R.string.message_when_update_status_order_pending);
+                        showProgress(R.string.message_when_update_status_order_pending);
                         removeOrderAndRestoreData();
                     }
                 }
@@ -559,7 +559,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         if (currentNumberCustomerInput == order.getCustomerNumber()) {
             return;
         }
-        showProgres(R.string.message_processing);
+        showProgress(R.string.message_processing);
         createOrderRequestManager();
         getToken();
 
@@ -648,12 +648,6 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         showDescriptionOrder();
         if (isViewAttached()) {
             getView().onAnimationDescriptionOrder();
-        }
-    }
-
-    private void showProgres(@StringRes int messageResId) {
-        if (isViewAttached()) {
-            getView().showProgress(messageResId);
         }
     }
 
@@ -877,16 +871,11 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     * */
 
     private void showCreatingNewOrder() {
-        showProgres(R.string.creating_new_order);
+        showProgress(R.string.creating_new_order);
     }
 
     private void showLoadingOrder() {
-        showProgres(R.string.loading_order);
+        showProgress(R.string.loading_order);
     }
 
-    private void hideProgress() {
-        if (isViewAttached()) {
-            getView().hideProgress();
-        }
-    }
 }

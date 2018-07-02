@@ -57,28 +57,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
         return this;
     }
 
-    AlertDialog progressDialog;
-
-    @Override
-    public void showProgress() {
-        if (progressDialog == null) {
-            progressDialog = MyProgressDialog.create(this, R.string.message_logining);
-        }
-        progressDialog.show();
-    }
-
-    @Override
-    public void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    @Override
-    public void showMessage(int idRes) {
-        Toast.makeText(this, getString(idRes), Toast.LENGTH_SHORT).show();
-    }
-
     // todo: đang test
     @Override
     public void openHomeActivity(String username) {
@@ -89,18 +67,18 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
 
     @Override
     public void onLoginFailed() {
-        showMessage(R.string.message_login_failed);
+        onShowMessage(R.string.message_login_failed);
         binding.edtPassword.setText("");
         binding.edtPassword.requestFocus();
     }
 
     @Override
     public void onLoginError() {
-        showMessage(R.string.message_login_failed);
+        onShowMessage(R.string.message_login_failed);
     }
 
     @Override
     public void onDisconnectToServer() {
-        showMessage(R.string.message_disconnect_server);
+        onShowMessage(R.string.message_disconnect_server);
     }
 }

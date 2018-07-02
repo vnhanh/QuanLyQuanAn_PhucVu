@@ -285,12 +285,6 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         }
     }
 
-    private void hideProgress() {
-        if (isViewAttached()) {
-            getView().hideProgress();
-        }
-    }
-
     private boolean isWaiteFood() {
         return isProgress.get();
     }

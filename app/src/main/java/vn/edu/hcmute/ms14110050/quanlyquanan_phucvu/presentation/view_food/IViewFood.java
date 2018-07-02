@@ -12,10 +12,6 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.Lif
 public interface IViewFood extends LifeCycle.View {
     void onBackPrevActivity();
 
-    void showProgress(int messageResId);
-
-    void hideProgress();
-
     // Nhập số lượng món cần đặt
     void openInputOrderCountDialog(int oldCount, InputCallback callback);
 

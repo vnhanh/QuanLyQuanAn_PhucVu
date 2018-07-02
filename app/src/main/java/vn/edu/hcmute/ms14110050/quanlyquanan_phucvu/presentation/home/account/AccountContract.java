@@ -1,6 +1,5 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.IProgressView;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 
@@ -9,7 +8,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
  */
 
 public interface AccountContract {
-    interface View extends LifeCycle.View, IProgressView {
+    interface View extends LifeCycle.View {
 
         void onUpdateUserProfile(User user);
 

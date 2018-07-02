@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BỘ PHẬN PHỤC VỤ</string>
+    <string name="app_name">NHÂN VIÊN PHỤC VỤ</string>
 
     <!--AUTHENTICATION-->
     <string name="validate_email">Email không hợp lệ</string>

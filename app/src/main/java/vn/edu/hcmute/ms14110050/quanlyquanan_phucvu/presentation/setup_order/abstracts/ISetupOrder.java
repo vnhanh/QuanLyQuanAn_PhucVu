@@ -19,10 +19,6 @@ public interface ISetupOrder {
 
         void onExit();
 
-        void showProgress(@StringRes int messageIdRes);
-
-        void hideProgress();
-
         void openInputNumberCustomerView(int customerNumber, InputCallback numberCustomerListener);
 
         void onAnimationShowStatus();

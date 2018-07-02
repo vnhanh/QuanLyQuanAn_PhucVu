@@ -33,6 +33,18 @@ public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCy
 
     }
 
+    protected void showProgress(@StringRes int idRes) {
+        if (isViewAttached()) {
+            getView().showProgress(idRes);
+        }
+    }
+
+    protected void hideProgress() {
+        if (isViewAttached()) {
+            getView().hideProgress();
+        }
+    }
+
     public final boolean isViewAttached() {
         return view != null;
     }

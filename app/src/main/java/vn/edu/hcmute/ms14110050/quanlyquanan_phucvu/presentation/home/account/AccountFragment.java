@@ -136,23 +136,6 @@ public class AccountFragment
         Toast.makeText(getContext(), getString(R.string.update_profile_failed), Toast.LENGTH_SHORT).show();
     }
 
-    AlertDialog progressDialog;
-
-    @Override
-    public void showProgress() {
-        if (progressDialog == null) {
-            progressDialog = MyProgressDialog.create(getContext(), R.string.message_processing);
-        }
-        progressDialog.show();
-    }
-
-    @Override
-    public void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     AlertDialog verifyAccountDialog;
 
     @Override

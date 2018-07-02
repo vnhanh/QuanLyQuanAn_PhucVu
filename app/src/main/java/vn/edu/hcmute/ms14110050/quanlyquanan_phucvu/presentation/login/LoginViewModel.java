@@ -47,9 +47,7 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
 
     // Click nút đăng nhập
     public void onSubmit(LoginRequest request) {
-        if (isViewAttached()) {
-            getView().showProgress();
-        }
+        showProgress(R.string.message_logining);
 
         // set đúng loại tài khoản
         request.setTypeUser(NATIVE_TYPE_USER);
@@ -110,12 +108,6 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
         }
     }
 
-    private void hideProgress() {
-        if (isViewAttached()) {
-            getView().hideProgress();
-        }
-    }
-
     // Đăng nhập thành công
     // Load dữ liệu người dùng và thoát
     private void onLoginSuccess(LoginResponseData response) {
@@ -124,7 +116,7 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
         if (!isViewAttached()) {
             return;
         }
-        getView().showMessage(R.string.message_login_success);
+        showProgress(R.string.message_login_success);
         getView().openHomeActivity(response.getUsername());
     }
 

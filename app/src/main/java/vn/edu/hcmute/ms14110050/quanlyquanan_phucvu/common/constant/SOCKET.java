@@ -8,9 +8,6 @@ public class SOCKET {
 
     public static String BASE_URL = "http://192.168.1.101:8080/";
 
-    public static int STATUS_SUCCESS = 200;
-    public static int STATUS_BAD_REQUEST = 400;
-
     public static String SOCKET_SERVER_UPLOAD_EMPLOYEE = "server-update-employee";
 
     public static String SOCKET_EVENT_ADD_REGION = "server-add-region";

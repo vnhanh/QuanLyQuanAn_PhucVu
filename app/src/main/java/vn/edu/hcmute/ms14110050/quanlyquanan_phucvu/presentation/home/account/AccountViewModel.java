@@ -63,7 +63,7 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
             }
             return;
         }
-        showProgress();
+        showProgress(R.string.message_processing);
         if (token == null) {
             token = SSharedReference.getToken(getView().getContext());
         }
@@ -187,7 +187,7 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
         if (isViewAttached()) {
             getView().onCancelVerifyAccountDialog();
         }
-        showProgress();
+        showProgress(R.string.message_processing);
 
         LoginRequest request = new LoginRequest();
         request.setUsername(user.getUsername());
@@ -245,7 +245,7 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
         if (isViewAttached()) {
             getView().onCancelInputNewPassword();
         }
-        showProgress();
+        showProgress(R.string.message_processing);
 
         ChangePasswordRequest request = new ChangePasswordRequest();
         request.setUsername(user.getUsername());
@@ -286,16 +286,4 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
     /*
     * END INPUT NEW PASSWORD
     * */
-
-    private void showProgress() {
-        if (isViewAttached()) {
-            getView().showProgress();
-        }
-    }
-
-    private void hideProgress() {
-        if (isViewAttached()) {
-            getView().hideProgress();
-        }
-    }
 }

@@ -12,9 +12,11 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.databinding.library.baseAdapters.BR;
 
@@ -22,13 +24,15 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetwork
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.OnChangeNetworkStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressVH;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 
 /**
  * Created by Vo Ngoc Hanh on 6/22/2018.
  */
 
 public abstract class BaseNetworkDialogFragment<B extends ViewDataBinding, V extends LifeCycle.View, VM extends BaseNetworkViewModel>
-        extends DialogFragment {
+        extends DialogFragment implements IProgressVH{
 
     protected B binding;
     protected VM viewModel;
@@ -115,6 +119,28 @@ public abstract class BaseNetworkDialogFragment<B extends ViewDataBinding, V ext
         super.onDestroyView();
         viewModel = null;
         binding = null;
+    }
+
+    @Override
+    public void onShowMessage(@StringRes int idRes){
+        Toast.makeText(getContext(), idRes, Toast.LENGTH_SHORT).show();
+    }
+
+    private AlertDialog progressDialog;
+
+    @Override
+    public void showProgress(@StringRes int idRes) {
+        if (progressDialog == null) {
+            progressDialog = MyProgressDialog.create(getContext(), idRes);
+        }
+        progressDialog.show();
+    }
+
+    @Override
+    public void hideProgress() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     public int dimen(@DimenRes int resId) {

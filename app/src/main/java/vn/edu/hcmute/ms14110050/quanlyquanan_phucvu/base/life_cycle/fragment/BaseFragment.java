@@ -10,19 +10,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.databinding.library.baseAdapters.BR;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.OnChangeNetworkStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressVH;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 
 
 public abstract class BaseFragment<B extends ViewDataBinding, V extends LifeCycle.View, VM extends BaseViewModel>
-        extends Fragment {
+        extends Fragment implements IProgressVH {
 
     protected B binding;
     protected VM viewModel;
@@ -105,5 +109,27 @@ public abstract class BaseFragment<B extends ViewDataBinding, V extends LifeCycl
 
     public String string(@StringRes int resId) {
         return getResources().getString(resId);
+    }
+
+    @Override
+    public void onShowMessage(@StringRes int idRes){
+        Toast.makeText(getContext(), idRes, Toast.LENGTH_SHORT).show();
+    }
+
+    private AlertDialog progressDialog;
+
+    @Override
+    public void showProgress(@StringRes int idRes) {
+        if (progressDialog == null) {
+            progressDialog = MyProgressDialog.create(getContext(), idRes);
+        }
+        progressDialog.show();
+    }
+
+    @Override
+    public void hideProgress() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }

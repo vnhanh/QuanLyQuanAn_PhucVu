@@ -125,21 +125,6 @@ public class ViewFoodActivity extends BaseActivity<ActivityViewFoodBinding, IVie
         onBackPressed();
     }
 
-    private AlertDialog progressDialog;
-
-    @Override
-    public void showProgress(int messageResId) {
-        progressDialog = MyProgressDialog.create(this, messageResId);
-        progressDialog.show();
-    }
-
-    @Override
-    public void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     @Override
     public void openInputOrderCountDialog(int oldCount, InputCallback callback) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

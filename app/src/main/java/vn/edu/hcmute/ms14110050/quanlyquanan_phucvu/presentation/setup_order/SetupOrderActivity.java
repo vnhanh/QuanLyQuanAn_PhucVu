@@ -25,6 +25,7 @@ import com.google.gson.reflect.TypeToken;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.ConfirmDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivitySetupOrderBinding;
@@ -288,21 +289,6 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
-    private AlertDialog progressDialog;
-
-    @Override
-    public void showProgress(int messageIdRes) {
-        progressDialog = MyProgressDialog.create(this, messageIdRes);
-        progressDialog.show();
-    }
-
-    @Override
-    public void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
     }
 
     private AlertDialog confirmRestoreDataDialog;
