@@ -2,18 +2,23 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
@@ -23,28 +28,31 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback
  * Created by Vo Ngoc Hanh on 6/28/2018.
  */
 
-public class InputCountDialogFragment extends DialogFragment {
+public class InputOneTextDialogFragment extends DialogFragment {
     private static final String EXTRA_TITLE = "EXTRA_TITLE";
     private static final String EXTRA_HINT_INPUT = "EXTRA_HINT_INPUT";
-    private static final String EXTRA_INIT_COUNT = "EXTRA_INIT_COUNT";
+    private static final String EXTRA_TYPE_INPUT = "EXTRA_TYPE_INPUT";
+    private static final String EXTRA_INIT_TEXT = "EXTRA_INIT_TEXT";
 
     private InputCallback listener;
 
     private String title;
     private String inputHint;
-    private int initCount;
+    private int typeInput;
+    private String initText;
 
     public void setListener(InputCallback listener) {
         this.listener = listener;
     }
 
-    public static InputCountDialogFragment newInstance(String title, String inputHint, int initCount) {
-        InputCountDialogFragment fragment = new InputCountDialogFragment();
+    public static InputOneTextDialogFragment newInstance(String title, String inputHint, int typeInput, String initText) {
+        InputOneTextDialogFragment fragment = new InputOneTextDialogFragment();
 
         Bundle arguments = new Bundle();
         arguments.putString(EXTRA_TITLE, title);
         arguments.putString(EXTRA_HINT_INPUT, inputHint);
-        arguments.putInt(EXTRA_INIT_COUNT, initCount);
+        arguments.putInt(EXTRA_TYPE_INPUT, typeInput);
+        arguments.putString(EXTRA_INIT_TEXT, initText);
         fragment.setArguments(arguments);
 
         return fragment;
@@ -65,10 +73,8 @@ public class InputCountDialogFragment extends DialogFragment {
         if (getArguments() != null) {
             title = getArguments().getString(EXTRA_TITLE);
             inputHint = getArguments().getString(EXTRA_HINT_INPUT);
-            initCount = getArguments().getInt(EXTRA_INIT_COUNT);
-            if (initCount < 0) {
-                initCount = 0;
-            }
+            typeInput = getArguments().getInt(EXTRA_TYPE_INPUT);
+            initText = getArguments().getString(EXTRA_INIT_TEXT);
         }
     }
 
@@ -91,6 +97,7 @@ public class InputCountDialogFragment extends DialogFragment {
         final TextInputLayout til = view.findViewById(R.id.til);
 
         final EditText editText = view.findViewById(R.id.edt);
+        editText.setInputType(typeInput);
         editText.setHint(inputHint);
 
         listener.setTextInputLayout(til);
@@ -115,7 +122,7 @@ public class InputCountDialogFragment extends DialogFragment {
             }
         });
 
-        editText.setText(String.valueOf(initCount));
+        editText.setText(initText);
         editText.setSelection(editText.getText().toString().length());
 
         final AlertDialog dialog = builder.create();

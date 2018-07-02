@@ -37,8 +37,7 @@
         <activity
             android:name=".presentation.setup_order.SetupOrderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".presentation.view_food.ViewFoodActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

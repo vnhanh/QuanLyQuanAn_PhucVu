@@ -8,6 +8,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocke
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateDetailOrderSocketData;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.IFoodVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.ITableVM;
 
@@ -22,4 +23,8 @@ public interface IOrderVM extends ITableVM, IFoodVM{
     Context getContext();
 
     void onUpdateStatusOrder(Order order);
+
+    void onUpdateDetailOrder(UpdateDetailOrderSocketData data);
+
+    void onDeleteDetailOrder(UpdateDetailOrderSocketData data);
 }

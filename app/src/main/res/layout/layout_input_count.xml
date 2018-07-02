@@ -21,6 +21,9 @@
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til"
         app:errorEnabled="true"
+        android:textColorHint="@color/colorDarkGray"
+        app:errorTextAppearance="@style/ErrorTextInputLayoutStyle"
+        app:hintTextAppearance="@style/TextInputLayoutStyle"
         android:layout_marginTop="@dimen/xxlarge_space"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -113,6 +113,13 @@ public class FoodVHViewModel extends BaseVHViewModel<IFoodVH> {
 
     // Khi bấm vào item
     public void onClickItem() {
+        if (containerVM == null) {
+            Log.d("LOG", getClass().getSimpleName() + ":onClickItem():not found containerVM");
+            return;
+        }
+        if (!containerVM.isCreatedOrder()) {
+            return;
+        }
         if (isViewAttached()) {
             getDetailOrder();
             getView().onStartViewFoodActivity(containerVM.getContext(), containerVM.getOrderID(), detailOrder, food);

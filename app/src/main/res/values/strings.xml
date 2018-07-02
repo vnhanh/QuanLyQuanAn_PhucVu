@@ -69,7 +69,7 @@
 
     <string name="title_fragment_list_tables_order">BÀN</string>
     <string name="title_fragment_list_foods_order">MÓN</string>
-    <string name="action_create_order">TẠO</string>
+    <string name="action_create_order">TẠO ORDER</string>
     <string name="action_edit_order">SỬA</string>
     <string name="internet_disconnect">Mất kết nối internet</string>
     <string name="title_select_region">Chọn khu vực</string>
@@ -127,8 +127,8 @@
     <string name="ordering_food">Đang đặt món &#8230;</string>
     <string name="removing_order_food">Đang hủy món &#8230;</string>
     <string name="no_food">Chưa có món</string>
-    <string name="action_select_tables">Chọn bàn</string>
-    <string name="action_select_foods">Chọn món</string>
+    <string name="action_select_tables">CHỌN BÀN</string>
+    <string name="action_select_foods">CHỌN MÓN</string>
     <string name="error_not_get_food_extra">Không nhận được dữ liệu cần thiết</string>
     <string name="order_food">ĐẶT MÓN</string>
     <string name="label_description">Ghi chú</string>
@@ -159,9 +159,32 @@
     <string name="display_description_order">Ghi chú: %1$s</string>
     <string name="get_order_failed">Không lấy được thông tin order</string>
     <string name="loading_order">Đang lấy thông tin order &#8230;</string>
-    <string name="title_input_number_customer">NHẬP SỐ LƯỢN KHÁCH</string>
+    <string name="title_input_number_customer">NHẬP SỐ LƯỢNG KHÁCH</string>
     <string name="hint_number_customer">Số lượng khách</string>
     <string name="number_customer_must_not_negative">Số lượng khách không thể âm</string>
     <string name="update_number_customer_failed">Update số lượng khách hàng thất bại</string>
+    <string name="cannot_create_detail_order_for_zero_count">Không thể tạo chi tiết hóa đơn có số món bằng 0</string>
+    <string name="count_ordered_not_change">Số lượng đặt không thay đổi</string>
+    <string name="description_content_not_change">Nội dung chú thích không thay đổi</string>
+    <string name="description_content_is_null">Nội dung chú thích không xác định</string>
+    <string name="not_verify_order">Không xác định được order</string>
+    <string name="update_description_order_failed">Update chú thích thất bại</string>
+    <string name="title_input_description">NHẬP CHÚ THÍCH</string>
+    <string name="hint_input_description">Chú thích order</string>
+    <string name="message_creating">Đang tạo &#8230;</string>
+    <string name="create_order_failed">Tạo hóa đơn thất bại</string>
+    <string name="message_when_update_status_order_pending">Tạo hóa đơn thất bại. Đang phục hồi dữ liệu cho các món và bàn đã đặt &#8230;></string>
+    <string name="remove_order_success">Phục hồi các bàn và món thành công</string>
+    <string name="remove_order_failed">Phục hồi các bàn và món thất bại</string>
+    <string name="restoring_tables_and_foods_in_order">Đang phục hồi dữ liệu các món và bàn trước đã đặt trước khi thoát &#8230;</string>
+    <string name="must_select_tables_and_foods_for_order">Phải chọn bàn và món cho order</string>
+    <string name="message_confirm_restore_data_in_order_before_exit">Bạn đã chọn bàn hoặc món cho order. Nếu thoát ra, chúng sẽ được phục hồi lại dữ liệu trước kia. Có muốn thoát không ?</string>
+    <string name="label_creater">Người lập:</string>
+    <string name="label_tables">Bàn:</string>
+    <string name="label_final_cost">Tổng tiền:</string>
+    <string name="label_status">Trạng thái:</string>
+    <string name="content_final_cost">%1$d VNĐ</string>
+    <string name="error_cant_load_orders_waiting">Không thể load danh sách order</string>
+    <string name="action_view_order">XEM ORDER</string>
 
 </resources>

@@ -21,6 +21,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.tab
 public class TableVHViewModel extends BaseVHViewModel<IProgressVH> {
     private Table table;
     public ObservableBoolean isSelected = new ObservableBoolean(false);
+    public ObservableBoolean isCreatedOrder = new ObservableBoolean(false);
+
     private ITableVM containerVM;
 
     /*
@@ -29,7 +31,7 @@ public class TableVHViewModel extends BaseVHViewModel<IProgressVH> {
 
     public void setContainerViewModel(ITableVM containerViewModel) {
         this.containerVM = containerViewModel;
-
+        isCreatedOrder.set(containerVM.isCreatedOrder());
     }
 
     public void setTable(Table table) {
@@ -54,9 +56,10 @@ public class TableVHViewModel extends BaseVHViewModel<IProgressVH> {
             Log.d("LOG", getClass().getSimpleName()
                     + ":onCLickItem():error:containerVM is:" + containerVM + ":table is:" + table
                     + ":orderID:" + getOrderID());
-            if (isViewAttached()) {
-                getView().onShowMessage(R.string.found_error);
-            }
+            return;
+        }
+
+        if (!containerVM.isCreatedOrder()) {
             return;
         }
 

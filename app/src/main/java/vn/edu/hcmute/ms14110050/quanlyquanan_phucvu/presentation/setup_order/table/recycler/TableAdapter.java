@@ -3,7 +3,6 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.ta
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +17,13 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerTabl
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.ITableVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.viewholder.TableVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IListViewAdapterListener<Table> {
+public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IRecyclerViewAdapterListener<Table> {
     private ArrayList<Table> tables = new ArrayList<>();
     private ITableVM containerVM;
 
@@ -162,6 +161,11 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
             return true;
         }
         return false;
+    }
+
+    @Override
+    public RecyclerView.Adapter getAdapter() {
+        return this;
     }
 
     @Override

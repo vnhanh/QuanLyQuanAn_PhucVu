@@ -2,15 +2,21 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 
 import com.google.gson.Gson;
@@ -29,8 +35,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.foo
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.recyclerview.FoodAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.TableAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.SelectTableDialogFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food.InputCountCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food.InputCountDialogFragment;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food.InputOneTextDialogFragment;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_ORDER_ID;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderConstant.EXTRA_PROCESS_MODE;
@@ -52,6 +57,55 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (viewModel.isCreateOrder.get()) {
+            MenuInflater inflater = new MenuInflater(this);
+            inflater.inflate(R.menu.menu_setup_order, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (viewModel != null && viewModel.isCreateOrder.get()) {
+            switch (item.getItemId()) {
+                case R.id.menu_create_order:
+                    viewModel.onClickProcessData();
+                    return true;
+
+                case R.id.menu_select_table:
+                    onClickAddTables();
+                    return true;
+
+                case R.id.menu_select_food:
+                    viewModel.onClickSelectFoods();
+                    return true;
+
+                case android.R.id.home:
+                    viewModel.onClickBackButton();
+            }
+        }else{
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    onExit();
+                    return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewModel.isCreateOrder.get()) {
+            viewModel.onClickBackButton();
+        }else{
+            onExit();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +114,7 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         // sau khi đọc intent
         // nếu vẫn chưa xác định được mode xử lý order hoặc order id
         int orderMode = viewModel.getProcessMode();
-        if ((orderMode != OrderMode.ADD && orderMode != OrderMode.VIEW)
+        if ((orderMode != OrderMode.CREATE && orderMode != OrderMode.VIEW)
                 || viewModel.getWaiter() == null) {
             Log.d("LOG", getClass().getSimpleName() + ":onCreate(): not get nesccessary information");
             // trở về màn hình cũ
@@ -69,6 +123,11 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         }
 
         initRecyclerViews();
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -78,8 +137,11 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
             binding.setViewmodel(viewModel);
         }
         super.onStart();
-        Log.d("LOG", getClass().getSimpleName() + ":onStart():viewmodel:" + viewModel);
-        binding.setActivity(this);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(viewModel.toolbarTitle.get()));
+        }
+
         initSelectFoodFragment();
     }
 
@@ -113,12 +175,6 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         binding.recyclerviewFoods.setAdapter(foodAdapter);
         foodAdapter.setContainerVM(viewModel);
         viewModel.setFoodDataListener(foodAdapter);
-    }
-
-    // TODO : kiểm tra dữ liệu đã thao tác
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     private void readIntent() {
@@ -213,13 +269,25 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
     }
 
     @Override
+    public void onAnimationFinalCost() {
+        binding.txtTotalCost.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
+    }
+
+    @Override
+    public void onAnimationDescriptionOrder() {
+        binding.txtDescription.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
+    }
+
+    @Override
     public void onHideLoadTablesByOrderIDProgress() {
         binding.recyclerviewTables.setEnabled(true);
     }
 
     @Override
-    public void onBackPrevActivity() {
-        onBackPressed();
+    public void onExit() {
+        super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private AlertDialog progressDialog;
@@ -237,23 +305,70 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         }
     }
 
+    private AlertDialog confirmRestoreDataDialog;
+
+    @Override
+    public void openConfirmRestoreDataInOrder() {
+        if (confirmRestoreDataDialog == null) {
+            confirmRestoreDataDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.title_exit)
+                    .setMessage(R.string.message_confirm_restore_data_in_order_before_exit)
+                    .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            if (viewModel != null) {
+                                viewModel.onRemoveOrderAndRestoreData();
+                            }
+                        }
+                    }).setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).create();
+        }
+        confirmRestoreDataDialog.show();
+    }
+
     @Override
     public void openInputNumberCustomerView(int customerNumber, InputCallback callback) {
+        removePrevFragDialog();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        InputOneTextDialogFragment _fragment  =
+                InputOneTextDialogFragment.newInstance(
+                        getString(R.string.title_input_number_customer),
+                        getString(R.string.hint_number_customer),
+                        InputType.TYPE_CLASS_NUMBER, String.valueOf(customerNumber));
+        _fragment.setListener(callback);
+        _fragment.show(ft, "dialog");
+    }
+
+    @Override
+    public void openDescriptionDialog(String description, InputCallback listener) {
+        removePrevFragDialog();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        InputOneTextDialogFragment _fragment  =
+                InputOneTextDialogFragment.newInstance(
+                        getString(R.string.title_input_description),
+                        getString(R.string.hint_input_description),
+                        InputType.TYPE_CLASS_TEXT, description);
+        _fragment.setListener(listener);
+        _fragment.show(ft, "dialog");
+    }
+
+    private void removePrevFragDialog() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
         if (fragment != null) {
             ft.remove(fragment);
         }
         ft.addToBackStack(null);
-
-        InputCountDialogFragment _fragment  =
-                InputCountDialogFragment.newInstance(
-                        getString(R.string.title_input_number_customer),
-                        getString(R.string.hint_number_customer), customerNumber);
-        _fragment.setListener(callback);
-        _fragment.show(ft, "dialog");
+        ft.commit();
     }
-
     /*
     * End ISetupOrder
     * */

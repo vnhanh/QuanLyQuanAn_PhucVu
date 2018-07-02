@@ -35,4 +35,7 @@ public class SOCKET {
     public static String SOCKET_EVENT_UPDATE_ACTIVE_FOOD = "server-update-ative-food";
 
     public static String SOCKET_EVENT_UPDATE_STATUS_ORDER = "server-update-status-order";
+    public static String SOCKET_EVENT_CREATE_DETAIL_ORDER = "server-create-detail-order";
+    public static String SOCKET_EVENT_UPDATE_DETAIL_ORDER = "server-update-detail-order";
+    public static String SOCKET_EVENT_DELETE_DETAIL_ORDER = "server-remove-detail-order";
 }

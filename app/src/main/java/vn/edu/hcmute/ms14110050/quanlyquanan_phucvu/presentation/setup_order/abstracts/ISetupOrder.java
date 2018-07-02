@@ -17,7 +17,7 @@ public interface ISetupOrder {
 
         void onHideLoadTablesByOrderIDProgress();
 
-        void onBackPrevActivity();
+        void onExit();
 
         void showProgress(@StringRes int messageIdRes);
 
@@ -28,5 +28,13 @@ public interface ISetupOrder {
         void onAnimationShowStatus();
 
         void onAnimationNumberCustomer();
+
+        void onAnimationFinalCost();
+
+        void openDescriptionDialog(String description, InputCallback inputCallback);
+
+        void onAnimationDescriptionOrder();
+
+        void openConfirmRestoreDataInOrder();
     }
 }

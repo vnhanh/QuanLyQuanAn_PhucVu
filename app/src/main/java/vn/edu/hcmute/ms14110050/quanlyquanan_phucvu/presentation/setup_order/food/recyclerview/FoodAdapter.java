@@ -14,19 +14,16 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sort.RegionTableSort;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerFoodBinding;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerTableBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.IFoodVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.recyclerview.viewholder.FoodVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.viewholder.TableVH;
 
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
  */
 
-public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListViewAdapterListener<Food> {
+public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IRecyclerViewAdapterListener<Food> {
     private ArrayList<Food> foods = new ArrayList<>();
     private IFoodVM containerVM;
 
@@ -92,6 +89,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListVi
             return true;
         }
         return false;
+    }
+
+    @Override
+    public RecyclerView.Adapter getAdapter() {
+        return this;
     }
 
     // Cẩn thận khi dùng cái này

@@ -30,7 +30,9 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodRespo
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.FullOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TablesResponse;
 
@@ -372,5 +374,111 @@ public class OrderRequestManager {
 
                     }
                 });
+    }
+
+    public void updateDescription(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
+        service.updateDescription(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue responseValue) {
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":updateDescription():error:" + e.getMessage());
+                        ResponseValue response = new ResponseValue(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateStatusOrder(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
+        service.updateStatusOrder(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue responseValue) {
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":updateStatusOrder():error:" + e.getMessage());
+                        ResponseValue response = new ResponseValue(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void restoreOrder(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
+        service.removeOrder(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue responseValue) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":restoreOrder():finish:success:" + responseValue.getSuccess()
+                                + ":message:" + responseValue.getMessage());
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":restoreOrder():error:" + e.getMessage());
+                        ResponseValue response = new ResponseValue(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // Get tất cả order từ PENDING đến RUNNING
+    public void getOrdersForWaiter(String token, final GetCallback<OrdersResponse> callback) {
+
+        service.getOrdersWaiting(token)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<OrdersResponse>() {
+                    @Override
+                    public void onNext(OrdersResponse response) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":getOrdersForWaiter():finish:success:" + response.getSuccess()
+                                + ":message:" + response.getMessage());
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":restoreOrder():error:" + e.getMessage());
+
+                        OrdersResponse response = new OrdersResponse(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
     }
 }

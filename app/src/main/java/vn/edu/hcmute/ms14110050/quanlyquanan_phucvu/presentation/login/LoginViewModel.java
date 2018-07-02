@@ -4,6 +4,8 @@ import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.Map;
+
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -65,7 +67,14 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
                         hideProgress();
 
                         if (response.getSuccess()) {
-                            onLoginSuccess(response);
+                            Map<String,String> map = response.getUser();
+                            String typeUser = map.get("type_account");
+                            int _type = Integer.parseInt(typeUser);
+                            if (_type == NATIVE_TYPE_USER) {
+                                onLoginSuccess(response);
+                            }else{
+                                onLoginFailed();
+                            }
                         }else{
                             onLoginFailed();
                         }

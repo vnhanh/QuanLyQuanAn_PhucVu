@@ -16,6 +16,9 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retr
  */
 
 public interface IFoodVM {
+
+    boolean isCreatedOrder();
+
     int getDetailOrderIndexByFood(String foodID);
 
     DetailOrder getDetailOrderByFood(String foodID);

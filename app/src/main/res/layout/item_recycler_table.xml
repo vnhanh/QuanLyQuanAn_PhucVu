@@ -2,6 +2,8 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewmodel"
             type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.viewholder.TableVHViewModel" />
@@ -38,6 +40,7 @@
 
         <CheckBox
             android:id="@+id/checkbox"
+            android:visibility="@{viewmodel.isCreatedOrder ? View.VISIBLE : View.GONE}"
             android:onClick="@{()->viewmodel.onClickItem()}"
             android:clickable="false"
             android:checked="@{viewmodel.isSelected}"

@@ -23,16 +23,16 @@ public class Order{
     @SerializedName("customer_name")
     @Expose
     String customerName;
-    @SerializedName("waiter_username ")
+    @SerializedName("waiter_username")
     @Expose
     String waiterUsername;
-    @SerializedName("waiter_fullname ")
+    @SerializedName("waiter_fullname")
     @Expose
     String waiterFullname;
-    @SerializedName("cashier_username ")
+    @SerializedName("cashier_username")
     @Expose
     String cashierUsername;
-    @SerializedName("cashier_fullname ")
+    @SerializedName("cashier_fullname")
     @Expose
     String cashierFullname;
     @SerializedName("flag_status")

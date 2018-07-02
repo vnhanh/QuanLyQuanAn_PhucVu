@@ -12,12 +12,12 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputProcesso
  * Created by Vo Ngoc Hanh on 6/28/2018.
  */
 
-public class InputCountCallback implements InputCallback {
+public class InputCallbackImpl implements InputCallback {
     private WeakReference<InputProcessorCallback> processorRef;
     private WeakReference<TextInputLayout> tilRef;
     private WeakReference<EditText> edtRef;
 
-    public InputCountCallback(InputProcessorCallback processor) {
+    public InputCallbackImpl(InputProcessorCallback processor) {
         this.processorRef = new WeakReference<InputProcessorCallback>(processor);
     }
 

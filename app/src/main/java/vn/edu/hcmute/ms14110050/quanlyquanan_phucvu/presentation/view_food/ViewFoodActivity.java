@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -148,8 +149,8 @@ public class ViewFoodActivity extends BaseActivity<ActivityViewFoodBinding, IVie
         }
         ft.addToBackStack(null);
 
-        InputCountDialogFragment _fragment = InputCountDialogFragment.newInstance(
-                getString(R.string.title_order_food_count), getString(R.string.hint_ordered_count), oldCount);
+        InputOneTextDialogFragment _fragment = InputOneTextDialogFragment.newInstance(
+                getString(R.string.title_order_food_count), getString(R.string.hint_ordered_count), InputType.TYPE_CLASS_NUMBER, String.valueOf(oldCount));
         _fragment.setListener(callback);
 
         _fragment.show(ft, "dialog");

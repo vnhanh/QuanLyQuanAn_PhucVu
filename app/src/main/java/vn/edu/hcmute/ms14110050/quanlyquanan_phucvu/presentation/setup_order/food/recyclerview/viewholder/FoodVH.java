@@ -42,11 +42,6 @@ public class FoodVH extends BaseProgressVH<ItemRecyclerFoodBinding, FoodVHViewMo
     }
 
     @Override
-    protected void attachToViewModel() {
-        viewmodel.attachView(this);
-    }
-
-    @Override
     public Context getContext() {
         return binding.getRoot().getContext();
     }

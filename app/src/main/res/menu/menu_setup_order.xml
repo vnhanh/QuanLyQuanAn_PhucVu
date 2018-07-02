@@ -4,6 +4,13 @@
     tools:context="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.order.activity.AddEditOrderActivity">
 
     <item
+        android:id="@+id/menu_create_order"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_order_32_0"
+        android:title="@string/action_create_order"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/menu_select_table"
         android:orderInCategory="110"
         android:icon="@drawable/ic_table_16_0"

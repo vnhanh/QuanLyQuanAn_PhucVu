@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStateListener;
@@ -17,11 +16,10 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocke
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderSocketData;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
 
@@ -45,7 +43,7 @@ public class SelectFoodViewModel
     private Order order;
 
     private ISpinnerDataListener<CategoryFood> catDataListener;
-    private IListViewAdapterListener<Food> foodsDataListener;
+    private IRecyclerViewAdapterListener<Food> foodsDataListener;
 
     public final ObservableBoolean isLoadingFoods = new ObservableBoolean();
 
@@ -67,7 +65,7 @@ public class SelectFoodViewModel
     }
 
     // recyclerview adapter
-    public void setFoodsDataListener(IListViewAdapterListener<Food> foodsDataListener) {
+    public void setFoodsDataListener(IRecyclerViewAdapterListener<Food> foodsDataListener) {
         this.foodsDataListener = foodsDataListener;
     }
 
@@ -205,10 +203,11 @@ public class SelectFoodViewModel
         if (StringUtils.isEmpty(token)) {
             token = SSharedReference.getToken(getView().getContext());
         }
-        Log.d("LOG", getClass().getSimpleName() + ":loadRegions()");
         requestManager.loadCategories(token, new GetCallback<ArrayList<CategoryFood>>() {
             @Override
             public void onFinish(ArrayList<CategoryFood> categories) {
+                Log.d("LOG", getClass().getSimpleName()
+                        + ":loadCategoryfoods():get category food:size:"+categories.size());
                 onGetCategories(categories);
             }
         });
@@ -260,6 +259,11 @@ public class SelectFoodViewModel
     /*
     * IFoodVM
     * */
+
+    @Override
+    public boolean isCreatedOrder() {
+        return centerVM.isCreatedOrder();
+    }
 
     @Override
     public int getDetailOrderIndexByFood(String foodID) {

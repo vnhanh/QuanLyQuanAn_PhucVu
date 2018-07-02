@@ -15,8 +15,8 @@ import retrofit2.http.Path;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 
 /**
@@ -51,4 +51,19 @@ public interface OrderService {
     @PUT("order/updateNumberCustomer")
     @FormUrlEncoded
     Observable<OrderResponse> updateNumberCustomer(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/updateDescription")
+    @FormUrlEncoded
+    Observable<OrderResponse> updateDescription(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/updateStatusOrder")
+    @FormUrlEncoded
+    Observable<ResponseValue> updateStatusOrder(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/removeOrder")
+    @FormUrlEncoded
+    Observable<ResponseValue> removeOrder(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @GET("order/getOrdersWaiting")
+    Observable<OrdersResponse> getOrdersWaiting(@Header("Authorization") String token);
 }

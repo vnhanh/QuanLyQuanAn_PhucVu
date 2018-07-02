@@ -47,6 +47,4 @@ public abstract class BaseViewHolder<DATABINDING extends ViewDataBinding, VIEWMO
     }
 
     protected abstract VIEWMODEL initViewModel();
-
-    protected abstract void attachToViewModel();
 }

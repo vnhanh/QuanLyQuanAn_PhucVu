@@ -13,14 +13,13 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.Ba
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.TableOrderSocket;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.RegionTableRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/22/2018.
@@ -38,7 +37,7 @@ public class SelectTableViewModel
     protected String token;
 
     private ISpinnerDataListener<Region> regionDataListener;
-    private IListViewAdapterListener<Table> tableDataListener;
+    private IRecyclerViewAdapterListener<Table> tableDataListener;
 
     private IOrderVM centerVM;
 
@@ -63,7 +62,7 @@ public class SelectTableViewModel
         this.regionDataListener = regionDataListener;
     }
 
-    public void setTableDataListener(IListViewAdapterListener tableDataListener) {
+    public void setTableDataListener(IRecyclerViewAdapterListener tableDataListener) {
         this.tableDataListener = tableDataListener;
     }
 
@@ -340,6 +339,14 @@ public class SelectTableViewModel
     /*
     * ITableVM
     * */
+
+    @Override
+    public boolean isCreatedOrder() {
+        if (centerVM == null) {
+            Log.d("LOG", getClass().getSimpleName() + ":isCreatedOrder():centerVM is null");
+        }
+        return centerVM != null && centerVM.isCreatedOrder();
+    }
 
     @Override
     public void onRequestAddTableToOrder(final Table table, final GetCallback<TableResponse> callback) {

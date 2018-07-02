@@ -214,6 +214,7 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
         int index = 0;
         // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
         boolean isChangeItem = false;
+        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():selectedCatID:" + selectedCatID);
         if (StringUtils.isEmpty(selectedCatID)) {
             if (categories != null && categories.size() > 0) {
                 isChangeItem = true;

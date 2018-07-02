@@ -43,7 +43,7 @@
     </style>
 
     <style name="TextView.RegularBox" parent="@style/RegularTextView">
-        <item name="android:background">@drawable/bg_white_rectangle_corner_normal</item>
+        <item name="android:background">#fff</item>
         <item name="android:paddingStart">@dimen/large_space</item>
         <item name="android:paddingEnd">@dimen/large_space</item>
         <item name="android:paddingTop">@dimen/normal_space</item>
@@ -235,6 +235,24 @@
 
     <style name="ColoredButton.Orange" parent="Widget.AppCompat.Button.Colored">
         <item name="android:background">@drawable/bg_orange_rectangle</item>
+    </style>
+
+    <style name="LineTextView" parent="@android:style/TextAppearance">
+        <item name="android:paddingTop">@dimen/small_space</item>
+        <item name="android:paddingBottom">@dimen/small_space</item>
+    </style>
+
+    <style name="LabelTextView" parent="LineTextView">
+        <item name="android:paddingStart">@dimen/large_space</item>
+        <item name="android:paddingEnd">@dimen/small_space</item>
+        <item name="android:textSize">@dimen/txtSize_normal</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ContentTextView" parent="LineTextView">
+        <item name="android:paddingStart">@dimen/small_space</item>
+        <item name="android:paddingEnd">@dimen/xhuge_large_space</item>
+        <item name="android:textSize">@dimen/txtSize_normal</item>
     </style>
 
 </resources>

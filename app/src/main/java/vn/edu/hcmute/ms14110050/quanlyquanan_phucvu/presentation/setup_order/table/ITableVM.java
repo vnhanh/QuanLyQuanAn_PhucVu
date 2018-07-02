@@ -11,6 +11,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retr
  */
 
 public interface ITableVM {
+    boolean isCreatedOrder();
+
     void onRequestAddTableToOrder(Table table, GetCallback<TableResponse> callback);
 
     void onRequestRemoveTableFromOrder(String tableID, GetCallback<TableResponse> callback);

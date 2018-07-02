@@ -117,7 +117,7 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         foodTarget = new BindableFieldTarget(foodDrawable, getContext().getResources());
 
         getFoodCallback = new GetFoodCallback(this);
-        inputOrderCountCallback = new InputCountCallback(this);
+        inputOrderCountCallback = new InputCallbackImpl(this);
         orderFoodCallback = new GetFoodOrderResponseCallback(this);
         updateOrderCallback = new GetOrderCallback(this);
 
@@ -323,6 +323,7 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         String error = "";
         String newText = "";
         int count = 0;
+        boolean isChanged = false;
 
         try {
             count = input.equals("") ? 0 : Integer.parseInt(input);
@@ -330,20 +331,24 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
             if (count < 0) {
                 error = getString(R.string.ordered_count_not_negative);
                 newText = "0";
+                isChanged = true;
             }else if(count > 0){
                 int _oldCount = detailOrder != null ? detailOrder.getCount() : 0;
 
                 if (count > _oldCount + food.getInventory()) {
                     error = getString(R.string.ordered_count_not_greater_inventory);
                     newText = String.valueOf(_oldCount + food.getInventory());
-                }else{
+                    isChanged = true;
+                } else if (input.charAt(0) == '0') {
                     newText = String.valueOf(count);
+                    isChanged = true;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             error = getString(R.string.error_wrong_format_input);
             newText = "0";
+            isChanged = true;
         }
 
         if (error.equals("")) {
@@ -355,11 +360,27 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
                 edt.setError(error);
             }
         }
-        edt.setText(newText);
+        if (isChanged) {
+            edt.setText(newText);
+            edt.setSelection(edt.getText().toString().length());
+        }
     }
 
     @Override
     public void onSubmitInputProcessor() {
+        if (currentOrderCount == 0 && detailOrder == null) {
+            if (isViewAttached()) {
+                Toast.makeText(getContext(), getString(R.string.cannot_create_detail_order_for_zero_count), Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        if (detailOrder != null && currentOrderCount == detailOrder.getCount()) {
+            if (isViewAttached()) {
+                Toast.makeText(getContext(), getString(R.string.count_ordered_not_change), Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         if (orderRM == null) {
             createOrderRequestManager();
         }
@@ -454,7 +475,7 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         return isViewAttached() ? getView().getViewUI() : null;
     }
 
-    private InputCountCallback inputOrderCountCallback;
+    private InputCallbackImpl inputOrderCountCallback;
 
     private GetFoodOrderResponseCallback orderFoodCallback;
 
