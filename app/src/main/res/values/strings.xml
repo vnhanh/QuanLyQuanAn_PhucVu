@@ -173,12 +173,11 @@
     <string name="hint_input_description">Chú thích order</string>
     <string name="message_creating">Đang tạo &#8230;</string>
     <string name="create_order_failed">Tạo hóa đơn thất bại</string>
-    <string name="message_when_update_status_order_pending">Tạo hóa đơn thất bại. Đang phục hồi dữ liệu cho các món và bàn đã đặt &#8230;></string>
     <string name="remove_order_success">Phục hồi các bàn và món thành công</string>
     <string name="remove_order_failed">Phục hồi các bàn và món thất bại</string>
     <string name="restoring_tables_and_foods_in_order">Đang phục hồi dữ liệu các món và bàn trước đã đặt trước khi thoát &#8230;</string>
     <string name="must_select_tables_and_foods_for_order">Phải chọn bàn và món cho order</string>
-    <string name="message_confirm_restore_data_in_order_before_exit">Bạn đã chọn bàn hoặc món cho order. Nếu thoát ra, chúng sẽ được phục hồi lại dữ liệu trước kia. Có muốn thoát không ?</string>
+    <string name="message_confirm_remove_order_in_creating">Bạn đã chọn bàn hoặc món cho order. Nếu thoát ra, chúng sẽ được phục hồi lại dữ liệu trước kia. Có muốn thoát không ?</string>
     <string name="label_creater">Người lập:</string>
     <string name="label_tables">Bàn:</string>
     <string name="label_final_cost">Tổng tiền:</string>
@@ -186,5 +185,21 @@
     <string name="content_final_cost">%1$d VNĐ</string>
     <string name="error_cant_load_orders_waiting">Không thể load danh sách order</string>
     <string name="action_view_order">XEM ORDER</string>
+    <string name="action_confirm_paying">THANH TOÁN</string>
+    <string name="title_confirm_paying">THANH TOÁN</string>
+    <string name="order_updated_paying">Order này đã được chuyển cho thu ngân để thanh toán</string>
+    <string name="order_updated_completed">Order này đã được thanh toán</string>
+    <string name="cooking">ĐANG NẤU</string>
+    <string name="order_updated_cooking">Order này đã bắt đầu chế biến</string>
+    <string name="order_updated_running">Order này đã được chế biến xong, khách có thể dùng</string>
+    <string name="title_remove_order">HỦY ORDER</string>
+    <string name="message_remove_order_in_pending">Order đang chờ bếp xác nhận nấu. Bạn có muốn xác nhận hủy order này ?</string>
+    <string name="message_confirm_pay_order">Bạn muốn xác nhận thanh toán hóa đơn này ?</string>
+    <string name="order_removed">Order đã bị hủy</string>
+    <string name="paying">CẦN THANH TOÁN</string>
+    <string name="no_order">Không có hóa đơn nào cần phục vụ</string>
+    <string name="message_update_status_order_success">Thao tác thành công</string>
+    <string name="message_update_status_order_failed">Thao tác thất bại</string>
+    <string name="list_failed_tables">Danh sách các bàn không thể loại khỏi order:\n</string>
 
 </resources>

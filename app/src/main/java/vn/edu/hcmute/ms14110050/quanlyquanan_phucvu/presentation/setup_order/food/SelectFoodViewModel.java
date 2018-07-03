@@ -19,7 +19,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrder
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
 
@@ -43,7 +43,7 @@ public class SelectFoodViewModel
     private Order order;
 
     private ISpinnerDataListener<CategoryFood> catDataListener;
-    private IRecyclerViewAdapterListener<Food> foodsDataListener;
+    private IListAdapterListener<Food> foodsDataListener;
 
     public final ObservableBoolean isLoadingFoods = new ObservableBoolean();
 
@@ -65,7 +65,7 @@ public class SelectFoodViewModel
     }
 
     // recyclerview adapter
-    public void setFoodsDataListener(IRecyclerViewAdapterListener<Food> foodsDataListener) {
+    public void setFoodsDataListener(IListAdapterListener<Food> foodsDataListener) {
         this.foodsDataListener = foodsDataListener;
     }
 

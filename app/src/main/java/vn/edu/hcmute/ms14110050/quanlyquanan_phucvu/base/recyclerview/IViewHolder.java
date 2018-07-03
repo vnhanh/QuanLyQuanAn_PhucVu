@@ -6,6 +6,6 @@ import android.content.Context;
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public interface IViewHolder {
+public interface IViewHolder extends IProgressView {
     Context getContext();
 }

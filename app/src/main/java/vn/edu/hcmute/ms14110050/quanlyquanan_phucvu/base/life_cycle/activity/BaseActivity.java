@@ -1,5 +1,6 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity;
 
+import android.content.Context;
 import android.content.IntentFilter;
 import android.databinding.ViewDataBinding;
 import android.net.ConnectivityManager;
@@ -10,25 +11,28 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.databinding.library.baseAdapters.BR;
 
+import java.lang.ref.WeakReference;
+
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.NetworkChangeReceiver;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.OnChangeNetworkStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressVH;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressView;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 
 
 public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycle.View, VM extends BaseNetworkViewModel>
-        extends AppCompatActivity implements ChangeNetworkStateContainer, IProgressVH{
+        extends AppCompatActivity implements ChangeNetworkStateContainer, LifeCycle.View {
 
     protected B binding;
     protected VM viewModel;
@@ -94,28 +98,6 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
     }
 
     @Override
-    public void onShowMessage(@StringRes int idRes){
-        Toast.makeText(getContext(), idRes, Toast.LENGTH_SHORT).show();
-    }
-
-    private AlertDialog progressDialog;
-
-    @Override
-    public void showProgress(@StringRes int idRes) {
-        if (progressDialog == null) {
-            progressDialog = MyProgressDialog.create(getContext(), idRes);
-        }
-        progressDialog.show();
-    }
-
-    @Override
-    public void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    @Override
     public NetworkChangeReceiver getChangeNetworkStateListener() {
         return networkChangeReceiver;
     }
@@ -135,4 +117,53 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
     public String string(@StringRes int resId) {
         return getResources().getString(resId);
     }
+
+    /*
+     * IProgressView
+     * */
+
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void onToast(int msgIdRes) {
+        runOnUiThread(new ToastRunnable(this, msgIdRes));
+    }
+
+    @Override
+    public void onShowMessage(String message, @ColorRes final int colorTextIsRes){
+        runOnUiThread(new MessageRunnable(this, binding.getRoot(), message, colorTextIsRes));
+    }
+
+    @Override
+    public void onShowMessage(@StringRes final int messageIdRes, @ColorRes final int colorTextIsRes){
+        runOnUiThread(new MessageRunnable(this, binding.getRoot(), getString(messageIdRes), colorTextIsRes));
+    }
+
+    private AlertDialog progressDialog;
+
+    @Override
+    public void showProgress(@StringRes int idRes) {
+        progressDialog = MyProgressDialog.create(this, idRes);
+
+        progressDialog.show();
+    }
+
+    @Override
+    public void hideProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    /*
+     * End
+     * */
+
 }

@@ -7,7 +7,8 @@ import android.widget.Toast;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseVHViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressVH;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressView;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IViewHolder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
@@ -18,7 +19,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.tab
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class TableVHViewModel extends BaseVHViewModel<IProgressVH> {
+public class TableVHViewModel extends BaseVHViewModel<IViewHolder> {
     private Table table;
     public ObservableBoolean isSelected = new ObservableBoolean(false);
     public ObservableBoolean isCreatedOrder = new ObservableBoolean(false);

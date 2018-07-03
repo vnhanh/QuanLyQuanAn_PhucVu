@@ -20,6 +20,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.Authent
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginResponseData;
 
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_SUCCESS;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.NATIVE_TYPE_USER;
 
 
@@ -116,7 +117,7 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
         if (!isViewAttached()) {
             return;
         }
-        showProgress(R.string.message_login_success);
+        showMessage(R.string.message_login_success, COLOR_SUCCESS);
         getView().openHomeActivity(response.getUsername());
     }
 

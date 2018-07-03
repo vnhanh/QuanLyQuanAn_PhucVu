@@ -1,4 +1,4 @@
-package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit;
+package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -30,9 +30,9 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodRespo
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.FullOrderResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.PayableOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TablesResponse;
 
@@ -400,12 +400,12 @@ public class OrderRequestManager {
                 });
     }
 
-    public void updateStatusOrder(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
+    public void updateStatusOrder(String token, WeakHashMap<String, Object> map, final GetCallback<OrderResponse> callback) {
         service.updateStatusOrder(token, map)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<ResponseValue>() {
+                .subscribe(new DisposableObserver<OrderResponse>() {
                     @Override
-                    public void onNext(ResponseValue responseValue) {
+                    public void onNext(OrderResponse responseValue) {
                         callback.onFinish(responseValue);
                     }
 
@@ -413,7 +413,31 @@ public class OrderRequestManager {
                     public void onError(Throwable e) {
                         Log.d("LOG", OrderRequestManager.class.getSimpleName()
                                 + ":updateStatusOrder():error:" + e.getMessage());
-                        ResponseValue response = new ResponseValue(false, "");
+                        OrderResponse response = new OrderResponse(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void setPayableOrder(String token, WeakHashMap<String, Object> map, final GetCallback<PayableOrderResponse> callback) {
+        service.setPayableOrder(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<PayableOrderResponse>() {
+                    @Override
+                    public void onNext(PayableOrderResponse responseValue) {
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":updateStatusOrder():error:" + e.getMessage());
+                        PayableOrderResponse response = new PayableOrderResponse(false, "");
                         callback.onFinish(response);
                     }
 

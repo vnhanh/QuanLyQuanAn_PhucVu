@@ -148,8 +148,14 @@ public class Order{
             case OrderFlag.PENDING:
                 return R.string.pending;
 
+            case OrderFlag.COOKING:
+                return R.string.cooking;
+
             case OrderFlag.RUNNING:
                 return R.string.running;
+
+            case OrderFlag.PAYING:
+                return R.string.paying;
 
             case OrderFlag.COMPLETE:
                 return R.string.complete;

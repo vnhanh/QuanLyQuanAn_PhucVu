@@ -1,11 +1,11 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -18,17 +18,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.ConfirmDialog;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivitySetupOrderBinding;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISetupOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderMode;
@@ -44,6 +45,8 @@ import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_or
 
 public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, ISetupOrder.View, SetupOrderViewModel>
         implements ISetupOrder.View{
+
+    private Menu menu;
 
     public static void startActivity(@NonNull Activity context, User waiter, @OrderMode int processMode, String orderID) {
         Intent intent = new Intent(context, SetupOrderActivity.class);
@@ -61,37 +64,44 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (viewModel.isCreateOrder.get()) {
-            MenuInflater inflater = new MenuInflater(this);
-            inflater.inflate(R.menu.menu_setup_order, menu);
-        }
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.menu_setup_order, menu);
+        this.menu = menu;
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (viewModel != null && viewModel.isCreateOrder.get()) {
-            switch (item.getItemId()) {
-                case R.id.menu_create_order:
-                    viewModel.onClickProcessData();
-                    return true;
+        if (viewModel != null) {
+            if (viewModel.isCreateOrder.get()) {
+                switch (item.getItemId()) {
+                    case R.id.menu_create_order:
+                        viewModel.onClickCreateOrder();
+                        return true;
 
-                case R.id.menu_select_table:
-                    onClickAddTables();
-                    return true;
+                    case R.id.menu_select_table:
+                        onClickAddTables();
+                        return true;
 
-                case R.id.menu_select_food:
-                    viewModel.onClickSelectFoods();
-                    return true;
+                    case R.id.menu_select_food:
+                        viewModel.onClickSelectFoods();
+                        return true;
 
-                case android.R.id.home:
-                    viewModel.onClickBackButton();
-            }
-        }else{
-            switch (item.getItemId()) {
-                case android.R.id.home:
-                    onExit();
-                    return true;
+                    case android.R.id.home:
+                        viewModel.onClickBackButton();
+                }
+
+            }else{
+                switch (item.getItemId()) {
+                    case R.id.menu_confirm_order:
+                        viewModel.onClickConfirmMenu();
+                        return true;
+
+                    case android.R.id.home:
+                        onExit();
+                        return true;
+                }
             }
         }
 
@@ -100,11 +110,16 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
 
     @Override
     public void onBackPressed() {
-        if (viewModel.isCreateOrder.get()) {
-            viewModel.onClickBackButton();
-        }else{
-            onExit();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (viewModel.isCreateOrder.get()) {
+                    viewModel.onClickBackButton();
+                }else{
+                    onExit();
+                }
+            }
+        });
     }
 
     @Override
@@ -250,11 +265,6 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
     * */
 
     @Override
-    public Context getContext() {
-        return this;
-    }
-
-    @Override
     public void onShowLoadTablesByOrderIDProgress() {
         binding.recyclerviewTables.setEnabled(false);
     }
@@ -286,35 +296,34 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
 
     @Override
     public void onExit() {
-        super.onBackPressed();
-        finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
     }
 
-    private AlertDialog confirmRestoreDataDialog;
 
     @Override
-    public void openConfirmRestoreDataInOrder() {
-        if (confirmRestoreDataDialog == null) {
-            confirmRestoreDataDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.title_exit)
-                    .setMessage(R.string.message_confirm_restore_data_in_order_before_exit)
-                    .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            if (viewModel != null) {
-                                viewModel.onRemoveOrderAndRestoreData();
-                            }
-                        }
-                    }).setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).create();
-        }
-        confirmRestoreDataDialog.show();
+    public void openConfirmDialog(@StringRes int messageResId, final GetCallback<Void> callback) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.title_exit)
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        callback.onFinish(null);
+                    }
+                }).setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 
     @Override
@@ -355,6 +364,53 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         ft.addToBackStack(null);
         ft.commit();
     }
+
+    @Override
+    public boolean onUpdateMenu(boolean isCreateOrder, @OrderFlag int statusFlag) {
+        if (menu == null) {
+            return false;
+        }
+        MenuItem menuCreateOrder = menu.findItem(R.id.menu_create_order);
+        MenuItem menuSelectTable = menu.findItem(R.id.menu_select_table);
+        MenuItem menuSelectFood = menu.findItem(R.id.menu_select_food);
+        MenuItem menuConfirmOrder = menu.findItem(R.id.menu_confirm_order);
+
+        // đang tạo order
+        if (isCreateOrder) {
+            menuCreateOrder.setVisible(true);
+            menuSelectTable.setVisible(true);
+            menuSelectFood.setVisible(true);
+            menuConfirmOrder.setVisible(false);
+        }
+        else{
+            menuCreateOrder.setVisible(false);
+            menuSelectTable.setVisible(false);
+            menuSelectFood.setVisible(false);
+            menuConfirmOrder.setVisible(true);
+
+            switch (statusFlag) {
+                case OrderFlag.PENDING:
+                    // order đã được tạo, chờ bếp xác nhận
+                    // có thể hủy
+                    menuConfirmOrder.setTitle(R.string.title_remove_order);
+                    return true;
+
+                case OrderFlag.PAYING:
+
+                case OrderFlag.COMPLETE:
+                    menuConfirmOrder.setVisible(false);
+                    return true;
+
+                default:
+                    // order đã được bếp xác nhận
+                    // có thể thanh toán
+                    menuConfirmOrder.setTitle(R.string.title_confirm_paying);
+                    return true;
+            }
+        }
+        return true;
+    }
+
     /*
     * End ISetupOrder
     * */

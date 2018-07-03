@@ -6,7 +6,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseProgressVH;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseViewHolder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerTableBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.ITableVM;
@@ -15,7 +15,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.tab
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class TableVH extends BaseProgressVH<ItemRecyclerTableBinding, TableVHViewModel>{
+public class TableVH extends BaseViewHolder<ItemRecyclerTableBinding, TableVHViewModel> {
 
     public TableVH(View view) {
         super(view);

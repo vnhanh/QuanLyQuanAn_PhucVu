@@ -5,6 +5,7 @@
 
     <item
         android:id="@+id/menu_create_order"
+        android:visible="false"
         android:orderInCategory="100"
         android:icon="@drawable/ic_order_32_0"
         android:title="@string/action_create_order"
@@ -12,6 +13,7 @@
 
     <item
         android:id="@+id/menu_select_table"
+        android:visible="false"
         android:orderInCategory="110"
         android:icon="@drawable/ic_table_16_0"
         android:title="@string/action_select_tables"
@@ -19,9 +21,18 @@
 
     <item
         android:id="@+id/menu_select_food"
+        android:visible="false"
         android:orderInCategory="120"
         android:icon="@drawable/ic_food_16_0"
         android:title="@string/action_select_foods"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_confirm_order"
+        android:visible="false"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_order_32_0"
+        android:title="@string/action_confirm_paying"
         app:showAsAction="ifRoom"/>
 
 </menu>

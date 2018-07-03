@@ -2,6 +2,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
@@ -31,6 +32,18 @@ public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCy
     @Override
     public void onDestroy() {
 
+    }
+
+    protected void showMessage(@StringRes int messageIdRes, @ColorRes int colorIdRes) {
+        if (isViewAttached()) {
+            getView().onShowMessage(messageIdRes, colorIdRes);
+        }
+    }
+
+    protected void showMessage(String message, @ColorRes int colorIdRes) {
+        if (isViewAttached()) {
+            getView().onShowMessage(message, colorIdRes);
+        }
     }
 
     protected void showProgress(@StringRes int idRes) {

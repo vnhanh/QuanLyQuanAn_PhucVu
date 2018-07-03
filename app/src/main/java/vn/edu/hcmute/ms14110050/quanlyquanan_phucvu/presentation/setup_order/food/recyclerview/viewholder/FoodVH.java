@@ -8,7 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseProgressVH;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseViewHolder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerFoodBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
@@ -19,7 +19,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food.ViewF
  * Created by Vo Ngoc Hanh on 6/26/2018.
  */
 
-public class FoodVH extends BaseProgressVH<ItemRecyclerFoodBinding, FoodVHViewModel> implements IFoodVH {
+public class FoodVH extends BaseViewHolder<ItemRecyclerFoodBinding, FoodVHViewModel> implements IFoodVH {
 
     public FoodVH(View view) {
         super(view);

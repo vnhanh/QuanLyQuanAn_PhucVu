@@ -3,8 +3,10 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.ab
 
 import android.support.annotation.StringRes;
 
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 
 /**
  * Created by Vo Ngoc Hanh on 6/22/2018.
@@ -31,6 +33,8 @@ public interface ISetupOrder {
 
         void onAnimationDescriptionOrder();
 
-        void openConfirmRestoreDataInOrder();
+        void openConfirmDialog(@StringRes int messageResId, GetCallback<Void> callback);
+
+        boolean onUpdateMenu(boolean isCreateOrder, @OrderFlag int statusFlag);
     }
 }

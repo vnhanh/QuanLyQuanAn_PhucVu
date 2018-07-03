@@ -1,19 +1,15 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.widget.Toast;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.OrderRequestManager;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/17/2018.
@@ -23,7 +19,7 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
     private OrderRequestManager orderRM;
     private String token;
     private User user;
-    private IRecyclerViewAdapterListener<Order> orderAdapter;
+    private IListAdapterListener<Order> orderAdapter;
     private ListOrdersSocketListener socketListener;
 
     /*
@@ -34,7 +30,7 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
         return user;
     }
 
-    public void setOrderAdapter(IRecyclerViewAdapterListener<Order> orderAdapter) {
+    public void setOrderAdapter(IListAdapterListener<Order> orderAdapter) {
         this.orderAdapter = orderAdapter;
         socketListener = new ListOrdersSocketListener();
         socketListener.setOrdersListener(orderAdapter);

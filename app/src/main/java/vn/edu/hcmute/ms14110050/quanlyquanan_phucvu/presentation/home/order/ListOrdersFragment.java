@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
@@ -19,6 +18,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.HomeActivi
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.ItemOrderAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderMode;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.SetupOrderActivity;
+
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_ERROR;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,7 +78,7 @@ public class ListOrdersFragment
         if (itemOrderListener == null) {
             itemOrderListener = new OnClickItemOrderListener(getActivity(), viewModel);
         }
-        adapter = new ItemOrderAdapter(itemOrderListener);
+        adapter = new ItemOrderAdapter(getActivity(), itemOrderListener);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.recyclerview.setLayoutManager(manager);
         binding.recyclerview.setHasFixedSize(true);
@@ -116,7 +117,7 @@ public class ListOrdersFragment
     public void openAddOrderScreen() {
         if (getActivity() == null) {
             Log.d("LOG", getClass().getSimpleName() + ":openAddOrderScreen():failed:getActivity() is null");
-            Toast.makeText(getContext(), getString(R.string.message_process_error), Toast.LENGTH_SHORT).show();
+            onShowMessage(R.string.message_process_error, COLOR_ERROR);
             return;
         }
         SetupOrderActivity.startActivity(getActivity(), viewModel.getUser(), OrderMode.CREATE, null);

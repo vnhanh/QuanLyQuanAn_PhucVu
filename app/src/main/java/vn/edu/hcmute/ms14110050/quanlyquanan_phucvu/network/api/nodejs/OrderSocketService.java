@@ -7,6 +7,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateDetailOrderSocketData;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_DELETE_DETAIL_ORDER;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_REMOVE_ORDER;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_DETAIL_ORDER;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET.SOCKET_EVENT_UPDATE_STATUS_ORDER;
 
@@ -25,5 +26,9 @@ public class OrderSocketService extends BaseSocketService {
 
     public void onEventDeleteDetailOrder(final GetCallback<UpdateDetailOrderSocketData> callback) {
         listenEvent(SOCKET_EVENT_DELETE_DETAIL_ORDER, callback, null, new TypeToken<UpdateDetailOrderSocketData>(){}.getType());
+    }
+
+    public void onEventRemoveOrder(final GetCallback<String> callback) {
+        listenEvent(SOCKET_EVENT_REMOVE_ORDER, callback, "order_id", null);
     }
 }

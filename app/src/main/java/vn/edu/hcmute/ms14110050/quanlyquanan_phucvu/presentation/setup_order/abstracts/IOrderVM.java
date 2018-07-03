@@ -22,9 +22,11 @@ public interface IOrderVM extends ITableVM, IFoodVM{
 
     Context getContext();
 
-    void onUpdateStatusOrder(Order order);
+    void onOrderUpdatedStatus(Order order);
 
     void onUpdateDetailOrder(UpdateDetailOrderSocketData data);
 
     void onDeleteDetailOrder(UpdateDetailOrderSocketData data);
+
+    void onOrderRemoved();
 }

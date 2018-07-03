@@ -10,7 +10,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
  * Created by Vo Ngoc Hanh on 6/23/2018.
  */
 
-public interface IRecyclerViewAdapterListener<DATA> {
+public interface IListAdapterListener<DATA> {
 
     void onAddItem(DATA item);
 

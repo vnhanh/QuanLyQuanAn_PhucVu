@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
@@ -27,6 +26,10 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.di
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.dialog.VerifyAccountDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.validation.AccountValidation;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login.LoginActivity;
+
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_ERROR;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_SUCCESS;
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_WARNING;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -123,17 +126,17 @@ public class AccountFragment
 
     @Override
     public void notiNotChangeUserProfile() {
-        Toast.makeText(getContext(), getString(R.string.message_not_change_profile), Toast.LENGTH_SHORT).show();
+        onShowMessage(R.string.message_not_change_profile, COLOR_WARNING);
     }
 
     @Override
     public void onUpdateProfileSuccess() {
-        Toast.makeText(getContext(), getString(R.string.update_profile_success), Toast.LENGTH_SHORT).show();
+        onShowMessage(R.string.update_profile_success, COLOR_SUCCESS);
     }
 
     @Override
     public void onUpdateProfileFailed() {
-        Toast.makeText(getContext(), getString(R.string.update_profile_failed), Toast.LENGTH_SHORT).show();
+        onShowMessage(R.string.update_profile_failed, COLOR_ERROR);
     }
 
     AlertDialog verifyAccountDialog;
@@ -155,7 +158,7 @@ public class AccountFragment
 
     @Override
     public void onVerifyPasswordFailed() {
-        Toast.makeText(getContext(), getString(R.string.wrong_password), Toast.LENGTH_SHORT).show();
+        onShowMessage(R.string.wrong_password, COLOR_ERROR);
     }
 
     AlertDialog inputNewPasswordDialog;
@@ -177,12 +180,12 @@ public class AccountFragment
 
     @Override
     public void onChangePasswordSuccess() {
-        Toast.makeText(getContext(), getString(R.string.update_password_success), Toast.LENGTH_SHORT).show();
+        onShowMessage(R.string.update_password_success, COLOR_SUCCESS);
     }
 
     @Override
     public void onChangePasswordFailed() {
-        Toast.makeText(getContext(), getString(R.string.update_password_failed), Toast.LENGTH_SHORT).show();
+        onShowMessage(R.string.update_password_failed, COLOR_ERROR);
     }
 
     @Override

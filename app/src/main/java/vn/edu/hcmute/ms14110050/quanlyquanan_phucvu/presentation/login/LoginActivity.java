@@ -15,6 +15,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivityLoginBin
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.HomeActivity;
 
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_ERROR;
+
 public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContract.View, LoginViewModel>
         implements LoginContract.View{
 
@@ -53,12 +55,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
     }
 
     @Override
-    public Context getContext() {
-        return this;
-    }
-
-    // todo: đang test
-    @Override
     public void openHomeActivity(String username) {
         HomeActivity.startActivity(this, username);
         finish();
@@ -67,18 +63,18 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
 
     @Override
     public void onLoginFailed() {
-        onShowMessage(R.string.message_login_failed);
+        onShowMessage(R.string.message_login_failed, COLOR_ERROR);
         binding.edtPassword.setText("");
         binding.edtPassword.requestFocus();
     }
 
     @Override
     public void onLoginError() {
-        onShowMessage(R.string.message_login_failed);
+        onShowMessage(R.string.message_login_failed, COLOR_ERROR);
     }
 
     @Override
     public void onDisconnectToServer() {
-        onShowMessage(R.string.message_disconnect_server);
+        onShowMessage(R.string.message_disconnect_server, COLOR_ERROR);
     }
 }

@@ -35,4 +35,5 @@ public class SOCKET {
     public static String SOCKET_EVENT_CREATE_DETAIL_ORDER = "server-create-detail-order";
     public static String SOCKET_EVENT_UPDATE_DETAIL_ORDER = "server-update-detail-order";
     public static String SOCKET_EVENT_DELETE_DETAIL_ORDER = "server-remove-detail-order";
+    public static String SOCKET_EVENT_REMOVE_ORDER = "server-remove-order";
 }

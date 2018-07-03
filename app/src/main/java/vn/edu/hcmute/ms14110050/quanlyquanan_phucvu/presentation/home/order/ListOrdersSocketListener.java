@@ -4,13 +4,13 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.OrderSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 
 public class ListOrdersSocketListener {
     private OrderSocketService service;
-    private IRecyclerViewAdapterListener<Order> ordersListener;
+    private IListAdapterListener<Order> ordersListener;
 
-    public void setOrdersListener(IRecyclerViewAdapterListener<Order> ordersListener) {
+    public void setOrdersListener(IListAdapterListener<Order> ordersListener) {
         this.ordersListener = ordersListener;
     }
 
@@ -46,6 +46,14 @@ public class ListOrdersSocketListener {
                         case OrderFlag.COMPLETE:
                             return;
                     }
+                }
+            }
+        });
+        service.onEventRemoveOrder(new GetCallback<String>() {
+            @Override
+            public void onFinish(String orderID) {
+                if (orderID != null) {
+                    ordersListener.onRemoveItem(orderID);
                 }
             }
         });

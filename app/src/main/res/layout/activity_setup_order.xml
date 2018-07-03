@@ -9,10 +9,6 @@
         <import type="android.view.View" />
 
         <variable
-            name="activity"
-            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.SetupOrderActivity" />
-
-        <variable
             name="viewmodel"
             type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.SetupOrderViewModel" />
 

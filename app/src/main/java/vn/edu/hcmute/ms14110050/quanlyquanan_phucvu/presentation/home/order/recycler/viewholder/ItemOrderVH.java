@@ -2,6 +2,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.rec
 
 import android.content.Context;
 import android.view.View;
+import android.widget.TextView;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseViewHolder;
@@ -9,6 +10,12 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerOrde
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 
 public class ItemOrderVH extends BaseViewHolder<ItemRecyclerOrderBinding,ItemOrderVM> implements IItemOrderView{
+
+    public ItemOrderVH(View view) {
+        super(view);
+        TextView textView = view.findViewById(R.id.txt_message);
+        textView.setText(R.string.no_order);
+    }
 
     public ItemOrderVH(ItemRecyclerOrderBinding binding, View.OnClickListener onClickItemListener) {
         super(binding);

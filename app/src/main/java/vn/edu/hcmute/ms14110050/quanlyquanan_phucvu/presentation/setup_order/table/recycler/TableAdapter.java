@@ -17,13 +17,13 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerTabl
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.ITableVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.viewholder.TableVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IRecyclerViewAdapterListener<Table> {
+public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IListAdapterListener<Table> {
     private ArrayList<Table> tables = new ArrayList<>();
     private ITableVM containerVM;
 

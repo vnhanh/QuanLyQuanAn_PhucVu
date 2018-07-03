@@ -1,5 +1,6 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler;
 
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,19 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.viewholder.ItemOrderVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerViewAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 
-public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implements IRecyclerViewAdapterListener<Order>{
+public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implements IListAdapterListener<Order> {
+    private WeakReference<Activity> weakActivity;
+
     private ArrayList<Order> orders = new ArrayList<>();
     private View.OnClickListener onClickItemListener;
 
-    public ItemOrderAdapter(@NonNull View.OnClickListener onClickItemListener) {
+    private final int VIEW_EMPTY = 0;
+    private final int VIEW_ORDER = 1;
+
+    public ItemOrderAdapter(Activity activity, @NonNull View.OnClickListener onClickItemListener) {
+        weakActivity = new WeakReference<>(activity);
         this.onClickItemListener = onClickItemListener;
     }
 
@@ -27,25 +35,56 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     @Override
     public ItemOrderVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ItemRecyclerOrderBinding binding =
-                DataBindingUtil.inflate(inflater, R.layout.item_recycler_order, parent, false);
+        if (viewType == VIEW_ORDER) {
+            ItemRecyclerOrderBinding binding =
+                    DataBindingUtil.inflate(inflater, R.layout.item_recycler_order, parent, false);
 
-        return new ItemOrderVH(binding, onClickItemListener);
+            return new ItemOrderVH(binding, onClickItemListener);
+        }else{
+            View view = inflater.inflate(R.layout.item_recycler_empty, parent, false);
+            return new ItemOrderVH(view);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ItemOrderVH holder, int position) {
-        holder.onBind(orders.get(position));
+        if (constainData()) {
+            holder.onBind(orders.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return orders != null ? orders.size() : 0;
+        return constainData() ? orders.size() : 1;
+    }
+
+    private boolean constainData() {
+        return orders != null && orders.size() > 0;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (constainData()) {
+            return VIEW_ORDER;
+        }
+        return VIEW_EMPTY;
     }
 
     /*
-     * Implement IRecyclerViewAdapterListener<Order>
+     * Implement IListAdapterListener<Order>
      * */
+    private void runNotifyDataSetChanged() {
+        Activity activity = weakActivity.get();
+        if (activity != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
     private int findItem(String id) {
         if (id == null) {
             return -1;
@@ -61,17 +100,26 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
 
     @Override
     public void onAddItem(Order item) {
-        for (Order order : orders) {
-            if (order.getId().equals(item.getId())) {
-                return;
+        if (!constainData()) {
+            orders = new ArrayList<>();
+            orders.add(item);
+            runNotifyDataSetChanged();
+        }else{
+            for (Order order : orders) {
+                if (order.getId().equals(item.getId())) {
+                    return;
+                }
             }
+            orders.add(0, item);
+            notifyItemInserted(0);
         }
-        orders.add(0, item);
-        notifyItemInserted(0);
     }
 
     @Override
     public boolean onUpdateItem(Order item) {
+        if (!constainData()) {
+            return false;
+        }
         int index = findItem(item.getId());
         if (index > -1) {
             orders.remove(index);
@@ -82,7 +130,6 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
         return false;
     }
 
-    // TODO: có cần ?
     @Override
     public boolean onUpdateOrAddItem(Order item) {
         int index = findItem(item.getId());
@@ -99,10 +146,18 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
 
     @Override
     public boolean onRemoveItem(String id) {
+        if (!constainData()) {
+            return false;
+        }
         int index = findItem(id);
         if (index > -1) {
-            orders.remove(index);
-            notifyItemRemoved(index);
+            if (orders.size() > 1) {
+                orders.remove(index);
+                notifyItemRemoved(index);
+            }else{
+                orders.remove(index);
+                runNotifyDataSetChanged();
+            }
             return true;
         }
         return false;
@@ -111,7 +166,7 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     @Override
     public void onGetList(ArrayList<Order> list) {
         orders = list;
-        notifyDataSetChanged();
+        runNotifyDataSetChanged();
     }
 
     @Override
@@ -128,6 +183,6 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     }
 
     /*
-    * End IRecyclerViewAdapterListener<Order>
+    * End IListAdapterListener<Order>
     * */
 }
