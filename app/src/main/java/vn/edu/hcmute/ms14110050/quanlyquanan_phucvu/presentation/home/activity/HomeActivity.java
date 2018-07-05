@@ -155,7 +155,10 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
                 Toast.makeText(HomeActivity.this, getString(R.string.user_data_is_null), Toast.LENGTH_SHORT).show();
                 return;
             }
-//            getSupportActionBar().setTitle(user.getFullname());
+
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(user.getFullname());
+            }
 
             String username = user.getUsername();
             SSharedReference.setUserName(HomeActivity.this, username);
