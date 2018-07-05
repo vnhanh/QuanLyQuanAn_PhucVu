@@ -4,13 +4,11 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
-
 /**
  * Created by Vo Ngoc Hanh on 6/23/2018.
  */
 
-public interface IListAdapterListener<DATA> {
+public interface IRecyclerAdapter<DATA> {
 
     void onAddItem(DATA item);
 
@@ -25,4 +23,6 @@ public interface IListAdapterListener<DATA> {
     ArrayList<DATA> getList();
 
     RecyclerView.Adapter getAdapter();
+
+    void clearAll();
 }

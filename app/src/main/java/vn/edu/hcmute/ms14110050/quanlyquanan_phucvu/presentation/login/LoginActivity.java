@@ -1,19 +1,15 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.widget.Toast;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivityLoginBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.HomeActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_ERROR;
 

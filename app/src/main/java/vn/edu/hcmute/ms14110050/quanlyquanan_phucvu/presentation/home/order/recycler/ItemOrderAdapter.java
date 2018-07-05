@@ -3,44 +3,65 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.rec
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseAdapter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.animator.AlphaAnimator;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.IOnCheckOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.OrderCheckable;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.viewholder.ItemOrderVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 
-public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implements IListAdapterListener<Order> {
-    private WeakReference<Activity> weakActivity;
-
-    private ArrayList<Order> orders = new ArrayList<>();
+public class ItemOrderAdapter extends BaseAdapter<ItemOrderVH, OrderCheckable> {
+    private String username;
     private View.OnClickListener onClickItemListener;
+    private AlphaAnimator animator = new AlphaAnimator();
 
-    private final int VIEW_EMPTY = 0;
-    private final int VIEW_ORDER = 1;
+    private final int VIEW_ORDER = VIEW_EMPTY + 1;
+    private IOnCheckOrder onCheckItemListener;
+
+    public void setOnCheckItemListener(IOnCheckOrder onCheckItemListener) {
+        this.onCheckItemListener = onCheckItemListener;
+    }
+
+    @Override
+    protected void runNotifyDataSetChanged() {
+        super.runNotifyDataSetChanged();
+        if (animator != null) {
+            animator.reset();
+        }
+    }
 
     public ItemOrderAdapter(Activity activity, @NonNull View.OnClickListener onClickItemListener) {
-        weakActivity = new WeakReference<>(activity);
+        super(activity);
         this.onClickItemListener = onClickItemListener;
+        username = SSharedReference.getUserName(activity.getApplicationContext());
+        animator.start();
     }
 
     @NonNull
     @Override
     public ItemOrderVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
         if (viewType == VIEW_ORDER) {
             ItemRecyclerOrderBinding binding =
                     DataBindingUtil.inflate(inflater, R.layout.item_recycler_order, parent, false);
 
-            return new ItemOrderVH(binding, onClickItemListener);
-        }else{
+            ItemOrderVH vh = new ItemOrderVH(binding, onClickItemListener, onCheckItemListener, animator);
+
+            return vh;
+        }
+        else{
             View view = inflater.inflate(R.layout.item_recycler_empty, parent, false);
             return new ItemOrderVH(view);
         }
@@ -49,17 +70,10 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     @Override
     public void onBindViewHolder(@NonNull ItemOrderVH holder, int position) {
         if (constainData()) {
-            holder.onBind(orders.get(position));
+            OrderCheckable item = list.get(position);
+            boolean isCreater = item.getOrder().getWaiterUsername().equals(username);
+            holder.onBind(list.get(position), isCreater);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return constainData() ? orders.size() : 1;
-    }
-
-    private boolean constainData() {
-        return orders != null && orders.size() > 0;
     }
 
     @Override
@@ -71,27 +85,17 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     }
 
     /*
-     * Implement IListAdapterListener<Order>
+     * Implement IRecyclerAdapter<Order>
      * */
-    private void runNotifyDataSetChanged() {
-        Activity activity = weakActivity.get();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
-        }
-    }
 
     private int findItem(String id) {
         if (id == null) {
             return -1;
         }
-        int size = orders.size();
+        int size = list.size();
         for (int i = 0; i < size; i++) {
-            if ((orders.get(i) != null && id.equals(orders.get(i).getId()))) {
+            Order order = list.get(i).getOrder();
+            if (order != null && id.equals(order.getId())) {
                 return i;
             }
         }
@@ -99,31 +103,35 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     }
 
     @Override
-    public void onAddItem(Order item) {
+    public void onAddItem(OrderCheckable item) {
         if (!constainData()) {
-            orders = new ArrayList<>();
-            orders.add(item);
+            list = new ArrayList<>();
+            list.add(item);
             runNotifyDataSetChanged();
+            Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
         }else{
-            for (Order order : orders) {
-                if (order.getId().equals(item.getId())) {
-                    return;
-                }
+            String creater = item.getOrder().getWaiterUsername();
+            if (creater != null && creater.equals(username)) {
+                list.add(0, item);
+                notifyItemInserted(0);
+                Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
+            }else{
+                list.add(item);
+                notifyItemInserted(list.size() - 1);
+                Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
             }
-            orders.add(0, item);
-            notifyItemInserted(0);
         }
     }
 
     @Override
-    public boolean onUpdateItem(Order item) {
+    public boolean onUpdateItem(OrderCheckable item) {
         if (!constainData()) {
             return false;
         }
-        int index = findItem(item.getId());
+        int index = findItem(item.getOrder().getId());
         if (index > -1) {
-            orders.remove(index);
-            orders.add(0, item);
+            list.remove(index);
+            list.add(0, item);
             notifyItemMoved(index,0);
             return true;
         }
@@ -131,17 +139,18 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
     }
 
     @Override
-    public boolean onUpdateOrAddItem(Order item) {
-        int index = findItem(item.getId());
+    public boolean onUpdateOrAddItem(OrderCheckable item) {
+        /*int index = findItem(item.getId());
         if (index > -1) {
-            orders.set(index, item);
+            list.set(index, item);
             notifyItemChanged(index);
             return true;
         }else{
-            orders.add(item);
-            notifyItemInserted(orders.size() - 1);
+            list.add(item);
+            notifyItemInserted(list.size() - 1);
             return false;
-        }
+        }*/
+        return false;
     }
 
     @Override
@@ -151,38 +160,30 @@ public class ItemOrderAdapter extends RecyclerView.Adapter<ItemOrderVH> implemen
         }
         int index = findItem(id);
         if (index > -1) {
-            if (orders.size() > 1) {
-                orders.remove(index);
+            if (list.size() > 1) {
+                list.remove(index);
                 notifyItemRemoved(index);
             }else{
-                orders.remove(index);
+                list.remove(index);
                 runNotifyDataSetChanged();
             }
+            Log.d("LOG", getClass().getSimpleName() + ":onRemoveItem():index:" + index);
             return true;
         }
         return false;
     }
 
     @Override
-    public void onGetList(ArrayList<Order> list) {
-        orders = list;
-        runNotifyDataSetChanged();
-    }
-
-    @Override
-    public ArrayList<Order> getList() {
-        if (orders == null) {
-            orders = new ArrayList<>();
-        }
-        return orders;
-    }
-
-    @Override
-    public RecyclerView.Adapter getAdapter() {
-        return this;
+    protected void sortList() {
+        // do nothing
     }
 
     /*
-    * End IListAdapterListener<Order>
+    * End IRecyclerAdapter<Order>
     * */
+
+    public void destroy() {
+        animator.stop();
+        animator.destroy();
+    }
 }

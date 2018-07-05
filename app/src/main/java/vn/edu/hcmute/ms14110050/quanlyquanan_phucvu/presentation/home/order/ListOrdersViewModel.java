@@ -2,14 +2,14 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order;
 
 import android.support.annotation.NonNull;
 
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 
 /**
  * Created by Vo Ngoc Hanh on 6/17/2018.
@@ -19,8 +19,25 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
     private OrderRequestManager orderRM;
     private String token;
     private User user;
-    private IListAdapterListener<Order> orderAdapter;
     private ListOrdersSocketListener socketListener;
+    private OrdersConstributor orderConstributor;
+
+
+    /**
+     * Constructor
+     */
+    public ListOrdersViewModel() {
+        createOrderConstributor();
+        socketListener = new ListOrdersSocketListener();
+        socketListener.setConstributor(orderConstributor);
+    }
+
+    private void createOrderConstributor() {
+        if (orderConstributor == null) {
+            orderConstributor = new OrdersConstributor();
+        }
+    }
+
 
     /*
     * Property
@@ -30,15 +47,18 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
         return user;
     }
 
-    public void setOrderAdapter(IListAdapterListener<Order> orderAdapter) {
-        this.orderAdapter = orderAdapter;
-        socketListener = new ListOrdersSocketListener();
-        socketListener.setOrdersListener(orderAdapter);
+    public void setOrderAdapter(IRecyclerAdapter<OrderCheckable> orderAdapter) {
+        orderConstributor.registerAdapter(orderAdapter);
+    }
+
+    public OrdersConstributor getOrderConstributor() {
+        return orderConstributor;
     }
 
     /*
     * End Property
     * */
+
 
     @Override
     public void onViewAttach(@NonNull ListOrdersContract.View viewCallback) {
@@ -50,17 +70,20 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
     @Override
     public void onViewDetached() {
         super.onViewDetached();
-        socketListener.destroy();
+        socketListener.stopListening();
     }
 
     @Override
     public void onDestroy() {
-        orderAdapter = null;
+        socketListener.destroy();
         orderRM = null;
+        orderConstributor.destroy();
         super.onDestroy();
     }
 
     private void loadOrders() {
+        showProgress(R.string.loading_order);
+
         createOrderRequestManager();
         getToken();
 
@@ -68,10 +91,11 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
             @Override
             public void onFinish(OrdersResponse response) {
                 if (response.getSuccess()) {
-                    if (orderAdapter != null) {
-                        orderAdapter.onGetList(response.getOrders());
+                    if (orderConstributor != null) {
+                        orderConstributor.onGetList(response.getOrders());
                     }
                 }
+                hideProgress();
             }
         });
     }
@@ -103,6 +127,7 @@ public class ListOrdersViewModel extends BaseNetworkViewModel<ListOrdersContract
     @Override
     public void onFinish(User user) {
         this.user = user;
+        createOrderConstributor();
+        orderConstributor.setUsername(user != null ? user.getUsername() : "");
     }
-
 }

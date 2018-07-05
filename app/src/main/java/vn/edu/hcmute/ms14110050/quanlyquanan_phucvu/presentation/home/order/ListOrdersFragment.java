@@ -4,17 +4,22 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order;
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.FragmentListOrdersBinding;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.HomeActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.ItemOrderAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderMode;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.SetupOrderActivity;
@@ -31,6 +36,7 @@ public class ListOrdersFragment
     private ItemOrderAdapter adapter;
 
     public ListOrdersFragment() {
+
         // Required empty public constructor
     }
 
@@ -45,7 +51,7 @@ public class ListOrdersFragment
         super.onCreateView(inflater, container, savedInstanceState);
 
         initRecyclerView();
-
+        initTabLayout();
         return binding.getRoot();
     }
 
@@ -60,6 +66,7 @@ public class ListOrdersFragment
 
     @Override
     public void onDestroy() {
+        adapter.destroy();
         itemOrderListener.destroy();
         super.onDestroy();
     }
@@ -86,9 +93,55 @@ public class ListOrdersFragment
         viewModel.setOrderAdapter(adapter);
     }
 
+    private void initTabLayout() {
+        View tab01 = LayoutInflater.from(getContext()).inflate(R.layout.tab_item_home, null);
+        TextView txtStatus01 = tab01.findViewById(R.id.txt_status);
+        txtStatus01.setText(R.string.title_status_pending);
+
+        View tab02 = LayoutInflater.from(getContext()).inflate(R.layout.tab_item_home, null);
+        TextView txtStatus02 = tab02.findViewById(R.id.txt_status);
+        txtStatus02.setText(R.string.title_status_cooking);
+
+        View tab03 = LayoutInflater.from(getContext()).inflate(R.layout.tab_item_home, null);
+        TextView txtStatus03 = tab03.findViewById(R.id.txt_status);
+        txtStatus03.setText(R.string.title_status_prepare);
+
+        View tab04 = LayoutInflater.from(getContext()).inflate(R.layout.tab_item_home, null);
+        TextView txtStatus04 = tab04.findViewById(R.id.txt_status);
+        txtStatus04.setText(R.string.title_status_eating);
+
+        View tab05 = LayoutInflater.from(getContext()).inflate(R.layout.tab_item_home, null);
+        TextView txtStatus05 = tab05.findViewById(R.id.txt_status);
+        txtStatus05.setText(R.string.title_status_paying);
+
+        TabLayout tabLayout = binding.tabLayout;
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.getTabAt(0).setCustomView(tab01);
+        tabLayout.getTabAt(1).setCustomView(tab02);
+        tabLayout.getTabAt(2).setCustomView(tab03);
+        tabLayout.getTabAt(3).setCustomView(tab04);
+        tabLayout.getTabAt(4).setCustomView(tab05);
+
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), R.color.colorWhite));
+
+        OrdersConstributor constributor = viewModel.getOrderConstributor();
+        constributor.registerTabLayout(binding.tabLayout);
+        ArrayList<View> customTabs = new ArrayList<>();
+        customTabs.add(tab01);
+        customTabs.add(tab02);
+        customTabs.add(tab03);
+        customTabs.add(tab04);
+        customTabs.add(tab05);
+        constributor.setTabViews(customTabs);
+    }
+
     private OnClickItemOrderListener itemOrderListener;
 
-    private static class OnClickItemOrderListener implements View.OnClickListener {
+    public static class OnClickItemOrderListener implements View.OnClickListener {
         private Activity activity;
         private ListOrdersViewModel viewModel;
 

@@ -93,11 +93,11 @@ public abstract class BaseFragment<B extends ViewDataBinding, V extends LifeCycl
 
     @Override
     @CallSuper
-    public void onDestroyView() {
+    public void onDestroy() {
+        super.onDestroy();
         viewModel.onDestroy();
         viewModel = null;
         binding = null;
-        super.onDestroyView();
     }
 
     public int dimen(@DimenRes int resId) {

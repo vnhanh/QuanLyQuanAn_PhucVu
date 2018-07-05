@@ -24,10 +24,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.home.HomeActivity"
+            android:name=".presentation.home.activity.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <service
             android:name=".common.service.get_user.SocketUserService"

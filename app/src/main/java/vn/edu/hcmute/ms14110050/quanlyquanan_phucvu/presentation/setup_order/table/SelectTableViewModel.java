@@ -19,7 +19,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableRes
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.RegionTableRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 
 /**
  * Created by Vo Ngoc Hanh on 6/22/2018.
@@ -37,7 +37,7 @@ public class SelectTableViewModel
     protected String token;
 
     private ISpinnerDataListener<Region> regionDataListener;
-    private IListAdapterListener<Table> tableDataListener;
+    private IRecyclerAdapter<Table> tableDataListener;
 
     private IOrderVM centerVM;
 
@@ -62,7 +62,7 @@ public class SelectTableViewModel
         this.regionDataListener = regionDataListener;
     }
 
-    public void setTableDataListener(IListAdapterListener tableDataListener) {
+    public void setTableDataListener(IRecyclerAdapter tableDataListener) {
         this.tableDataListener = tableDataListener;
     }
 

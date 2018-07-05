@@ -35,6 +35,6 @@ public interface ISetupOrder {
 
         void openConfirmDialog(@StringRes int messageResId, GetCallback<Void> callback);
 
-        boolean onUpdateMenu(boolean isCreateOrder, @OrderFlag int statusFlag);
+        boolean onUpdateMenu(boolean availableShow, boolean isCreateOrder, @OrderFlag int statusFlag);
     }
 }

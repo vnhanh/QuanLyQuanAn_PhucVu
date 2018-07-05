@@ -19,7 +19,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrder
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISpinnerDataListener;
 
@@ -43,7 +43,7 @@ public class SelectFoodViewModel
     private Order order;
 
     private ISpinnerDataListener<CategoryFood> catDataListener;
-    private IListAdapterListener<Food> foodsDataListener;
+    private IRecyclerAdapter<Food> foodsDataListener;
 
     public final ObservableBoolean isLoadingFoods = new ObservableBoolean();
 
@@ -65,7 +65,7 @@ public class SelectFoodViewModel
     }
 
     // recyclerview adapter
-    public void setFoodsDataListener(IListAdapterListener<Food> foodsDataListener) {
+    public void setFoodsDataListener(IRecyclerAdapter<Food> foodsDataListener) {
         this.foodsDataListener = foodsDataListener;
     }
 
@@ -76,7 +76,6 @@ public class SelectFoodViewModel
     @Override
     public void onViewAttach(@NonNull IFoodView viewCallback) {
         super.onViewAttach(viewCallback);
-        Log.d("LOG", getClass().getSimpleName() + ":onViewAttach()");
 
         onSetupServerConnection();
         loadCategories();
@@ -206,8 +205,8 @@ public class SelectFoodViewModel
         requestManager.loadCategories(token, new GetCallback<ArrayList<CategoryFood>>() {
             @Override
             public void onFinish(ArrayList<CategoryFood> categories) {
-                Log.d("LOG", getClass().getSimpleName()
-                        + ":loadCategoryfoods():get category food:size:"+categories.size());
+//                Log.d("LOG", getClass().getSimpleName()
+//                        + ":loadCategoryfoods():get category food:size:"+categories.size());
                 onGetCategories(categories);
             }
         });

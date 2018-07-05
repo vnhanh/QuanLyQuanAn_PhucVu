@@ -10,7 +10,8 @@ public class BaseSharedReference {
     public static final int VALUE_DEFAULT_INT = 0;
     public static final String VALUE_DEFAULT_STR = "";
 
-    public static final String SR_AUTHENTICATION_TOKEN = "LOGIN TOKEN";
+    public static final String SR_AUTHENTICATION_TOKEN = "SR_AUTHENTICATION_TOKEN";
+    public static final String SR_USERNAME = "SR_USERNAME";
 
     public static class Builder {
         Context context;

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">NHÂN VIÊN PHỤC VỤ</string>
-
+    <string name="font_family_medium">sans-serif-medium</string>
+    
     <!--AUTHENTICATION-->
     <string name="validate_email">Email không hợp lệ</string>
     <string name="validate_password">Mật khẩu phải có ít nhất 1 ký tự</string>
@@ -28,8 +29,8 @@
 
     <!--ACTIVITY HOME-->
     <string name="error_extra_get_username">Không lấy được thông tin người dùng</string>
-    <string name="title_receipt">ORDER</string>
-    <string name="title_account">TÀI KHOẢN</string>
+    <string name="title_receipt">Hóa đơn</string>
+    <string name="title_account">Tài khoản</string>
     <string name="user_data_is_null">Dữ liệu người dùng rỗng</string>
 
     <!--FRAGMENT ACCOUNT-->
@@ -153,7 +154,7 @@
     <string name="display_status_order">Trạng thái hóa đơn: %1$s</string>
     <string name="creating">ĐANG TẠO</string>
     <string name="complete">HOÀN THÀNH</string>
-    <string name="pending">Đang chờ</string>
+    <string name="pending">ĐANG CHỜ</string>
     <string name="running">ĐANG HOẠT ĐỘNG</string>
     <string name="display_total_cost_order">Tổng tiền: %1$d VNĐ</string>
     <string name="display_description_order">Ghi chú: %1$s</string>
@@ -201,5 +202,11 @@
     <string name="message_update_status_order_success">Thao tác thành công</string>
     <string name="message_update_status_order_failed">Thao tác thất bại</string>
     <string name="list_failed_tables">Danh sách các bàn không thể loại khỏi order:\n</string>
+    <string name="title_status_pending">ĐANG CHỜ</string>
+    <string name="title_status_cooking">ĐANG NẤU</string>
+    <string name="title_status_prepare">NẤU XONG</string>
+    <string name="title_status_eating">ĐANG ĂN</string>
+    <string name="title_status_paying">THANH TOÁN</string>
+    <string name="prepare">NẤU XONG</string>
 
 </resources>

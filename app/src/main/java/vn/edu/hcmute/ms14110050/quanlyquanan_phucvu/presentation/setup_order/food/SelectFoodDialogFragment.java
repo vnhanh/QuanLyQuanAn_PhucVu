@@ -63,7 +63,7 @@ public class SelectFoodDialogFragment
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.recyclerview.setLayoutManager(manager);
         binding.recyclerview.setHasFixedSize(true);
-        foodAdapter = new FoodAdapter();
+        foodAdapter = new FoodAdapter(getActivity());
         binding.recyclerview.setAdapter(foodAdapter);
         foodAdapter.setContainerVM(viewModel);
     }

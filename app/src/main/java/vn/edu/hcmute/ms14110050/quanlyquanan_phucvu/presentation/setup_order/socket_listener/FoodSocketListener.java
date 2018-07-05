@@ -1,4 +1,4 @@
-package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order;
+package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.socket_listener;
 
 import android.support.annotation.NonNull;
 
@@ -10,7 +10,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderSocketData;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 
 /**
@@ -18,7 +18,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abs
  */
 
 public class FoodSocketListener {
-    private IListAdapterListener<Food> foodDataListener;
+    private IRecyclerAdapter<Food> foodDataListener;
     private Order order;
     private IOrderVM centerVM;
 
@@ -38,10 +38,14 @@ public class FoodSocketListener {
         return socketService;
     }
 
+    public void stopListening() {
+        socketService.removeAllEvents();
+    }
+
     public void destroy() {
         order = null;
         centerVM = null;
-        socketService.destroy();
+        socketService = null;
     }
 
     private void updateFoodInfo(Food food) {
@@ -90,7 +94,7 @@ public class FoodSocketListener {
         }
     }
 
-    public void listenSockets(@NonNull IListAdapterListener<Food> dataListener, @NonNull IOrderVM centerVM) {
+    public void listenSockets(@NonNull IRecyclerAdapter<Food> dataListener, @NonNull IOrderVM centerVM) {
         this.centerVM = centerVM;
         this.foodDataListener = dataListener;
         this.order = centerVM.getOrder();

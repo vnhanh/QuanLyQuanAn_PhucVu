@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <TextView
+        android:id="@+id/txt_status"
+        android:text="CHỜ"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/txtSize_large"
+        android:fontFamily="@string/font_family_medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.SquareTextView
+        android:id="@+id/txt_count"
+        android:visibility="invisible"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        android:background="@drawable/bg_circular_orange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        app:layout_constraintStart_toEndOf="@id/txt_phantom"
+        app:layout_constraintBottom_toTopOf="@id/txt_phantom"/>
+
+    <View
+        android:id="@+id/txt_phantom"
+        android:visibility="gone"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintHorizontal_bias="0.84"
+        app:layout_constraintStart_toStartOf="@id/txt_status"
+        app:layout_constraintEnd_toEndOf="@id/txt_status"
+        app:layout_constraintTop_toTopOf="@id/txt_status"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -178,7 +178,7 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         binding.recyclerviewTables.setLayoutManager(manager);
-        tablesAdapter = new TableAdapter();
+        tablesAdapter = new TableAdapter(this);
         binding.recyclerviewTables.setAdapter(tablesAdapter);
         tablesAdapter.setContainerVM(viewModel);
         viewModel.setTableDataListener(tablesAdapter);
@@ -186,7 +186,7 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         LinearLayoutManager _manager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
-        foodAdapter = new FoodAdapter();
+        foodAdapter = new FoodAdapter(this);
         binding.recyclerviewFoods.setLayoutManager(_manager);
         binding.recyclerviewFoods.setAdapter(foodAdapter);
         foodAdapter.setContainerVM(viewModel);
@@ -366,46 +366,57 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
     }
 
     @Override
-    public boolean onUpdateMenu(boolean isCreateOrder, @OrderFlag int statusFlag) {
+    public boolean onUpdateMenu(boolean availableShow, boolean isCreateOrder, @OrderFlag int statusFlag) {
+        // activity chưa tạo menu
         if (menu == null) {
             return false;
         }
+
         MenuItem menuCreateOrder = menu.findItem(R.id.menu_create_order);
         MenuItem menuSelectTable = menu.findItem(R.id.menu_select_table);
         MenuItem menuSelectFood = menu.findItem(R.id.menu_select_food);
         MenuItem menuConfirmOrder = menu.findItem(R.id.menu_confirm_order);
 
-        // đang tạo order
-        if (isCreateOrder) {
-            menuCreateOrder.setVisible(true);
-            menuSelectTable.setVisible(true);
-            menuSelectFood.setVisible(true);
-            menuConfirmOrder.setVisible(false);
-        }
-        else{
+        // được phép shown menu
+        if (!availableShow) {
             menuCreateOrder.setVisible(false);
             menuSelectTable.setVisible(false);
             menuSelectFood.setVisible(false);
-            menuConfirmOrder.setVisible(true);
+            menuConfirmOrder.setVisible(false);
+        }
+        else{
+            // đang tạo order
+            if (isCreateOrder) {
+                menuCreateOrder.setVisible(true);
+                menuSelectTable.setVisible(true);
+                menuSelectFood.setVisible(true);
+                menuConfirmOrder.setVisible(false);
+            }
+            else{
+                menuCreateOrder.setVisible(false);
+                menuSelectTable.setVisible(false);
+                menuSelectFood.setVisible(false);
+                menuConfirmOrder.setVisible(true);
 
-            switch (statusFlag) {
-                case OrderFlag.PENDING:
-                    // order đã được tạo, chờ bếp xác nhận
-                    // có thể hủy
-                    menuConfirmOrder.setTitle(R.string.title_remove_order);
-                    return true;
+                switch (statusFlag) {
+                    case OrderFlag.PENDING:
+                        // order đã được tạo, chờ bếp xác nhận
+                        // có thể hủy
+                        menuConfirmOrder.setTitle(R.string.title_remove_order);
+                        return true;
 
-                case OrderFlag.PAYING:
+                    case OrderFlag.PAYING:
 
-                case OrderFlag.COMPLETE:
-                    menuConfirmOrder.setVisible(false);
-                    return true;
+                    case OrderFlag.COMPLETE:
+                        menuConfirmOrder.setVisible(false);
+                        return true;
 
-                default:
-                    // order đã được bếp xác nhận
-                    // có thể thanh toán
-                    menuConfirmOrder.setTitle(R.string.title_confirm_paying);
-                    return true;
+                    default:
+                        // order đã được bếp xác nhận
+                        // có thể thanh toán
+                        menuConfirmOrder.setTitle(R.string.title_confirm_paying);
+                        return true;
+                }
             }
         }
         return true;

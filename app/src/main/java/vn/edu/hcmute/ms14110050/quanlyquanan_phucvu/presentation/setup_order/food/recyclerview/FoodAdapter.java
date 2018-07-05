@@ -1,8 +1,8 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.recyclerview;
 
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sort.RegionTableSort;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerFoodBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.IFoodVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.recyclerview.viewholder.FoodVH;
 
@@ -23,12 +23,14 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.foo
  * Created by Vo Ngoc Hanh on 6/24/2018.
  */
 
-public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAdapterListener<Food> {
-    private ArrayList<Food> foods = new ArrayList<>();
+public class FoodAdapter extends BaseAdapter<FoodVH,Food>{
     private IFoodVM containerVM;
 
-    private final int EMPTY_VIEW = -1;
-    private final int DATA_VIEW = 0;
+    private final int VIEW_DATA = VIEW_EMPTY + 1;
+
+    public FoodAdapter(Activity activity) {
+        super(activity);
+    }
 
     public void setContainerVM(IFoodVM containerVM) {
         this.containerVM = containerVM;
@@ -36,46 +38,39 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAd
 
     @Override
     public int getItemViewType(int position) {
-        return hasNoData() ? EMPTY_VIEW : DATA_VIEW;
-    }
-
-    private boolean hasNoData() {
-        return foods == null || foods.size() == 0;
+        return constainData() ? VIEW_DATA : VIEW_EMPTY;
     }
 
     @NonNull
     @Override
     public FoodVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == EMPTY_VIEW) {
+
+        if (viewType == VIEW_DATA) {
+            ItemRecyclerFoodBinding binding =
+                    DataBindingUtil.inflate(inflater, R.layout.item_recycler_food, parent, false);
+            return new FoodVH(binding, containerVM);
+        }
+        else{
             View view = inflater.inflate(R.layout.item_recycler_empty, parent, false);
             TextView txtMessage = view.findViewById(R.id.txt_message);
             txtMessage.setText(parent.getContext().getString(R.string.no_food));
             return new FoodVH(view);
-        }else{
-            ItemRecyclerFoodBinding binding =
-                    DataBindingUtil.inflate(inflater, R.layout.item_recycler_food, parent, false);
-            return new FoodVH(binding, containerVM);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull FoodVH holder, int position) {
-        if (!hasNoData()) {
-            holder.onBind(foods.get(position));
+        if (constainData()) {
+            holder.onBind(list.get(position));
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return hasNoData() ? 1 : foods.size();
     }
 
     @Override
     public void onAddItem(Food item) {
         int index = findItem(item.getId());
         if (index < 0) {
-            foods.add(item);
+            list.add(item);
             sortList();
         }
     }
@@ -84,16 +79,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAd
     public boolean onUpdateItem(Food item) {
         int index = findItem(item.getId());
         if (index >= 0) {
-            foods.set(index, item);
+            list.set(index, item);
             notifyItemChanged(index);
             return true;
         }
         return false;
-    }
-
-    @Override
-    public RecyclerView.Adapter getAdapter() {
-        return this;
     }
 
     // Cẩn thận khi dùng cái này
@@ -101,11 +91,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAd
     public boolean onUpdateOrAddItem(Food item) {
         int index = findItem(item.getId());
         if (index >= 0) {
-            foods.set(index, item);
+            list.set(index, item);
             notifyItemChanged(index);
             return true;
         }else{
-            foods.add(item);
+            list.add(item);
             sortList();
         }
         return false;
@@ -115,32 +105,18 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAd
     public boolean onRemoveItem(String id) {
         int index = findItem(id);
         if (index >= 0) {
-            foods.remove(index);
+            list.remove(index);
             notifyItemRemoved(index);
             return true;
         }
         return false;
     }
 
-    @Override
-    public void onGetList(ArrayList<Food> list) {
-        this.foods = list;
-        sortList();
-    }
-
-    @Override
-    public ArrayList<Food> getList() {
-        if (foods == null) {
-            foods = new ArrayList<>();
-        }
-        return foods;
-    }
-
     private int findItem(@NonNull String foodID) {
-        if (foods != null) {
-            int size = foods.size();
+        if (list != null) {
+            int size = list.size();
             for (int i = 0; i < size; i++) {
-                if (foodID.equals(foods.get(i).getId())) {
+                if (foodID.equals(list.get(i).getId())) {
                     return i;
                 }
             }
@@ -148,8 +124,9 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAd
         return -1;
     }
 
-    private void sortList() {
-        RegionTableSort.sortFoods(foods, new GetCallback<ArrayList<Food>>() {
+    @Override
+    protected void sortList() {
+        RegionTableSort.sortFoods(list, new GetCallback<ArrayList<Food>>() {
             @Override
             public void onFinish(ArrayList<Food> _tables) {
                 onSortListFinish(_tables);
@@ -158,7 +135,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodVH> implements IListAd
     }
 
     private void onSortListFinish(ArrayList<Food> _foods) {
-        foods = _foods;
-        notifyDataSetChanged();
+        list = _foods;
+        runNotifyDataSetChanged();
     }
 }

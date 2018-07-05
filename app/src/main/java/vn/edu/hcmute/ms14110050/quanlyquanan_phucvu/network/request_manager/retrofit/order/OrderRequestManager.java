@@ -284,8 +284,8 @@ public class OrderRequestManager {
                                                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()));
 
                                     }
-                                    Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                            + ":getOrder():get order:start loading foods in order:count of foods:" + details.size());
+//                                    Log.d("LOG", OrderRequestManager.class.getSimpleName()
+//                                            + ":getOrder():get order:start loading foods in order:count of foods:" + details.size());
                                 }
 
                                 // load danh sách bàn
@@ -299,8 +299,8 @@ public class OrderRequestManager {
                                 return Observable.zip(soucres, new Function<Object[], FullOrderResponse>() {
                                     @Override
                                     public FullOrderResponse apply(Object[] objects) throws Exception {
-                                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                                + ":getOrder():get order:get foods of order complete");
+//                                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+//                                                + ":getOrder():get order:get foods of order complete");
                                         FullOrderResponse _response = new FullOrderResponse();
                                         _response.setSuccess(true);
                                         _response.setOrder(order);
@@ -318,7 +318,7 @@ public class OrderRequestManager {
                                 });
                             }
                         }
-                        Log.d("LOG", OrderRequestManager.class.getSimpleName() + ":get order:return empty FullOrderResponse");
+//                        Log.d("LOG", OrderRequestManager.class.getSimpleName() + ":get order:return empty FullOrderResponse");
                         FullOrderResponse _response = new FullOrderResponse(false, response.getMessage());
                         return Observable.just(_response);
                     }
@@ -327,11 +327,11 @@ public class OrderRequestManager {
                     @Override
                     public void onNext(FullOrderResponse orderResponse) {
                         if (orderResponse.getFoods() != null) {
-                            Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                    + ":get order:success:" + orderResponse.getSuccess() + ":count of details:" + orderResponse.getFoods().size());
+//                            Log.d("LOG", OrderRequestManager.class.getSimpleName()
+//                                    + ":get order:success:" + orderResponse.getSuccess() + ":count of details:" + orderResponse.getFoods().size());
                         }else{
                             Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                    + ":get order:success:" + orderResponse.getSuccess() + "no food");
+                                    + ":get order:is success:" + orderResponse.getSuccess() + "no food");
                         }
                         callback.onFinish(orderResponse);
                     }
@@ -475,7 +475,7 @@ public class OrderRequestManager {
                 });
     }
 
-    // Get tất cả order từ PENDING đến RUNNING
+    // Get tất cả order có thể phục vụ
     public void getOrdersForWaiter(String token, final GetCallback<OrdersResponse> callback) {
 
         service.getOrdersWaiting(token)

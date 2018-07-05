@@ -151,7 +151,10 @@ public class Order{
             case OrderFlag.COOKING:
                 return R.string.cooking;
 
-            case OrderFlag.RUNNING:
+            case OrderFlag.PREPARE:
+                return R.string.prepare;
+
+            case OrderFlag.EATING:
                 return R.string.running;
 
             case OrderFlag.PAYING:

@@ -1,25 +1,40 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.viewholder;
 
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.databinding.ObservableInt;
+import android.graphics.Typeface;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseVHViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.OrderCheckable;
 
 public class ItemOrderVM extends BaseVHViewModel<IItemOrderView> {
+    public final ObservableInt createrStyle = new ObservableInt();
     public final ObservableField<String> contentCreater = new ObservableField<>();
     public final ObservableField<String> contentTables = new ObservableField<>();
     public final ObservableField<String> contentFinalCost = new ObservableField<>();
     public final ObservableField<String> contentStatus = new ObservableField<>();
 
-    private Order order;
+    private OrderCheckable data;
 
     public Order getOrder() {
-        return order;
+        return data != null ? data.getOrder() : null;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public OrderCheckable getData() {
+        return data;
+    }
+
+    public void setData(OrderCheckable item, boolean isCreater) {
+        this.data = item;
+        Order order = item.getOrder();
+        if (order == null) {
+            createrStyle.set(Typeface.NORMAL);
+            return;
+        }
+        createrStyle.set(isCreater ? Typeface.BOLD : Typeface.NORMAL);
 
         contentCreater.set(order.getWaiterFullname());
 

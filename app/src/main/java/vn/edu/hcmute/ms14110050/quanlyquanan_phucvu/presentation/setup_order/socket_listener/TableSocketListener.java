@@ -1,4 +1,4 @@
-package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order;
+package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.socket_listener;
 
 import android.support.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 
 /**
@@ -14,7 +14,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abs
  */
 
 public class TableSocketListener {
-    private IListAdapterListener<Table> tableDataListener;
+    private IRecyclerAdapter<Table> tableDataListener;
     private IOrderVM centerVM;
 
     private RegionTableSocketService socketService;
@@ -33,16 +33,21 @@ public class TableSocketListener {
         }
     }
 
+    public void stopListening() {
+        socketService.removeAllEvents();
+    }
+
     public void destroy() {
+        socketService = null;
         centerVM = null;
-        socketService.destroy();
+        tableDataListener = null;
     }
 
     private Order getOrder() {
         return centerVM.getOrder();
     }
 
-    public void listenSockets(@NonNull IListAdapterListener<Table> dataListener, @NonNull IOrderVM centerVM) {
+    public void listenSockets(@NonNull IRecyclerAdapter<Table> dataListener, @NonNull IOrderVM centerVM) {
         this.centerVM = centerVM;
         this.tableDataListener = dataListener;
 

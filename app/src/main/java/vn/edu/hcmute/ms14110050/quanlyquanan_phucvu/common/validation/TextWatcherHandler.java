@@ -144,7 +144,6 @@ public class TextWatcherHandler extends Observable implements TextWatcher, IVali
         notifyObservers(TAG_VALIDATE);
     }
 
-    // Call this method to destroy resource
     @Override
     public void destroy() {
         textInputLayout = null;

@@ -5,15 +5,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
+public class PayableOrderResponse extends UpdateStatusOrderResponse {
 
-public class PayableOrderResponse extends ResponseValue {
     @SerializedName("tables")
     @Expose
-    private ArrayList<String> tables;
-    @SerializedName("order")
-    @Expose
-    private Order order;
+    protected ArrayList<String> tables;
 
     public PayableOrderResponse(boolean success, String message) {
         super(success, message);
@@ -25,13 +21,5 @@ public class PayableOrderResponse extends ResponseValue {
 
     public void setTables(ArrayList<String> tables) {
         this.tables = tables;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 }

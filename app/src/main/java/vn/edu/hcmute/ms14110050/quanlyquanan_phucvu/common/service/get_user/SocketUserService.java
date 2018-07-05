@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -123,8 +125,8 @@ public class SocketUserService extends Service {
         requestManager.getProfile(token, username, new GetCallback<User>() {
             @Override
             public void onFinish(User user) {
-                Log.d("LOG", SocketUserService.class.getSimpleName()
-                        + ":getProfile():user:" + (user != null ? user.getFullname() : user));
+//                Log.d("LOG", SocketUserService.class.getSimpleName()
+//                        + ":getProfile():user:" + (user != null ? user.getFullname() : user));
                 onGetUserFromSocket(user);
             }
         });

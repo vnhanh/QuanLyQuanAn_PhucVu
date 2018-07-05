@@ -14,14 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.FragmentAccountBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.HomeActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.dialog.InputNewPasswordDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.dialog.VerifyAccountDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.validation.AccountValidation;

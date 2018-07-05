@@ -1,8 +1,8 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler;
 
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,26 +12,24 @@ import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sort.RegionTableSort;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerTableBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.ITableVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.recycler.viewholder.TableVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
 
 /**
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IListAdapterListener<Table> {
-    private ArrayList<Table> tables = new ArrayList<>();
+public class TableAdapter extends BaseAdapter<TableVH, Table> {
     private ITableVM containerVM;
 
-    private final int EMPTY_VIEW = -1;
-    private final int DATA_VIEW = 0;
+    private final int VIEW_DATA = VIEW_EMPTY + 1;
 
-    public TableAdapter() {
-
+    public TableAdapter(Activity activity) {
+        super(activity);
     }
     /*
     * Property
@@ -47,39 +45,32 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
 
     @Override
     public int getItemViewType(int position) {
-        return hasNoData() ? EMPTY_VIEW : DATA_VIEW;
-    }
-
-    private boolean hasNoData() {
-        return tables == null || tables.size() == 0;
+        return constainData() ? VIEW_DATA : VIEW_EMPTY;
     }
 
     @NonNull
     @Override
     public TableVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == EMPTY_VIEW) {
+
+        if (viewType == VIEW_DATA) {
+            ItemRecyclerTableBinding binding =
+                    DataBindingUtil.inflate(inflater, R.layout.item_recycler_table, parent, false);
+            return new TableVH(binding, containerVM);
+        }
+        else{
             View view = inflater.inflate(R.layout.item_recycler_empty, parent, false);
             TextView txtMessage = view.findViewById(R.id.txt_message);
             txtMessage.setText(parent.getContext().getString(R.string.no_table));
             return new TableVH(view);
-        }else{
-            ItemRecyclerTableBinding binding =
-                    DataBindingUtil.inflate(inflater, R.layout.item_recycler_table, parent, false);
-            return new TableVH(binding, containerVM);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull TableVH holder, int position) {
-        if (!hasNoData()) {
-            holder.onBind(tables.get(position));
+        if (constainData()) {
+            holder.onBind(list.get(position));
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return hasNoData() ? 1 : tables.size();
     }
 
     /*
@@ -87,10 +78,10 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
     * */
 
     private int findTable(@NonNull String tableID) {
-        if (tables != null) {
-            int size = tables.size();
+        if (list != null) {
+            int size = list.size();
             for (int i = 0; i < size; i++) {
-                if (tableID.equals(tables.get(i).getId())) {
+                if (tableID.equals(list.get(i).getId())) {
                     return i;
                 }
             }
@@ -98,8 +89,9 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
         return -1;
     }
 
-    private void sortList() {
-        RegionTableSort.sortTables(tables, new GetCallback<ArrayList<Table>>() {
+    @Override
+    protected void sortList() {
+        RegionTableSort.sortTables(list, new GetCallback<ArrayList<Table>>() {
             @Override
             public void onFinish(ArrayList<Table> _tables) {
                 onSortListFinish(_tables);
@@ -108,15 +100,15 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
     }
 
     private void onSortListFinish(ArrayList<Table> _tables) {
-        tables = _tables;
-        notifyDataSetChanged();
+        list = _tables;
+        runNotifyDataSetChanged();
     }
 
     @Override
     public void onAddItem(Table table) {
         int index = findTable(table.getId());
         if (index < 0) {
-            tables.add(table);
+            list.add(table);
             sortList();
         }
     }
@@ -125,9 +117,9 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
     public boolean onUpdateItem(Table table) {
         int index = findTable(table.getId());
         if (index >= 0) {
-            Table old = tables.get(index);
+            Table old = list.get(index);
             if (!old.equalValue(table)) {
-                tables.set(index, table);
+                list.set(index, table);
                 notifyItemChanged(index);
                 return true;
             }
@@ -139,14 +131,14 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
     public boolean onUpdateOrAddItem(Table table) {
         int index = findTable(table.getId());
         if (index >= 0) {
-            Table old = tables.get(index);
+            Table old = list.get(index);
             if (!old.equals(table)) {
-                tables.set(index, table);
+                list.set(index, table);
                 notifyItemChanged(index);
                 return true;
             }
         }else{
-            tables.add(table);
+            list.add(table);
             sortList();
         }
         return false;
@@ -156,28 +148,10 @@ public class TableAdapter extends RecyclerView.Adapter<TableVH> implements IList
     public boolean onRemoveItem(String tableID) {
         int index = findTable(tableID);
         if (index >= 0) {
-            tables.remove(index);
+            list.remove(index);
             notifyItemRemoved(index);
             return true;
         }
         return false;
-    }
-
-    @Override
-    public RecyclerView.Adapter getAdapter() {
-        return this;
-    }
-
-    @Override
-    public void onGetList(ArrayList<Table> tables) {
-        this.tables = tables;
-        sortList();
-    }
-
-    @Override
-    public ArrayList<Table> getList() {
-        if(tables == null)
-            tables = new ArrayList<>();
-        return tables;
     }
 }

@@ -46,8 +46,11 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retr
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.RegionTableRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISetupOrder;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IListAdapterListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderMode;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.socket_listener.FoodSocketListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.socket_listener.OrderSocketListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.socket_listener.TableSocketListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food.InputCallbackImpl;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_ERROR;
@@ -87,8 +90,8 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
 
     // listener lắng nghe thay đổi dữ liệu của bàn và món
-    private IListAdapterListener<Table> tableDataListener;
-    private IListAdapterListener<Food> foodDataListener;
+    private IRecyclerAdapter<Table> tableDataListener;
+    private IRecyclerAdapter<Food> foodDataListener;
 
     private User waiter;
 
@@ -125,11 +128,11 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         }
     }
 
-    public void setTableDataListener(IListAdapterListener<Table> tableDataListener) {
+    public void setTableDataListener(IRecyclerAdapter<Table> tableDataListener) {
         this.tableDataListener = tableDataListener;
     }
 
-    public void setFoodDataListener(IListAdapterListener<Food> foodDataListener) {
+    public void setFoodDataListener(IRecyclerAdapter<Food> foodDataListener) {
         this.foodDataListener = foodDataListener;
     }
 
@@ -235,7 +238,6 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
             foodListener.listenSockets(foodDataListener, this);
         }
 
-        Log.d("LOG", getClass().getSimpleName() + ":onViewAttached():FLAG_CREATED_ORDER_ON_SERVER:" + FLAG_CREATED_ORDER_ON_SERVER);
         if (FLAG_CREATED_ORDER_ON_SERVER) {
             loadOrder();
         }else{
@@ -327,9 +329,14 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        boolean updateMenuResult = getView().onUpdateMenu(isCreateOrder.get(), order.getStatusFlag());
-                        if (!updateMenuResult) {
-                            handler.postDelayed(this, 500);
+                        if (isViewAttached()) {
+                            boolean availableShow = order.getWaiterUsername() != null
+                                    && order.getWaiterUsername().equals(waiter.getUsername());
+
+                            boolean updateMenuResult = getView().onUpdateMenu(availableShow, isCreateOrder.get(), order.getStatusFlag());
+                            if (!updateMenuResult) {
+                                handler.postDelayed(this, 500);
+                            }
                         }
                     }
                 }, 500);
@@ -355,25 +362,35 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     @Override
     public void onViewDetached() {
-        orderRM = null;
-        tableRM = null;
-        foodRM = null;
-        orderListener.destroy();
-        orderListener = null;
-        tableListener.destroy();
-        tableListener = null;
-        foodListener.destroy();
-        foodListener = null;
-        numberCustomerListener = null;
+
+        foodListener.stopListening();
+        tableListener.stopListening();
+        orderListener.stopListening();
 
         super.onViewDetached();
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+
+        foodListener.destroy();
+        foodListener = null;
+
+        tableListener.destroy();
+        tableListener = null;
+
+        orderListener.destroy();
+        orderListener = null;
+
+        numberCustomerListener = null;
+
         tableDataListener = null;
         foodDataListener = null;
-        super.onDestroy();
+
+        orderRM = null;
+        tableRM = null;
+        foodRM = null;
     }
 
     // load thông tin order theo orderID
@@ -731,7 +748,6 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     @Override
     public boolean isCreatedOrder() {
-        Log.d("LOG", getClass().getSimpleName() + ":isCreatedOrder():" + isCreateOrder);
         return isCreateOrder.get();
     }
 
@@ -867,7 +883,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 showMessage(R.string.order_updated_cooking, COLOR_WARNING);
                 return;
 
-            case OrderFlag.RUNNING:
+            case OrderFlag.EATING:
                 showMessage(R.string.order_updated_running, COLOR_WARNING);
                 return;
 

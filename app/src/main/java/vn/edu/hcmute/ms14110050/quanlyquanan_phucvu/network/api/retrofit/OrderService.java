@@ -66,6 +66,6 @@ public interface OrderService {
     @FormUrlEncoded
     Observable<ResponseValue> removeOrder(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
 
-    @GET("order/getOrdersWaiting")
+    @GET("order/getOrdersForWaiter")
     Observable<OrdersResponse> getOrdersWaiting(@Header("Authorization") String token);
 }

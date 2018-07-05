@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.socket.emitter.Emitter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
@@ -32,7 +33,7 @@ public class BaseSocketService {
      * @param <MODEL>
      */
     protected  <MODEL> void listenEvent(final String event, final GetCallback<MODEL> callback,
-                                     final String tag, final Type typeClass) {
+                                        final String tag, final Type typeClass) {
         events.add(event);
 
         Emitter.Listener listener = new Emitter.Listener() {
@@ -42,13 +43,13 @@ public class BaseSocketService {
                 try {
                     String value = jsonObj.getString(tag);
 
-//                    Log.d("LOG", RegionTableSocketService.class.getSimpleName()
+//                    Log.d("LOG", BaseSocketService.class.getSimpleName()
 //                            + ":onEvent:" + event + ":result:" + jsonObj.toString()
 //                            + ":type class:"+ new TypeToken<MODEL>(){}.getClass());
 
                     // typeClass == null nghĩa là không cần convert
                     if (typeClass == null) {
-//                        Log.d("LOG", RegionTableSocketService.class.getSimpleName() +
+//                        Log.d("LOG", BaseSocketService.class.getSimpleName() +
 //                                ":get data from socket:not convert");
                         callback.onFinish((MODEL) value);
                     }else{
@@ -58,6 +59,8 @@ public class BaseSocketService {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("LOG", BaseSocketService.class.getSimpleName() +
+                            ":get data from socket:count exception:"+e.getMessage());
                     callback.onFinish(null);
                 }
             }
@@ -69,7 +72,7 @@ public class BaseSocketService {
     }
 
     protected  <MODEL> void listenEvent(final String event, final GetCallback<MODEL> callback,
-                                     final Type typeClass) {
+                                        final Type typeClass) {
         events.add(event);
 
         Emitter.Listener listener = new Emitter.Listener() {
@@ -79,14 +82,14 @@ public class BaseSocketService {
                 try {
                     String value = jsonObj.toString();
 
-                    Log.d("LOG", RegionTableSocketService.class.getSimpleName()
-                            + ":onEvent:" + event + ":result:" + jsonObj.toString()
-                            + ":type class:"+ new TypeToken<MODEL>(){}.getClass());
+//                    Log.d("LOG", BaseSocketService.class.getSimpleName()
+//                            + ":onEvent:" + event + ":result:" + jsonObj.toString()
+//                            + ":type class:"+ new TypeToken<MODEL>(){}.getClass());
 
                     // typeClass == null nghĩa là không cần convert
                     if (typeClass == null) {
-                        Log.d("LOG", RegionTableSocketService.class.getSimpleName() +
-                                ":get data from socket:not convert");
+//                        Log.d("LOG", BaseSocketService.class.getSimpleName() +
+//                                ":get data from socket:not convert");
                         callback.onFinish((MODEL) value);
                     }else{
                         new ConvertSocketResponse<MODEL>(callback, typeClass,
@@ -94,6 +97,9 @@ public class BaseSocketService {
                                 .execute(value);
                     }
                 } catch (Exception e) {
+                    Log.d("LOG", BaseSocketService.class.getSimpleName() +
+                            ":get data from socket:count exception:"+e.getMessage());
+
                     e.printStackTrace();
                     callback.onFinish(null);
                 }
@@ -105,7 +111,7 @@ public class BaseSocketService {
         SocketManager.getInstance().onSocket(event, listener);
     }
 
-    public void destroy() {
+    public void removeAllEvents() {
         while (events != null && events.size() > 0) {
             SocketManager.getInstance().offSocket(events.get(0), listeners.get(0));
             events.remove(0);

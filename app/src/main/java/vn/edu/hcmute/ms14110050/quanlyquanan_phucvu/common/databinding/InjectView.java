@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.validation.TextWatcherHandler;
 
@@ -22,5 +23,10 @@ public class InjectView {
     @BindingAdapter("addErrorViewer")
     public static void addErrorViewer(TextInputLayout textInputLayout, TextWatcherHandler handler) {
         handler.setTextInputLayout(textInputLayout);
+    }
+
+    @BindingAdapter("textStyle")
+    public static void addTextStyle(TextView textView, int style) {
+        textView.setTypeface(null, style);
     }
 }

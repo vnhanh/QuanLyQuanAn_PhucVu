@@ -1,4 +1,4 @@
-package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home;
+package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -117,8 +119,9 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
 
     @Override
     protected void onDestroy() {
-        // xóa token khi thoát app hoặc quay về màn hình login
+        // xóa token và tài khoản user khi thoát app hoặc quay về màn hình login
         SSharedReference.clearToken(this);
+        SSharedReference.clearUserName(this);
         super.onDestroy();
     }
 
@@ -152,7 +155,10 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
                 Toast.makeText(HomeActivity.this, getString(R.string.user_data_is_null), Toast.LENGTH_SHORT).show();
                 return;
             }
-            getSupportActionBar().setTitle(user.getFullname());
+//            getSupportActionBar().setTitle(user.getFullname());
+
+            String username = user.getUsername();
+            SSharedReference.setUserName(HomeActivity.this, username);
 
             while (changeUserProfileLisenersQueue != null && changeUserProfileLisenersQueue.size() > 0) {
                 socketUserService.registerChangeUserProfileListener(changeUserProfileLisenersQueue.get(0));

@@ -214,14 +214,14 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
         int index = 0;
         // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
         boolean isChangeItem = false;
-        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():selectedCatID:" + selectedCatID);
+//        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():selectedCatID:" + selectedCatID);
         if (StringUtils.isEmpty(selectedCatID)) {
             if (categories != null && categories.size() > 0) {
                 isChangeItem = true;
                 selectedCatID = categories.get(0).getId();
             }
         } else {
-            Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item was existed");
+//            Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item was existed");
 
             // tìm vị trí của item đang select
             int _index = 0;
@@ -234,7 +234,7 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
             }
 
             if (_index == size) {
-                Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item just change");
+//                Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item just change");
                 isChangeItem = true;
                 selectedCatID = "";
             }

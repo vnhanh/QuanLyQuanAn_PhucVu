@@ -48,29 +48,42 @@ public class SocketManager {
         }
     }
 
-    private ArrayList<String> events = new ArrayList<>();
+//    private ArrayList<String> events = new ArrayList<>();
     private HashMap<String, ArrayList<Emitter.Listener>> eventListeners = new HashMap<>();
 
     public void onSocket(final String event, Emitter.Listener listener) {
-        if (!eventListeners.containsKey(event)) {
-            ArrayList<Emitter.Listener> listeners = new ArrayList<>();
-            listeners.add(listener);
-            eventListeners.put(event, listeners);
+        ArrayList<Emitter.Listener> listeners = null;
 
-            if (socket != null) {
-                socket.on(event, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        processOnEvent(event, args);
-                    }
-                });
-            }
-        }else{
-//            Log.d("LOG", getClass().getSimpleName() + ":onSocket:add listener for event:" + event);
-            ArrayList<Emitter.Listener> listeners = eventListeners.get(event);
-            if (!listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+        if (!eventListeners.containsKey(event)) {
+            Log.d("LOG", getClass().getSimpleName() + ":onSocket:create socket listen for event:" + event);
+
+            listeners = new ArrayList<>();
+        }
+        else{
+            Log.d("LOG", getClass().getSimpleName() + ":onSocket:add listener to socket event:" + event);
+
+            listeners = eventListeners.get(event);
+        }
+
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+
+        eventListeners.put(event, listeners);
+
+        if (listeners.size() == 1) {
+            createSocketForEvent(event);
+        }
+    }
+
+    private void createSocketForEvent(final String event) {
+        if (socket != null) {
+            socket.on(event, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    processOnEvent(event, args);
+                }
+            });
         }
     }
 
@@ -88,14 +101,15 @@ public class SocketManager {
             ArrayList<Emitter.Listener> listeners = eventListeners.get(event);
             listeners.remove(listener);
             if (listeners.size() == 0) {
-//                Log.d("LOG", SocketManager.class.getSimpleName() + ":offSocket:event:" + event);
+                Log.d("LOG", SocketManager.class.getSimpleName() + ":offSocket:event:" + event);
                 socket.off(event);
                 eventListeners.remove(event);
             }
         }
     }
 
-    public void disconnectSocket() {
+    // Các method không dùng đến
+    /*public void disconnectSocket() {
         if (socket != null) {
             if (events != null && events.size() > 0) {
                 for (String event : events) {
@@ -115,7 +129,7 @@ public class SocketManager {
 
     public void removeSocketStateListener(OnChangeSocketStateListener listener) {
         networkStateListeners.remove(listener);
-    }
+    }*/
 
     public boolean connected() {
         return socket != null && socket.connected();
