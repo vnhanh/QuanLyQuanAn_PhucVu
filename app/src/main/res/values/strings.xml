@@ -208,5 +208,6 @@
     <string name="title_status_eating">ĐANG ĂN</string>
     <string name="title_status_paying">THANH TOÁN</string>
     <string name="prepare">NẤU XONG</string>
+    <string name="wrong_type_account">Sai loại tài khoản</string>
 
 </resources>

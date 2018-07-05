@@ -58,19 +58,20 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
     }
 
     @Override
-    public void onLoginFailed() {
-        onShowMessage(R.string.message_login_failed, COLOR_ERROR);
+    public void onLoginFailed(int msgResId) {
+        onLoginFailed(getString(msgResId));
+    }
+
+    @Override
+    public void onLoginFailed(String message) {
+        onShowMessage(message, COLOR_ERROR);
         binding.edtPassword.setText("");
         binding.edtPassword.requestFocus();
     }
 
     @Override
-    public void onLoginError() {
-        onShowMessage(R.string.message_login_failed, COLOR_ERROR);
-    }
-
-    @Override
-    public void onDisconnectToServer() {
-        onShowMessage(R.string.message_disconnect_server, COLOR_ERROR);
+    public void onLoginError(int msgResId) {
+        onShowMessage(msgResId, COLOR_ERROR);
+        binding.edtUsername.requestFocus();
     }
 }

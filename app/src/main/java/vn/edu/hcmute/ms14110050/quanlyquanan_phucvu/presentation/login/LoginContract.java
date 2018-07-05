@@ -13,10 +13,10 @@ public interface LoginContract {
 
         void openHomeActivity(String username);
 
-        void onLoginFailed();
+        void onLoginFailed(int msgResId);
 
-        void onLoginError();
+        void onLoginFailed(String message);
 
-        void onDisconnectToServer();
+        void onLoginError(int msgResId);
     }
 }

@@ -2,6 +2,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login;
 
 import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.util.Log;
 
 import java.util.Map;
@@ -69,24 +70,30 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
                             Map<String,String> map = response.getUser();
                             String typeUser = map.get("type_account");
                             int _type = Integer.parseInt(typeUser);
+
                             if (_type == NATIVE_TYPE_USER) {
                                 onLoginSuccess(response);
-                            }else{
-                                onLoginFailed();
+                            }
+                            else{
+                                onLoginFailed(R.string.wrong_type_account);
                             }
                         }else{
-                            onLoginFailed();
+                            String message = getString(R.string.message_login_failed) + ". " + response.getMessage();
+                            onLoginFailed(message);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.d("LOG", getClass().getSimpleName() + ":onSubmit():get error:" + e.getMessage());
+
                         hideProgress();
+
                         if (e.getMessage().startsWith("failed to connect to")) {
-                            onDisconnectToServer();
-                        }else{
-                            onLoginError();
+                            onLoginError(R.string.message_disconnect_server);
+                        }
+                        else{
+                            onLoginError(R.string.message_login_error);
                         }
                     }
 
@@ -97,15 +104,9 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
                 });
     }
 
-    private void onDisconnectToServer() {
+    private void onLoginError(@StringRes int msgResId) {
         if (isViewAttached()) {
-            getView().onDisconnectToServer();
-        }
-    }
-
-    private void onLoginError() {
-        if (isViewAttached()) {
-            getView().onLoginError();
+            getView().onLoginError(msgResId);
         }
     }
 
@@ -122,9 +123,16 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
     }
 
     // Đăng nhập thất bại
-    private void onLoginFailed() {
+    private void onLoginFailed(int msgResId) {
         if (isViewAttached()) {
-            getView().onLoginFailed();
+            getView().onLoginFailed(msgResId);
+        }
+    }
+
+    // Đăng nhập thất bại
+    private void onLoginFailed(String message) {
+        if (isViewAttached()) {
+            getView().onLoginFailed(message);
         }
     }
 }
