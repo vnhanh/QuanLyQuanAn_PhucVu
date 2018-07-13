@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.view_food.WaiterViewFoodModel" />
+
+    </data>
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".presentation.waiter.view_food.WaiterViewFoodActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_food"
+                android:contentDescription="@string/description_image"
+                android:src="@{viewmodel.foodDrawable}"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_image_view_food"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/txt_food_name"
+                android:text="@{viewmodel.name}"
+                android:textStyle="bold"
+                style="@style/BlurTextView"
+                android:paddingBottom="@dimen/small_space"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/txt_label_food_unit_price" />
+
+            <TextView
+                android:id="@+id/txt_label_food_unit_price"
+                android:text="@string/label_unit_price"
+                android:textStyle="bold"
+                style="@style/BlurTextView"
+                android:paddingTop="@dimen/small_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btn_add_to_order" />
+
+            <TextView
+                android:id="@+id/txt_content_food_unit_price"
+                android:text="@{viewmodel.unitPrice}"
+                style="@style/BlurTextView"
+                android:paddingTop="@dimen/small_space"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/txt_label_food_unit_price"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btn_add_to_order" />
+
+            <Button
+                android:id="@+id/btn_add_to_order"
+                android:onClick="@{(view)->viewmodel.onClickOrderButton(view)}"
+                android:text="@string/order_food"
+                android:textColor="#fff"
+                android:textSize="@dimen/txtSize_xlarge"
+                android:textStyle="bold"
+                style="@style/ColoredButton.Orange"
+                android:layout_width="0dp"
+                android:padding="@dimen/xxlarge_space"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/image_food"/>
+
+            <ImageView
+                android:id="@+id/image_cart"
+                android:elevation="2dp"
+                android:contentDescription="@string/description_image"
+                android:src="@drawable/ic_white_cart_32_4"
+                android:layout_marginStart="@dimen/huge_large_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/btn_add_to_order"
+                app:layout_constraintTop_toTopOf="@id/btn_add_to_order"
+                app:layout_constraintBottom_toBottomOf="@id/btn_add_to_order"/>
+
+            <TextView
+                android:id="@+id/action_view_order"
+                android:elevation="2dp"
+                android:text="@{viewmodel.orderedCount}"
+                android:visibility="@{viewmodel.hasOrdered ? View.VISIBLE : View.GONE}"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="@dimen/txtSize_xsmall"
+                android:background="@drawable/bg_circular_orange"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="24dp"
+                app:layout_constraintStart_toStartOf="@id/image_cart"
+                app:layout_constraintBottom_toBottomOf="@id/image_cart"/>
+
+            <TextView
+                android:id="@+id/text_label_discount"
+                android:text="@string/label_discount"
+                android:textColor="#000"
+                android:textStyle="bold"
+                style="@style/NormalTextView.Padding"
+                android:layout_marginTop="@dimen/small_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_food"/>
+
+            <TextView
+                android:id="@+id/text_content_discount"
+                android:text="@{viewmodel.discount}"
+                android:textColor="#000"
+                style="@style/NormalTextView.Padding"
+                android:paddingStart="@dimen/small_space"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/text_label_discount"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/text_label_discount"
+                app:layout_constraintBottom_toBottomOf="@+id/text_label_discount"/>
+
+            <TextView
+                android:id="@+id/text_label_inventory"
+                android:text="@string/label_inventory"
+                android:textColor="#000"
+                android:textStyle="bold"
+                style="@style/NormalTextView.Padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_label_discount"/>
+
+            <TextView
+                android:id="@+id/text_content_inventory"
+                android:text="@{viewmodel.inventory}"
+                android:textColor="#000"
+                style="@style/NormalTextView.Padding"
+                android:paddingStart="@dimen/small_space"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/text_label_inventory"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/text_label_inventory"
+                app:layout_constraintBottom_toBottomOf="@+id/text_label_inventory"/>
+
+            <TextView
+                android:id="@+id/text_title_description"
+                android:text="@string/label_description"
+                android:textColor="#000"
+                android:textStyle="bold"
+                style="@style/NormalTextView.Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_label_inventory" />
+
+            <TextView
+                android:id="@+id/text_content_description"
+                android:text="@{viewmodel.description}"
+                android:textColor="#000"
+                style="@style/NormalTextView.Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_title_description" />
+
+            <ProgressBar
+                android:elevation="4dp"
+                android:visibility="@{viewmodel.isProgress ? View.VISIBLE : View.GONE}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/text_content_description"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+</layout>

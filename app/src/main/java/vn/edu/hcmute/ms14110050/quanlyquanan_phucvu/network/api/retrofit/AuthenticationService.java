@@ -46,7 +46,7 @@ public interface AuthenticationService {
     Observable<FindAccountResponse> findAccount(@Header("Authorization") String token,
                                                 @Field("username") String username, @Field("type_account") int typeAccount);
 
-    @POST("authentication/logout")
+    @PUT("authentication/logout")
     @FormUrlEncoded
     Observable<ResponseValue> logout(@Header("Authorization") String token, @Field("username") String username);
 

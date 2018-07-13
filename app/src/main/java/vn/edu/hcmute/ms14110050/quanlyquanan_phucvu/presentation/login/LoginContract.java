@@ -11,7 +11,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.Lif
 public interface LoginContract {
     interface View extends LifeCycle.View {
 
-        void openHomeActivity(String username);
+        void openHomeActivity(String username, int typeAccount);
 
         void onLoginFailed(int msgResId);
 

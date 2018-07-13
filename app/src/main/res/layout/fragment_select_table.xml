@@ -5,7 +5,7 @@
 
         <variable
             name="viewmodel"
-            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.table.SelectTableViewModel" />
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.table.SelectTableViewModel" />
 
     </data>
 
@@ -13,7 +13,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".presentation.setup_order.table.SelectTableDialogFragment"
+        tools:context=".presentation.waiter.setup_order.table.SelectTableDialogFragment"
         android:background="@drawable/bg_white_rectangle_corner"
         android:padding="@dimen/large_space"
         android:layout_width="match_parent"

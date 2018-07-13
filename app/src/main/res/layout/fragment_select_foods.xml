@@ -7,13 +7,13 @@
 
         <variable
             name="viewmodel"
-            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.food.SelectFoodViewModel" />
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.food.SelectFoodViewModel" />
 
     </data>
 
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        tools:context=".presentation.setup_order.food.SelectFoodDialogFragment"
+        tools:context=".presentation.waiter.setup_order.food.SelectFoodDialogFragment"
         android:background="@drawable/bg_white_rectangle_corner"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

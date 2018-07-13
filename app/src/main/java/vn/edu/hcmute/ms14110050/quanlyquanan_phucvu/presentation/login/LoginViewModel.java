@@ -105,7 +105,7 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
             return;
         }
         showMessage(R.string.message_login_success, COLOR_SUCCESS);
-        getView().openHomeActivity(response.getUsername());
+        getView().openHomeActivity(response.getUsername(), response.getTypeAccount());
     }
 
     // Đăng nhập thất bại

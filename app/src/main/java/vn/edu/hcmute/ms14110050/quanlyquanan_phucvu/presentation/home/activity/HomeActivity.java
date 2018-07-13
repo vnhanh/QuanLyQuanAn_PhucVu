@@ -4,57 +4,47 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.databinding.DataBindingUtil;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.NetworkChangeReceiver;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.MessageRunnable;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.ActivityUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.service.get_user.SocketUserService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivityHomeBinding;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.TypeAcc;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.account.AccountRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.ChefListOrdersFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.AccountFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.ListOrdersFragment;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.WaiterListOrdersFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login.LoginActivity;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.NODEJS.USERNAME;
 
 public class HomeActivity extends BaseActivity<ActivityHomeBinding, IHomeView, HomeViewModel>
         implements IHomeView, ChangeNetworkStateContainer {
-
+    private static final String EXTRA_TYPE_ACCOUNT = "EXTRA_TYPE_ACCOUNT";
     private Intent socketUserIntent;
 
-    public static void startActivity(Activity context, String username) {
+    public static void startActivity(Activity context, String username, int typeAccount) {
         Intent intent = new Intent(context, HomeActivity.class);
         intent.putExtra(USERNAME, username);
+        intent.putExtra(EXTRA_TYPE_ACCOUNT, typeAccount);
+
         context.startActivity(intent);
 
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -64,6 +54,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding, IHomeView, H
         if (getIntent() != null && getIntent().hasExtra(USERNAME)) {
             String username = getIntent().getStringExtra(USERNAME);
             viewModel.setUserName(username);
+            int typeAccount = getIntent().getIntExtra(EXTRA_TYPE_ACCOUNT, -1);
+            viewModel.setTypeAccount(typeAccount);
         }
     }
 
@@ -76,9 +68,16 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding, IHomeView, H
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_order:
-                    ListOrdersFragment fragment = new ListOrdersFragment();
-                    fragment.setChangeNetworkStateContainer(HomeActivity.this);
-                    ActivityUtils.replaceFragment(getSupportFragmentManager(), fragment, R.id.frame_layout);
+                    if (viewModel.getTypeAccount() == TypeAcc.WAITER) {
+                        WaiterListOrdersFragment fragment = new WaiterListOrdersFragment();
+                        fragment.setChangeNetworkStateContainer(HomeActivity.this);
+                        ActivityUtils.replaceFragment(getSupportFragmentManager(), fragment, R.id.frame_layout);
+                    }
+                    else{
+                        ChefListOrdersFragment fragment = new ChefListOrdersFragment();
+                        fragment.setChangeNetworkStateContainer(HomeActivity.this);
+                        ActivityUtils.replaceFragment(getSupportFragmentManager(), fragment, R.id.frame_layout);
+                    }
 
                     return true;
 

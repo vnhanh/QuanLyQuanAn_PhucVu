@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".presentation.login.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -34,14 +35,21 @@
             android:enabled="true"
             android:exported="true" />
 
+        <!--PHỤC VỤ-->
         <activity
-            android:name=".presentation.setup_order.SetupOrderActivity"
+            android:name=".presentation.waiter.setup_order.WaiterSetupOrderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".presentation.view_food.ViewFoodActivity"
+        <activity android:name=".presentation.waiter.view_food.WaiterViewFoodActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
+        <!--BẾP-->
+        <activity
+            android:name=".presentation.chef.setup_order.ChefSetupOrderActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
 
     </application>

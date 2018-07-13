@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.table.recycler.viewholder.ChefTableVHViewModel" />
+
+        <variable
+            name="table"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table" />
+
+    </data>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@drawable/selector_item_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/normal_space"
+        android:paddingBottom="@dimen/normal_space"
+        android:layout_marginStart="@dimen/normal_space"
+        android:layout_marginEnd="@dimen/normal_space"
+        android:layout_marginTop="@dimen/xsmall_space"
+        android:layout_marginBottom="@dimen/xsmall_space">
+
+        <TextView
+            android:id="@+id/txt_table_name"
+            android:text="@{table.id}"
+            android:textSize="@dimen/txtSize_large"
+            android:textColor="@color/colorBlack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_space"
+            android:layout_marginEnd="0dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"/>
+
+    </RelativeLayout>
+
+</layout>

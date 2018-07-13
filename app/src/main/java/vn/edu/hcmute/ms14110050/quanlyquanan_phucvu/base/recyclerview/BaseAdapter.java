@@ -7,8 +7,6 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
-
 public abstract class BaseAdapter<VH extends BaseViewHolder, DATA> extends RecyclerView.Adapter<VH>
         implements IRecyclerAdapter<DATA> {
     private WeakReference<Activity> weakActivity;

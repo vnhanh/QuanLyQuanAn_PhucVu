@@ -120,7 +120,7 @@ public class BaseSocketService {
         SocketManager.getInstance().onSocket(event, listener);
     }
 
-    public void removeAllEvents() {
+    public void stopAllEvents() {
         while (events != null && events.size() > 0) {
             SocketManager.getInstance().offSocket(events.get(0), listeners.get(0));
             events.remove(0);

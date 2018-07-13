@@ -51,8 +51,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
     }
 
     @Override
-    public void openHomeActivity(String username) {
-        HomeActivity.startActivity(this, username);
+    public void openHomeActivity(String username, int typeAccount) {
+        HomeActivity.startActivity(this, username, typeAccount);
         finish();
     }
 

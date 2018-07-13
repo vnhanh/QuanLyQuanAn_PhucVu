@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NHÂN VIÊN PHỤC VỤ</string>
+    <string name="app_name">NHÂN VIÊN</string>
     <string name="font_family_medium">sans-serif-medium</string>
     
     <!--AUTHENTICATION-->
@@ -257,5 +257,13 @@
     <string name="order_id_null">Mã hóa đơn rỗng !</string>
     <string name="order_null">Không có thông tin hóa đơn !</string>
     <string name="removing_order">Đang xóa hóa đơn &#8230;</string>
+    <string name="title_confirm_order">XÁC NHẬN HÓA ĐƠN</string>
+    <string name="message_confirm_start_cooking">Xác nhận nấu &#8230;</string>
+    <string name="message_confirm_finish_cook">Xác nhận nấu xong &#8230;></string>
+    <string name="no_table">Chưa có bàn</string>
+    <string name="action_confirm_order">XÁC NHẬN</string>
+    <string name="title_confirm_start_cooking">BẮT ĐẦU NẤU</string>
+    <string name="title_confirm_cook_finish">NẤU XONG</string>
+    <string name="loading_orders_waiting">Đang lấy danh sách order cần phục vụ &#8230;</string>
 
 </resources>

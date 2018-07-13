@@ -17,7 +17,6 @@ public class LoginResponseData extends ResponseValue {
     @Expose
     private String token;
 
-    // key : username
     @SerializedName("user")
     @Expose
     private Map<String,String> user;
@@ -32,6 +31,16 @@ public class LoginResponseData extends ResponseValue {
 
     public String getUsername() {
         return user.get("username");
+    }
+
+    public int getTypeAccount() {
+        String value = user.get("type_account");
+        try {
+            int typeAccount = Integer.parseInt(value);
+            return typeAccount;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     public Map<String, String> getUser() {

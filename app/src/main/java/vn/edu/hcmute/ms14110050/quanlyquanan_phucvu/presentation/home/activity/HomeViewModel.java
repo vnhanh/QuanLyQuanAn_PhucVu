@@ -13,6 +13,7 @@ public class HomeViewModel extends BaseNetworkViewModel<IHomeView>
     private boolean FLAG_IS_LOGINING = true;
 
     private String userName;
+    private int typeAccount;
 
     public String getUserName() {
         return userName;
@@ -20,6 +21,14 @@ public class HomeViewModel extends BaseNetworkViewModel<IHomeView>
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setTypeAccount(int typeAccount) {
+        this.typeAccount = typeAccount;
+    }
+
+    public int getTypeAccount() {
+        return typeAccount;
     }
 
     @Override
