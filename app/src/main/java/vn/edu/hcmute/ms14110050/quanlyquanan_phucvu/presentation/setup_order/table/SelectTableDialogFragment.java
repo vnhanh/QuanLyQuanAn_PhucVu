@@ -70,7 +70,7 @@ public class SelectTableDialogFragment extends BaseNetworkDialogFragment<Fragmen
         LinearLayoutManager manager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.recyclerview.setLayoutManager(manager);
-        tablesAdapter = new TableAdapter(getActivity());
+        tablesAdapter = new TableAdapter(getActivity(), false);
         binding.recyclerview.setAdapter(tablesAdapter);
     }
 

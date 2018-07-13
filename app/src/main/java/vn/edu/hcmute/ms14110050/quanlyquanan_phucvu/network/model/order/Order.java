@@ -59,10 +59,10 @@ public class Order{
     ArrayList<String> tables;
     @SerializedName("region_id")
     @Expose
-    String regionId;
-    @SerializedName("region_name")
+    ArrayList<String> regionId;
+    @SerializedName("delegacy")
     @Expose
-    String regionName;
+    ArrayList<String> delegacies;
 
     public String getId() {
         return id;
@@ -229,19 +229,25 @@ public class Order{
         this.tables = tables;
     }
 
-    public String getRegionId() {
+    public ArrayList<String> getRegionId() {
+        if (regionId == null) {
+            regionId = new ArrayList<>();
+        }
         return regionId;
     }
 
-    public void setRegionId(String regionId) {
+    public void setRegionId(ArrayList<String> regionId) {
         this.regionId = regionId;
     }
 
-    public String getRegionName() {
-        return regionName;
+    public ArrayList<String> getDelegacies() {
+        if (delegacies == null) {
+            delegacies = new ArrayList<>();
+        }
+        return delegacies;
     }
 
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
+    public void setDelegacies(ArrayList<String> delegacies) {
+        this.delegacies = delegacies;
     }
 }

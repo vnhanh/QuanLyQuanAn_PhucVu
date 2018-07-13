@@ -25,11 +25,13 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.tab
 
 public class TableAdapter extends BaseAdapter<TableVH, Table> {
     private ITableVM containerVM;
-
+    // cờ đánh dấu đang show bàn theo order hay theo khu vực
+    private boolean showOrder;
     private final int VIEW_DATA = VIEW_EMPTY + 1;
 
-    public TableAdapter(Activity activity) {
+    public TableAdapter(Activity activity, boolean showOrder) {
         super(activity);
+        this.showOrder = showOrder;
     }
     /*
     * Property
@@ -61,7 +63,8 @@ public class TableAdapter extends BaseAdapter<TableVH, Table> {
         else{
             View view = inflater.inflate(R.layout.item_recycler_empty, parent, false);
             TextView txtMessage = view.findViewById(R.id.txt_message);
-            txtMessage.setText(parent.getContext().getString(R.string.no_table));
+            int msgResId = showOrder ? R.string.msg_no_table : R.string.no_available_table;
+            txtMessage.setText(parent.getContext().getString(msgResId));
             return new TableVH(view);
         }
     }

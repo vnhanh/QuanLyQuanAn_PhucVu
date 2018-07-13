@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.socket.emitter.Emitter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.Callback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.asynctask.ConvertSocketResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
@@ -105,6 +106,14 @@ public class BaseSocketService {
                 }
             }
         };
+
+        listeners.add(listener);
+
+        SocketManager.getInstance().onSocket(event, listener);
+    }
+
+    protected  <MODEL> void listenEvent(final String event, Emitter.Listener listener) {
+        events.add(event);
 
         listeners.add(listener);
 

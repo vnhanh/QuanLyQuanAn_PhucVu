@@ -16,10 +16,9 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSh
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.animator.AlphaAnimator;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.IOnCheckOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.abstracts.IOnCheckOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.OrderCheckable;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.viewholder.ItemOrderVH;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 
 public class ItemOrderAdapter extends BaseAdapter<ItemOrderVH, OrderCheckable> {
     private String username;
@@ -28,6 +27,10 @@ public class ItemOrderAdapter extends BaseAdapter<ItemOrderVH, OrderCheckable> {
 
     private final int VIEW_ORDER = VIEW_EMPTY + 1;
     private IOnCheckOrder onCheckItemListener;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public void setOnCheckItemListener(IOnCheckOrder onCheckItemListener) {
         this.onCheckItemListener = onCheckItemListener;
@@ -44,7 +47,6 @@ public class ItemOrderAdapter extends BaseAdapter<ItemOrderVH, OrderCheckable> {
     public ItemOrderAdapter(Activity activity, @NonNull View.OnClickListener onClickItemListener) {
         super(activity);
         this.onClickItemListener = onClickItemListener;
-        username = SSharedReference.getUserName(activity.getApplicationContext());
         animator.start();
     }
 
@@ -104,21 +106,52 @@ public class ItemOrderAdapter extends BaseAdapter<ItemOrderVH, OrderCheckable> {
 
     @Override
     public void onAddItem(OrderCheckable item) {
+        // dữ liệu rỗng ==> tạo list, add hóa đơn vào list
         if (!constainData()) {
             list = new ArrayList<>();
             list.add(item);
             runNotifyDataSetChanged();
-            Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
+//            Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
         }else{
             String creater = item.getOrder().getWaiterUsername();
+
+            // hóa đơn do chính người dùng tạo ==> ưu tiên hiển thị đầu
             if (creater != null && creater.equals(username)) {
                 list.add(0, item);
                 notifyItemInserted(0);
-                Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
-            }else{
+//                Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
+            }
+            // hóa đơn do người khác tạo
+            else{
+                // hóa đơn được bàn giao cho người dùng
+                // ==> sẽ hiển thị ở dưới nhóm do người dùng tạo (mức ưu tiên hạng 2)
+                ArrayList<String> delegacies = item.getOrder().getDelegacies();
+                if (delegacies != null && delegacies.size() > 0) {
+                    int delegacyCount = delegacies.size();
+                    String delegacy = delegacies.get(delegacyCount - 1);
+
+                    // người dùng được bàn giao cho hóa đơn này
+                    if (username.equals(delegacy)) {
+                        // tìm vị trí chèn (ngay dưới nhóm hóa đơn do chính người dùng tạo)
+                        int size = list.size();
+                        for (int i = 0; i < size; i++) {
+                            Order order = list.get(i).getOrder();
+                            String waiterUserName = order.getWaiterUsername();
+
+                            // hóa đơn này không phải do người dùng tạo
+                            if (!username.equals(waiterUserName)) {
+                                list.add(i, item);
+                                notifyItemInserted(i);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // hóa đơn không được bàn giao cho người dùng
                 list.add(item);
                 notifyItemInserted(list.size() - 1);
-                Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
+//                Log.d("LOG", getClass().getSimpleName() + ":onAddItem()");
             }
         }
     }

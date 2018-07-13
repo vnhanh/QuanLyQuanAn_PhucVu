@@ -54,7 +54,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginContr
     public void openHomeActivity(String username) {
         HomeActivity.startActivity(this, username);
         finish();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     @Override

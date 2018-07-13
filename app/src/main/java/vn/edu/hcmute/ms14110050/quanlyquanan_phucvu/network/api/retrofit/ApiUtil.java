@@ -12,8 +12,8 @@ public class ApiUtil {
         return RetrofitClient.getClient(BASE_URL).create(AuthenticationService.class);
     }
 
-    public static RegionTableService getRegionTableService() {
-        return RetrofitClient.getClient(BASE_URL).create(RegionTableService.class);
+    public static TableService getRegionTableService() {
+        return RetrofitClient.getClient(BASE_URL).create(TableService.class);
     }
 
     public static FoodService getFoodService() {

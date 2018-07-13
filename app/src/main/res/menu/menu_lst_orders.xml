@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/hand_over"
+        android:icon="@drawable/ic_hand_over_24_2"
+        android:title="@string/menu_item_hand_over"
+        app:showAsAction="never"/>
+
+    <!--DANH SÁCH CÁC HÓA ĐƠN KHÔNG THỂ CHUYỂN GIAO-->
+    <item
+        android:id="@+id/lst_failed"
+        android:visible="false"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="@string/menu_item_lst_failed_handover"
+        app:showAsAction="never"/>
+
+</menu>

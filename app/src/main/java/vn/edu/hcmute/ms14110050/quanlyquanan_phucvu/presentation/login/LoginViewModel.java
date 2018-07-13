@@ -1,6 +1,5 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login;
 
-import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.util.Log;
@@ -12,9 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.OnChangeNetworkStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.ApiUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.AuthenticationService;
@@ -51,9 +48,6 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
     public void onSubmit(LoginRequest request) {
         showProgress(R.string.message_logining);
 
-        // set đúng loại tài khoản
-        request.setTypeUser(NATIVE_TYPE_USER);
-
         authService.login(request)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<LoginResponseData>() {
@@ -66,19 +60,11 @@ public class LoginViewModel extends BaseNetworkViewModel<LoginContract.View> {
                     public void onNext(LoginResponseData response) {
                         hideProgress();
 
-                        if (response.getSuccess()) {
-                            Map<String,String> map = response.getUser();
-                            String typeUser = map.get("type_account");
-                            int _type = Integer.parseInt(typeUser);
-
-                            if (_type == NATIVE_TYPE_USER) {
-                                onLoginSuccess(response);
-                            }
-                            else{
-                                onLoginFailed(R.string.wrong_type_account);
-                            }
-                        }else{
-                            String message = getString(R.string.message_login_failed) + ". " + response.getMessage();
+                        if (response.isSuccess()) {
+                            onLoginSuccess(response);
+                        }
+                        else{
+                            String message = getString(R.string.message_login_failed, response.getMessage());
                             onLoginFailed(message);
                         }
                     }

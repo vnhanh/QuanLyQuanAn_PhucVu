@@ -7,7 +7,6 @@ import android.widget.Toast;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseVHViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressView;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IViewHolder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
@@ -92,7 +91,7 @@ public class TableVHViewModel extends BaseVHViewModel<IViewHolder> {
     private void onGetAddTableResponseValue(TableResponse response) {
         hideProgress();
 
-        if (!response.getSuccess()) {
+        if (!response.isSuccess()) {
             String errorMsg = getView().getContext().getString(R.string.add_table_to_order_failed);
             showErrorMessage(errorMsg, response.getMessage());
         }
@@ -100,7 +99,7 @@ public class TableVHViewModel extends BaseVHViewModel<IViewHolder> {
 
     private void onGetRemoveTableResponseValue(ResponseValue response) {
         hideProgress();
-        if (!response.getSuccess()) {
+        if (!response.isSuccess()) {
             String errorMsg = getView().getContext().getString(R.string.remove_table_from_order_failed);
             showErrorMessage(errorMsg, response.getMessage());
         }

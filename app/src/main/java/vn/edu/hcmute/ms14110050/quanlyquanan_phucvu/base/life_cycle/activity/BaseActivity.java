@@ -5,6 +5,9 @@ import android.content.IntentFilter;
 import android.databinding.ViewDataBinding;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
@@ -19,9 +22,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.databinding.library.baseAdapters.BR;
 
-import java.lang.ref.WeakReference;
+
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.BR;
+
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.NetworkChangeReceiver;
@@ -30,6 +34,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.Ba
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressView;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 
+import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.ActivityUtils.isOnUiThread;
+
 
 public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycle.View, VM extends BaseNetworkViewModel>
         extends AppCompatActivity implements ChangeNetworkStateContainer, LifeCycle.View {
@@ -37,12 +43,14 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
     protected B binding;
     protected VM viewModel;
     protected NetworkChangeReceiver networkChangeReceiver;
+    protected Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = initViewModel();
         binding = initBinding();
+
         binding.setVariable(BR.viewmodel, viewModel);
         // khởi tạo và đăng ký NetworkChangeReceiver
         initNetworkChangeReceiver();
@@ -90,11 +98,11 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
     @Override
     @CallSuper
     protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(networkChangeReceiver);
         viewModel.onDestroy();
         viewModel = null;
         binding = null;
-        super.onDestroy();
     }
 
     @Override
@@ -127,6 +135,11 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
     }
 
     @Override
+    public void onToast(String message) {
+        runOnUiThread(new ToastRunnable(this, message));
+    }
+
+    @Override
     public void onToast(int msgIdRes) {
         runOnUiThread(new ToastRunnable(this, msgIdRes));
     }
@@ -141,13 +154,41 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
         runOnUiThread(new MessageRunnable(this, binding.getRoot(), getString(messageIdRes), colorTextIsRes));
     }
 
+//    private Handler handler = new Handler(Looper.getMainLooper()) {
+//        private AlertDialog progressDialog;
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            Context context = (Context) msg.obj;
+//            String message = msg.getData().getString("msg");
+//            int flag = msg.what;
+//            if (flag == 0) {
+//                progressDialog = MyProgressDialog.create(context, message);
+//                progressDialog.show();
+//            } else if (flag == 1) {
+//                if (progressDialog != null && progressDialog.isShowing()) {
+//                    progressDialog.dismiss();
+//                }
+//            }
+//        }
+//    };
+
     private AlertDialog progressDialog;
 
     @Override
-    public void showProgress(@StringRes int idRes) {
-        progressDialog = MyProgressDialog.create(this, idRes);
-
-        progressDialog.show();
+    public void showProgress(@StringRes final int idRes) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog = MyProgressDialog.create(BaseActivity.this, idRes);
+                progressDialog.show();
+            }
+        });
+//        Message msg = handler.obtainMessage(0, this);
+//        Bundle bundle = new Bundle();
+//        bundle.putString("msg", getString(idRes));
+//        msg.setData(bundle);
+//        msg.sendToTarget();
     }
 
     @Override
@@ -160,6 +201,9 @@ public abstract class BaseActivity<B extends ViewDataBinding, V extends LifeCycl
                 }
             }
         });
+
+//        Message msg = handler.obtainMessage(1);
+//        msg.sendToTarget();
     }
 
     /*

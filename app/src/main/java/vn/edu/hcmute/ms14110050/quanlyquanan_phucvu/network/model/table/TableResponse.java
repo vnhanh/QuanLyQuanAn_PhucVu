@@ -14,6 +14,10 @@ public class TableResponse extends ResponseValue {
     @Expose
     Table table;
 
+    public TableResponse(boolean success, String message) {
+        super(success, message);
+    }
+
     public Table getTable() {
         return table;
     }

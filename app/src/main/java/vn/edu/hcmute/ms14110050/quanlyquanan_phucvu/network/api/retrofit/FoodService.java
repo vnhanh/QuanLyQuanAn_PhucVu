@@ -36,4 +36,8 @@ public interface FoodService {
 
     @GET("foods/food/{foodID}")
     Observable<FoodResponse> getFoodByID(@Header("Authorization") String token, @Path("foodID") String foodID);
+
+    @POST("foods/removeFoodFromOrder")
+    @FormUrlEncoded
+    Observable<ResponseValue> removeFoodFromOrder(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
 }

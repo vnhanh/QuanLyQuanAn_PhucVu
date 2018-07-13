@@ -28,7 +28,7 @@ public class OrderSocketListener {
         service.onEventUpdateStatusOrder(new GetCallback<UpdateStatusOrderResponse>() {
             @Override
             public void onFinish(UpdateStatusOrderResponse data) {
-                Log.d("LOG", OrderSocketListener.class.getSimpleName() + ":onEventUpdateStatusOrder():data");
+//                Log.d("LOG", OrderSocketListener.class.getSimpleName() + ":onEventUpdateStatusOrder():data");
                 if (centerVM != null && centerVM.getOrderID() != null) {
                     String orderID = centerVM.getOrderID();
                     Order _order = data.getOrder();
@@ -38,6 +38,22 @@ public class OrderSocketListener {
                     String _orderID = _order.getId();
                     if (orderID.equals(_orderID)) {
                         centerVM.onOrderUpdatedStatus(_order);
+                    }
+                }
+            }
+        });
+
+        service.onEventUpdateOrder(new GetCallback<Order>() {
+            @Override
+            public void onFinish(Order order) {
+//                Log.d("LOG", "SetupOrder:onEventUpdateOrder():order:waiter_fullname:" + order.getWaiterFullname());
+
+                if (centerVM != null && centerVM.getOrderID() != null) {
+                    String orderID = centerVM.getOrderID();
+                    String _orderID = order.getId();
+
+                    if (orderID.equals(_orderID)) {
+                        centerVM.onOrderUpdatedStatus(order);
                     }
                 }
             }

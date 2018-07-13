@@ -28,9 +28,17 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/menu_confirm_order"
+        android:id="@+id/menu_serve_order"
         android:visible="false"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_order_32_0"
+        android:title="@string/action_confirm_paying"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_pay_order"
+        android:visible="false"
+        android:orderInCategory="110"
         android:icon="@drawable/ic_order_32_0"
         android:title="@string/action_confirm_paying"
         app:showAsAction="ifRoom"/>

@@ -3,6 +3,8 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment;
 import android.app.Dialog;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
@@ -11,25 +13,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.databinding.library.baseAdapters.BR;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.BR;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.MessageRunnable;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.ProgressRunnable;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.ToastRunnable;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IProgressView;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
 
 /**
  * Created by Vo Ngoc Hanh on 6/22/2018.
@@ -137,41 +133,39 @@ public abstract class BaseNetworkDialogFragment<B extends ViewDataBinding, V ext
     }
 
     @Override
-    public void onShowMessage(String message, @ColorRes final int colorTextIsRes){
+    public void onToast(String message) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new MessageRunnable(getContext(), binding.getRoot(), message, colorTextIsRes));
+            getActivity().runOnUiThread(new ToastRunnable(getActivity(), message));
         }
+    }
+
+
+    @Override
+    public void onShowMessage(String message, @ColorRes final int colorTextIsRes){
+//        if (getActivity() != null) {
+//            getActivity().runOnUiThread(new MessageRunnable(getContext(), binding.getRoot(), message, colorTextIsRes));
+//        }
+        onToast(message);
     }
 
     @Override
     public void onShowMessage(@StringRes final int msgResId, @ColorRes final int colorTextIsRes){
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new MessageRunnable(getContext(), binding.getRoot(), getString(msgResId), colorTextIsRes));
-        }
+        onShowMessage(getString(msgResId), colorTextIsRes);
     }
 
-    private AlertDialog progressDialog;
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private ProgressRunnable progressRunnable;
 
     @Override
     public void showProgress(@StringRes int idRes) {
-        if (progressDialog == null) {
-            progressDialog = MyProgressDialog.create(getContext(), idRes);
-        }
-        progressDialog.show();
+        progressRunnable = new ProgressRunnable(getContext(), getString(idRes));
+
+        handler.post(progressRunnable);
     }
 
     @Override
     public void hideProgress() {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                }
-            });
-        }
+        progressRunnable.hide();
     }
 
     /*

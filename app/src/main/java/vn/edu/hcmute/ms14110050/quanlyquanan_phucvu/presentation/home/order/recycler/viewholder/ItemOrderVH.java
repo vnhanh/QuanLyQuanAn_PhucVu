@@ -11,7 +11,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseViewHolder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ItemRecyclerOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.animator.AlphaAnimator;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.IOnCheckOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.abstracts.IOnCheckOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.OrderCheckable;
 
 public class ItemOrderVH extends BaseViewHolder<ItemRecyclerOrderBinding,ItemOrderVM> implements IItemOrderView, View.OnClickListener {
@@ -53,9 +53,13 @@ public class ItemOrderVH extends BaseViewHolder<ItemRecyclerOrderBinding,ItemOrd
             viewmodel.setData(item, isCreater);
             binding.getRoot().setTag(binding.getRoot().getId(), viewmodel.getOrder().getId());
 
+//            Log.d("LOG", getClass().getSimpleName() + ":onBind():isCreater:" + isCreater
+//                    + ":is checked:" + item.isCheck());
+
             if (isCreater && !item.isCheck()) {
                 animator.addView(view);
             }else{
+//                Log.d("LOG", getClass().getSimpleName() + ":onBind():khong phai chinh chu");
                 view.setAlpha(1f);
             }
         }

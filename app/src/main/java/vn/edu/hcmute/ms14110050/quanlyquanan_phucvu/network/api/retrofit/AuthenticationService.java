@@ -2,6 +2,8 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit;
 
 import io.reactivex.Observable;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -14,6 +16,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.Res
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginResponseData;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.ProfileResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.FindAccountResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 
 /**
@@ -37,5 +40,14 @@ public interface AuthenticationService {
 
     @PUT("authentication/updatePassword")
     Observable<ResponseValue> updatePassword(@Header("Authorization") String token, @Body ChangePasswordRequest request);
+
+    @POST("authentication/findAccount")
+    @FormUrlEncoded
+    Observable<FindAccountResponse> findAccount(@Header("Authorization") String token,
+                                                @Field("username") String username, @Field("type_account") int typeAccount);
+
+    @POST("authentication/logout")
+    @FormUrlEncoded
+    Observable<ResponseValue> logout(@Header("Authorization") String token, @Field("username") String username);
 
 }

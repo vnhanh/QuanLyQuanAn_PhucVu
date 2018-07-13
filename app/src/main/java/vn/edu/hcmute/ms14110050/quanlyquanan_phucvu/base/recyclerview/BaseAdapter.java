@@ -2,6 +2,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public abstract class BaseAdapter<VH extends BaseViewHolder, DATA> extends Recyc
     @Override
     public void onGetList(ArrayList<DATA> list) {
         this.list = list;
+        Log.d("LOG", getClass().getSimpleName() + ":onGetList()");
         sortList();
     }
 

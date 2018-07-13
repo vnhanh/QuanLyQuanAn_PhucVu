@@ -39,9 +39,8 @@ public abstract class BaseViewHolder<DATABINDING extends ViewDataBinding, VIEWMO
         this.binding = binding;
         viewmodel = initViewModel();
         binding.setVariable(BR.viewmodel, viewmodel);
-        if (this instanceof IViewHolder) {
-            viewmodel.attachView((IViewHolder) this);
-        }
+
+        viewmodel.attachView(this);
     }
 
     @Override
@@ -68,6 +67,18 @@ public abstract class BaseViewHolder<DATABINDING extends ViewDataBinding, VIEWMO
         }else{
             Log.d("LOG", getClass().getSimpleName() + ":onToast():context is not activity instance");
             Toast.makeText(getContext(), msgIdRes, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onToast(String message) {
+        if (getContext() instanceof Activity) {
+            Log.d("LOG", getClass().getSimpleName() + ":onToast():context is activity instance");
+            Activity activity = (Activity) getContext();
+            activity.runOnUiThread(new ToastRunnable(activity, message));
+        }else{
+            Log.d("LOG", getClass().getSimpleName() + ":onToast():context is not activity instance");
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
 

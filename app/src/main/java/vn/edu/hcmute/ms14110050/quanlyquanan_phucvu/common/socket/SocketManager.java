@@ -25,9 +25,17 @@ public class SocketManager {
         socket.on("connect", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Log.d("LOG", "SocketManger:connect event");
+//                Log.d("LOG", "SocketManger:connect event");
                 for (OnChangeSocketStateListener listener : networkStateListeners) {
                     listener.onSocketConnect();
+                }
+            }
+        });
+        socket.on("disconnect", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                for (OnChangeSocketStateListener listener : networkStateListeners) {
+                    listener.onSocketDisconnect();
                 }
             }
         });
@@ -55,12 +63,12 @@ public class SocketManager {
         ArrayList<Emitter.Listener> listeners = null;
 
         if (!eventListeners.containsKey(event)) {
-            Log.d("LOG", getClass().getSimpleName() + ":onSocket:create socket listen for event:" + event);
+//            Log.d("LOG", getClass().getSimpleName() + ":onSocket:create socket listen for event:" + event);
 
             listeners = new ArrayList<>();
         }
         else{
-            Log.d("LOG", getClass().getSimpleName() + ":onSocket:add listener to socket event:" + event);
+//            Log.d("LOG", getClass().getSimpleName() + ":onSocket:add listener to socket event:" + event);
 
             listeners = eventListeners.get(event);
         }
@@ -101,7 +109,7 @@ public class SocketManager {
             ArrayList<Emitter.Listener> listeners = eventListeners.get(event);
             listeners.remove(listener);
             if (listeners.size() == 0) {
-                Log.d("LOG", SocketManager.class.getSimpleName() + ":offSocket:event:" + event);
+//                Log.d("LOG", SocketManager.class.getSimpleName() + ":offSocket:event:" + event);
                 socket.off(event);
                 eventListeners.remove(event);
             }
@@ -120,8 +128,9 @@ public class SocketManager {
             socket.disconnect();
         }
     }
-
+*/
     public void addSocketStateListener(OnChangeSocketStateListener listener) {
+//        Log.d("LOG", "Add OnChangeSocketStateListener");
         if (!networkStateListeners.contains(listener)) {
             networkStateListeners.add(listener);
         }
@@ -129,7 +138,7 @@ public class SocketManager {
 
     public void removeSocketStateListener(OnChangeSocketStateListener listener) {
         networkStateListeners.remove(listener);
-    }*/
+    }
 
     public boolean connected() {
         return socket != null && socket.connected();

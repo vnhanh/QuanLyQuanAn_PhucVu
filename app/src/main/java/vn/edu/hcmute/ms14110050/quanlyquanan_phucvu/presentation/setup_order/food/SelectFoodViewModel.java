@@ -205,8 +205,8 @@ public class SelectFoodViewModel
         requestManager.loadCategories(token, new GetCallback<ArrayList<CategoryFood>>() {
             @Override
             public void onFinish(ArrayList<CategoryFood> categories) {
-//                Log.d("LOG", getClass().getSimpleName()
-//                        + ":loadCategoryfoods():get category food:size:"+categories.size());
+                Log.d("LOG", getClass().getSimpleName()
+                        + ":loadCategoryfoods():get category food:size:"+categories.size());
                 onGetCategories(categories);
             }
         });

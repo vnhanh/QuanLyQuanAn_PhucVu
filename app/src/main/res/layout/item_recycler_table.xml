@@ -20,10 +20,12 @@
         android:background="@drawable/selector_item_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/normal_space"
-        android:paddingBottom="@dimen/normal_space"
+        android:layout_marginStart="@dimen/normal_space"
+        android:layout_marginEnd="@dimen/normal_space"
         android:layout_marginTop="@dimen/xsmall_space"
-        android:layout_marginBottom="@dimen/xsmall_space">
+        android:layout_marginBottom="@dimen/xsmall_space"
+        android:paddingTop="@dimen/normal_space"
+        android:paddingBottom="@dimen/normal_space">
 
         <TextView
             android:id="@+id/txt_table_name"

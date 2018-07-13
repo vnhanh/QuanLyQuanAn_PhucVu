@@ -11,14 +11,19 @@ import com.squareup.picasso.Picasso;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.OnChangeNetworkStateListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.Callback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.databinding.BindableFieldTarget;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.RectangleImageTransform;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.ScaleType;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.account.ChangePasswordRequest;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.account.ResAccFlag;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.login.LoginRequest;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.account.AccountRequestManager;
@@ -28,31 +33,46 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retr
  */
 
 public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
-        implements GetCallback<User>{
+        implements GetCallback<User>, Callback<ResponseValue>{
     private AccountRequestManager requestManager;
     private User user;
     private String token;
     public final ObservableField<Drawable> profileDrawable = new ObservableField<>();
     private BindableFieldTarget profileTarget;
 
+    public AccountViewModel() {
+        createAccountRequestManager();
+    }
+
     @Override
     public void onViewAttach(@NonNull AccountContract.View viewCallback) {
         super.onViewAttach(viewCallback);
 
-        createAccountRequestManager();
-
-        profileTarget = new BindableFieldTarget(profileDrawable, getView().getContext().getResources());
+        if (profileTarget == null) {
+            profileTarget = new BindableFieldTarget(profileDrawable, getView().getContext().getResources());
+        }
     }
 
     @Override
     public void onViewDetached() {
-        requestManager = null;
         super.onViewDetached();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        requestManager = null;
     }
 
     private void createAccountRequestManager() {
         if (requestManager == null) {
             requestManager = AccountRequestManager.getInstance();
+        }
+    }
+
+    private void getToken() {
+        if (token == null) {
+            token = SSharedReference.getToken(getView().getContext());
         }
     }
 
@@ -109,7 +129,7 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
     * */
     @Override
     public void onFinish(User user) {
-        Log.d("LOG", getClass().getSimpleName() + ":on update user profile");
+//        Log.d("LOG", getClass().getSimpleName() + ":on update user profile");
         this.user = user;
         if (user == null) {
             Log.d("LOG", getClass().getSimpleName() + ":on update user profile:user is null");
@@ -170,8 +190,29 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
             Log.d("LOG", getClass().getSimpleName() + ":onClickLogoutMenuItem():view is null");
             return;
         }
-        SSharedReference.clearToken(getView().getContext());
-        getView().onLogout();
+        createAccountRequestManager();
+        getToken();
+        showProgress(R.string.msg_logout_ing);
+        requestManager.logout(token, user.getUsername(), this);
+    }
+
+    private void onGetResponseLogout(ResponseValue response) {
+        hideProgress();
+
+        boolean isSuccess = response.isSuccess();
+
+        if (isSuccess) {
+            showMessage(R.string.msg_logout_success, Constant.COLOR_SUCCESS);
+            SSharedReference.clearToken(getView().getContext());
+            getView().onLogout();
+        }else{
+            Log.d("LOG", getClass().getSimpleName()
+                    + ":logout():failed:message:" + response.getMessage()
+                    + ":error:" + response.getError());
+
+            String message = getString(R.string.msg_logout_failed, response.getMessage());
+            showMessage(message, Constant.COLOR_ERROR);
+        }
     }
 
     /*
@@ -179,14 +220,12 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
     * */
     public void onClickVerifyPassword(String password) {
         createAccountRequestManager();
-
-        if (token == null) {
-            token = SSharedReference.getToken(getView().getContext());
-        }
+        getToken();
 
         if (isViewAttached()) {
             getView().onCancelVerifyAccountDialog();
         }
+
         showProgress(R.string.message_processing);
 
         LoginRequest request = new LoginRequest();
@@ -205,7 +244,7 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
         });
     }
 
-    // Bấm vào nút HỦY trong layout XÁC THỰC TÀI KHOẢN
+    // Bấm vào nút HỦY trong hộp thoại XÁC THỰC TÀI KHOẢN
     public void onClickCancelVerifyAccount() {
         if (isViewAttached()) {
             getView().onCancelVerifyAccountDialog();
@@ -237,10 +276,7 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
     * */
     public void onClickSubmitNewPassword(String newPassword) {
         createAccountRequestManager();
-
-        if (token == null) {
-            token = SSharedReference.getToken(getView().getContext());
-        }
+        getToken();
 
         if (isViewAttached()) {
             getView().onCancelInputNewPassword();
@@ -280,6 +316,15 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
     public void onClickCancelInputNewPassword() {
         if (isViewAttached()) {
             getView().onCancelInputNewPassword();
+        }
+    }
+
+    @Override
+    public void onGet(ResponseValue response, int flag) {
+        switch (flag) {
+            case ResAccFlag.LOGOUT:
+                onGetResponseLogout(response);
+                break;
         }
     }
 

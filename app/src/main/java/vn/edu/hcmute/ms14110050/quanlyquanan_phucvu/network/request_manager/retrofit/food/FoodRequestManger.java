@@ -1,22 +1,15 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food;
 
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.WeakHashMap;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.ApiUtil;
@@ -25,10 +18,10 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.Res
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFoodsResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodsResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
 
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
@@ -58,7 +51,7 @@ public class FoodRequestManger {
 
                     @Override
                     public void onNext(CategoryFoodsResponse response) {
-                        if (response.getSuccess()) {
+                        if (response.isSuccess()) {
                             callback.onFinish(response.getCategoryfoods());
                         }else{
                             Log.d("LOG", FoodRequestManger.class.getSimpleName()
@@ -92,7 +85,7 @@ public class FoodRequestManger {
 
                     @Override
                     public void onNext(FoodsResponse response) {
-                        if (response.getSuccess()) {
+                        if (response.isSuccess()) {
                             callback.onFinish(response.getFoods());
                         }else{
                             Log.d("LOG", FoodRequestManger.class.getSimpleName()
@@ -136,6 +129,31 @@ public class FoodRequestManger {
                         FoodResponse response = new FoodResponse();
                         response.setSuccess(false);
                         response.setMessage("Lỗi xử lý");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public Disposable removeFoodFromOrder(String token, WeakHashMap<String,Object> map, final GetCallback<ResponseValue> callback){
+        return service.removeFoodFromOrder(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue response) {
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":removeFoodFromOrder():onError():" + e.getMessage());
+
+                        ResponseValue response = new ResponseValue(false, "Lỗi xử lý");
                         callback.onFinish(response);
                     }
 

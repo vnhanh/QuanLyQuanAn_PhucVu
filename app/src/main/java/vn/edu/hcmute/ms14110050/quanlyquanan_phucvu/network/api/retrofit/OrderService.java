@@ -3,6 +3,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -12,9 +13,11 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.NewIdResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.PayableOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 
 /**
@@ -33,6 +36,10 @@ public interface OrderService {
     @PUT("order/updateOrCreateDetailOrder")
     @FormUrlEncoded
     Observable<OrderResponse> updateOrCreateDetailOrder(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
+
+    @POST("order/makeOrder")
+    @FormUrlEncoded
+    Observable<UpdateStatusOrderResponse> makeOrder(@Header("Authorization") String token, @Field("id") String orderID);
 
     @POST("order/createOrder")
     @FormUrlEncoded
@@ -68,4 +75,17 @@ public interface OrderService {
 
     @GET("order/getOrdersForWaiter")
     Observable<OrdersResponse> getOrdersWaiting(@Header("Authorization") String token);
+
+    @PUT("order/suggestDelegacy")
+    @FormUrlEncoded
+    Observable<ResponseValue> suggestDelegacy(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/agreeBecomeDelegacy")
+    @FormUrlEncoded
+    Observable<ResponseValue> agreeBecomeDelegacy(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/disagreeBecomeDelegacy")
+    @FormUrlEncoded
+    Observable<ResponseValue> disagreeBecomeDelegacy(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
 }

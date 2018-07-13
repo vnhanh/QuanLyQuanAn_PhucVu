@@ -36,4 +36,6 @@
     <dimen name="height_image_view_food">360dp</dimen>
     <dimen name="width_label_item_recycler_order">110dp</dimen>
 
+    <dimen name="size_profile_img_find_account">80dp</dimen>
+
 </resources>

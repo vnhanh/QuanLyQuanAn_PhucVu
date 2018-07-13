@@ -6,7 +6,9 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant;
 
 public class SOCKET {
 
-    public static String BASE_URL = "http://192.168.1.101:8080/";
+    public static String BASE_URL = "http://192.168.103.2:8080/";
+
+    public static String SOCKET_SERVER_DISCONNECT = "disconnect";
 
     public static String SOCKET_SERVER_UPLOAD_EMPLOYEE = "server-update-employee";
 
@@ -32,8 +34,11 @@ public class SOCKET {
     public static String SOCKET_EVENT_UPDATE_ACTIVE_FOOD = "server-update-ative-food";
 
     public static String SOCKET_EVENT_UPDATE_STATUS_ORDER = "server-update-status-order";
-    public static String SOCKET_EVENT_CREATE_DETAIL_ORDER = "server-create-detail-order";
+    public static String SOCKET_EVENT_UPDATE_ORDER = "server-update-order";
     public static String SOCKET_EVENT_UPDATE_DETAIL_ORDER = "server-update-detail-order";
     public static String SOCKET_EVENT_DELETE_DETAIL_ORDER = "server-remove-detail-order";
     public static String SOCKET_EVENT_REMOVE_ORDER = "server-remove-order";
+
+    public static String SOCKET_EVENT_REQUEST_DELEGACY_WAITER = "server-request-delegacy-waiter";
+    public static String SOCKET_EVENT_RESPONSE_DELEGACY_WAITER = "server-response-delegacy-waiter";
 }

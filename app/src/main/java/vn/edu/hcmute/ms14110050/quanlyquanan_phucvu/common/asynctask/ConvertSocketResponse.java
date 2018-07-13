@@ -51,5 +51,6 @@ public class ConvertSocketResponse<MODEL> extends AsyncTask<String,Void,MODEL> {
     protected void onPostExecute(MODEL model) {
         super.onPostExecute(model);
         callback.onFinish(model);
+        callback = null;
     }
 }

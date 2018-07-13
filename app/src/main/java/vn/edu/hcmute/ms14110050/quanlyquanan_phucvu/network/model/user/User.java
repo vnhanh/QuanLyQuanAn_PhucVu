@@ -1,6 +1,5 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user;
 
-import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.annotations.Expose;
@@ -10,8 +9,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 
 /**
  * Created by Vo Ngoc Hanh on 5/15/2018.
@@ -51,7 +48,7 @@ public class User implements Cloneable{
     @SerializedName("address")
     @Expose
     String address = "";
-    @TYPE_USER
+    @TypeAcc
     @SerializedName("type_account")
     @Expose
     int typeUser;

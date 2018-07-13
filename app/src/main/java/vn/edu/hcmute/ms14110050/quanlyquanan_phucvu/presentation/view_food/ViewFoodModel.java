@@ -20,18 +20,21 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputProcessorCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.databinding.BindableFieldTarget;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.RectangleImageTransform;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.ScaleType;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderParams;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
 
@@ -62,27 +65,19 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
     * Property
     * */
 
+    private String orderID;
     private DetailOrder detailOrder;
     private Food food;
     private String token;
-    private String orderID;
     // độ rộng ảnh món
     private int imageFoodWidth = -1;
-
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
 
     public String getOrderID() {
         return orderID;
     }
 
-    public DetailOrder getDetailOrder() {
-        return detailOrder;
-    }
-
-    public void setDetailOrder(DetailOrder detailOrder) {
-        this.detailOrder = detailOrder;
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
     }
 
     public void setFood(Food food) {
@@ -91,6 +86,15 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
 
     public Food getFood() {
         return food;
+    }
+
+    public DetailOrder getDetailOrder() {
+        return detailOrder;
+    }
+
+    public void setDetailOrder(DetailOrder detailOrder) {
+        this.detailOrder = detailOrder;
+        oriCount = getOldCount();
     }
 
     public void setImageFoodWidth(int imageFoodWidth) {
@@ -119,7 +123,6 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         getFoodCallback = new GetFoodCallback(this);
         inputOrderCountCallback = new InputCallbackImpl(this);
         orderFoodCallback = new GetFoodOrderResponseCallback(this);
-        updateOrderCallback = new GetOrderCallback(this);
 
         listenFoodSocket();
 
@@ -152,15 +155,15 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         inputOrderCountCallback = null;
         getFoodCallback = null;
         orderFoodCallback = null;
-        updateOrderCallback = null;
         super.onViewDetached();
     }
 
     private void showOrderIfExist() {
-        if (detailOrder != null && detailOrder.getCount() > 0) {
+        if (detailOrder!=null && detailOrder.getCount() > 0) {
             hasOrdered.set(true);
             orderedCount.set(String.valueOf(detailOrder.getCount()));
-        }else{
+        }
+        else{
             hasOrdered.set(false);
         }
     }
@@ -216,39 +219,6 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
 
     private String orderFoodError = "";
 
-    public void onUpdateOrderResponse(OrderResponse response) {
-        hideProgress();
-        if (response.getSuccess()) {
-            Order order = response.getOrder();
-            for (DetailOrder detail : order.getDetailOrders()) {
-                if (detail.getFoodId().equals(food.getId())) {
-                    detailOrder = detail;
-                    showOrderIfExist();
-                    return;
-                }
-            }
-        }
-        else{
-            Log.d("LOG", ViewFoodModel.class.getSimpleName()
-                    + ":orderFood():failed:" + response.getMessage());
-
-            // trường hợp update food thành công nhưng update order thất bại
-            // sẽ hiển thị message
-            if (orderFoodError.equals("")) {
-                String message =
-                        currentOrderCount == 0 ? getString(R.string.remove_order_food_failed) : getString(R.string.order_food_failed);
-
-                if (!StringUtils.isEmpty(response.getMessage())) {
-                    message += " " + response.getMessage();
-                }
-
-                if (isViewAttached()) {
-                    Snackbar.make(getView().getViewUI(), message, Snackbar.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
     private void loadFood() {
         showLoadingFood();
         getToken();
@@ -257,7 +227,7 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
 
     public void onGetFoodResponse(FoodResponse response) {
         hideloadingFood();
-        if (!response.getSuccess()) {
+        if (!response.isSuccess()) {
             Log.d("LOG", ViewFoodModel.class.getSimpleName()
                     + ":orderFood():failed:" + response.getMessage());
 
@@ -281,7 +251,7 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
 
     private void showProgress() {
         if (isViewAttached()) {
-            getView().showProgress(currentOrderCount != 0 ? R.string.ordering_food : R.string.removing_order_food);
+            getView().showProgress(newCount != 0 ? R.string.ordering_food : R.string.removing_order_food);
         }
     }
 
@@ -293,19 +263,14 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
     * DataBinding
     * */
 
-    private boolean hasOrder() {
-        return detailOrder != null && detailOrder.getFoodId() != null && detailOrder.getFoodId().equals(food.getId());
-    }
-
-    private int currentOrderCount;
+    private int newCount;
 
     public void onClickOrderButton(View view) {
         // đang trong trạng thái rảnh, không thực hiện tác vụ xử lý hay load
         if (!isWaiteFood()) {
             if (isViewAttached()) {
-                int oldCount = hasOrder() ? detailOrder.getCount() : 0;
-                currentOrderCount = oldCount;
-                getView().openInputOrderCountDialog(oldCount, inputOrderCountCallback);
+                newCount = detailOrder != null ? detailOrder.getCount() : 0;
+                getView().openInputOrderCountDialog(newCount, inputOrderCountCallback);
             }
         }else{
             Snackbar.make(view, getString(R.string.updating_food), Snackbar.LENGTH_SHORT).show();
@@ -318,58 +283,61 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         String newText = "";
         int count = 0;
         boolean isChanged = false;
+        int oldCount = detailOrder != null ? detailOrder.getCount() : 0;
 
         try {
             count = input.equals("") ? 0 : Integer.parseInt(input);
 
             if (count < 0) {
                 error = getString(R.string.ordered_count_not_negative);
-                newText = "0";
+                count = 0;
                 isChanged = true;
-            }else if(count > 0){
-                int _oldCount = detailOrder != null ? detailOrder.getCount() : 0;
+            }
+            else if(count > 0){
 
-                if (count > _oldCount + food.getInventory()) {
+                if (count > oldCount + food.getInventory()) {
                     error = getString(R.string.ordered_count_not_greater_inventory);
-                    newText = String.valueOf(_oldCount + food.getInventory());
+                    count = oldCount + food.getInventory();
                     isChanged = true;
                 } else if (input.charAt(0) == '0') {
-                    newText = String.valueOf(count);
                     isChanged = true;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             error = getString(R.string.error_wrong_format_input);
-            newText = "0";
+            count = 0;
             isChanged = true;
         }
 
+        newText = String.valueOf(count);
+
         if (error.equals("")) {
-            currentOrderCount = count;
-        }else{
+            newCount = count;
+        }
+        else{
             if (til != null) {
                 til.setError(error);
             }else{
                 edt.setError(error);
             }
         }
+
         if (isChanged) {
             edt.setText(newText);
             edt.setSelection(edt.getText().toString().length());
         }
     }
 
+    private int getOldCount() {
+        return detailOrder != null ? detailOrder.getCount() : 0;
+    }
+
     @Override
     public void onSubmitInputProcessor() {
-        if (currentOrderCount == 0 && detailOrder == null) {
-            if (isViewAttached()) {
-                Toast.makeText(getContext(), getString(R.string.cannot_create_detail_order_for_zero_count), Toast.LENGTH_SHORT).show();
-            }
-            return;
-        }
+        int oldCount = getOldCount();
 
-        if (detailOrder != null && currentOrderCount == detailOrder.getCount()) {
+        if (newCount == oldCount) {
             if (isViewAttached()) {
                 Toast.makeText(getContext(), getString(R.string.count_ordered_not_change), Toast.LENGTH_SHORT).show();
             }
@@ -378,16 +346,17 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         if (orderRM == null) {
             createOrderRequestManager();
         }
+
         showProgress();
 
+        createOrderRequestManager();
         getToken();
-        int oldCount = hasOrder() ? detailOrder.getCount() : 0;
 
         WeakHashMap<String, Object> fields = new WeakHashMap<>();
-        fields.put("orderID", getOrderID());
+        fields.put("orderID", orderID);
         fields.put("foodID", food.getId());
         fields.put("oldCount", oldCount);
-        fields.put("newCount", currentOrderCount);
+        fields.put("newCount", newCount);
         fields.put("inventory", food.getInventory());
 
         // reset giá trị lỗi hiển thị khi order thất bại
@@ -395,7 +364,7 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         orderRM.orderFood(token, fields, new GetCallback<FoodResponse>() {
             @Override
             public void onFinish(FoodResponse response) {
-                if (!response.getSuccess()) {
+                if (!response.isSuccess()) {
                     Log.d("LOG", ViewFoodModel.class.getSimpleName()
                             + ":orderFoodForOrder():failed:" + response.getMessage());
                 }else{
@@ -406,14 +375,21 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         }, new GetCallback<OrderResponse>() {
             @Override
             public void onFinish(OrderResponse orderResponse) {
-                if (!orderResponse.getSuccess()) {
+                Log.d("LOG", ViewFoodModel.class.getSimpleName()
+                        + ":order food:isSuccess():" + orderResponse.isSuccess()
+                        + ":message:" + orderResponse.getMessage());
+
+                if (!orderResponse.isSuccess()) {
                     hideProgress();
-                    String message = getString(currentOrderCount == 0 ? R.string.remove_order_food_failed : R.string.order_food_failed);
+                    String message = getString(newCount == 0 ? R.string.remove_order_food_failed : R.string.order_food_failed);
+
                     if(!StringUtils.isEmpty(orderResponse.getMessage())){
                         message += ". " + orderResponse.getMessage();
                     }
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                }else{
+
+                    showMessage(message, Constant.COLOR_ERROR);
+                }
+                else{
                     Order order = orderResponse.getOrder();
                     ArrayList<DetailOrder> details = order.getDetailOrders();
                     int size = details.size();
@@ -435,13 +411,13 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
     }
 
     public void onOrderFoodResponse(FoodOrderResponse response) {
-        if (!response.getSuccess()) {
+        if (!response.isSuccess()) {
             Log.d("LOG", ViewFoodModel.class.getSimpleName()
                     + ":orderFood():onOrderFoodResposne():failed:" + response.getMessage());
 
             if (isViewAttached()) {
                 orderFoodError =
-                        currentOrderCount == 0 ? getString(R.string.remove_order_food_failed) : getString(R.string.order_food_failed);
+                        newCount == 0 ? getString(R.string.remove_order_food_failed) : getString(R.string.order_food_failed);
 
                 if (!StringUtils.isEmpty(response.getMessage())) {
                     orderFoodError += response.getMessage();
@@ -455,6 +431,54 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
         }
     }
 
+    private int oriCount;
+
+    // Khi người dùng bấm nút BACK trên thanh toolbar
+    public void onClickBackButton() {
+        Log.d("LOG", getClass().getSimpleName() + ":onClickBackButton()");
+
+        // đã thay đổi số lượng đặt
+        if (detailOrder != null && oriCount != detailOrder.getCount()) {
+            if (isViewAttached()) {
+                getView().openConfirmDialog(R.string.msg_confirm_exit_after_change_order_count, new GetCallback<Void>() {
+                    @Override
+                    public void onFinish(Void aVoid) {
+                        onRequestRestoreOrderedCount();
+                    }
+                });
+            }
+        } else {
+            if (isViewAttached()) {
+                getView().onBackPrevActivity();
+            }
+        }
+    }
+
+    private void onRequestRestoreOrderedCount() {
+        showProgress(R.string.message_removing_ordered_food);
+
+        createFoodRequestManager();
+        getToken();
+
+        WeakHashMap<String, Object> fields = new WeakHashMap<>();
+        fields.put("orderID", orderID);
+        fields.put("foodID", food.getId());
+        fields.put("count", detailOrder.getCount());
+
+        foodRM.removeFoodFromOrder(token, fields, new GetCallback<ResponseValue>() {
+            @Override
+            public void onFinish(ResponseValue response) {
+                hideProgress();
+
+                if (response.isSuccess()) {
+                    getView().onBackPrevActivity();
+                }else{
+                    showMessage(R.string.msg_restore_ordered_food_failed, Constant.COLOR_ERROR);
+                }
+            }
+        });
+    }
+
     public void getToken() {
         if (token == null) {
             token = SSharedReference.getToken(getContext());
@@ -465,15 +489,9 @@ public class ViewFoodModel extends BaseNetworkViewModel<IViewFood> implements In
     * End DataBinding
     * */
 
-    private View getViewUI() {
-        return isViewAttached() ? getView().getViewUI() : null;
-    }
-
     private InputCallbackImpl inputOrderCountCallback;
 
     private GetFoodOrderResponseCallback orderFoodCallback;
 
     private GetFoodCallback getFoodCallback;
-
-    private GetOrderCallback updateOrderCallback;
 }

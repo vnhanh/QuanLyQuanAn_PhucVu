@@ -26,7 +26,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */
 
-public interface RegionTableService {
+public interface TableService {
 
     @GET("region/allRegions")
     Observable<RegionsResponse> loadRegions(@Header("Authorization") String token);
@@ -36,11 +36,11 @@ public interface RegionTableService {
 
     @POST("table/addTableToOrder")
     @FormUrlEncoded
-    Observable<TableResponse> addTableToOrder(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
+    Observable<TableResponse> orderTable(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
 
     @POST("table/removeTableFromOrder")
     @FormUrlEncoded
-    Observable<TableResponse> removeOrderIDFromTable(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
+    Observable<TableResponse> removeTableFromOrder(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
 
     @GET("table/getTables/{orderID}")
     Observable<TablesResponse> loadTablesByOrderID(@Header("Authorization") String token, @Path("orderID") String orderID);

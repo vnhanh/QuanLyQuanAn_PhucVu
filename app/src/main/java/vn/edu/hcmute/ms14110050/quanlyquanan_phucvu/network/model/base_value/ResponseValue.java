@@ -31,7 +31,7 @@ public class ResponseValue {
         this.message = message;
     }
 
-    public boolean getSuccess() {
+    public boolean isSuccess() {
         return success;
     }
 
@@ -57,5 +57,9 @@ public class ResponseValue {
             error = "";
         }
         return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }

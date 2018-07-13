@@ -34,6 +34,18 @@ public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCy
 
     }
 
+    protected void showToast(@StringRes int messageIdRes) {
+        if (isViewAttached()) {
+            getView().onToast(messageIdRes);
+        }
+    }
+
+    protected void showToast(String message) {
+        if (isViewAttached()) {
+            getView().onToast(message);
+        }
+    }
+
     protected void showMessage(@StringRes int messageIdRes, @ColorRes int colorIdRes) {
         if (isViewAttached()) {
             getView().onShowMessage(messageIdRes, colorIdRes);

@@ -56,7 +56,7 @@
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:onClick="@{()->viewmodel.onClickAddOrderButton()}"
-            app:srcCompat="@android:drawable/ic_input_add"
+            app:srcCompat="@drawable/ic_add_24_0"
             android:layout_margin="@dimen/xxlarge_space"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

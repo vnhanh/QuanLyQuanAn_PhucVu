@@ -2,24 +2,39 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order;
 
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.ActivityUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.FragmentListOrdersBinding;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.DelegacyResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.SuggestDelegacy;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.abstracts.ListOrdersContract;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.find_account.FindAccountDialog;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.ItemOrderAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.OrderMode;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.SetupOrderActivity;
@@ -31,13 +46,32 @@ import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Const
  */
 public class ListOrdersFragment
         extends BaseNetworkFragment<FragmentListOrdersBinding, ListOrdersContract.View, ListOrdersViewModel>
-        implements ListOrdersContract.View{
+        implements ListOrdersContract.View, DialogInterface.OnClickListener{
 
     private ItemOrderAdapter adapter;
 
     public ListOrdersFragment() {
 
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_lst_orders, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.hand_over) {
+            onShowFindUserDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -176,7 +210,145 @@ public class ListOrdersFragment
         SetupOrderActivity.startActivity(getActivity(), viewModel.getUser(), OrderMode.CREATE, null);
     }
 
+    private static class ShowConfirmDelegacyDialogRunnable implements Runnable{
+        private WeakReference<Activity> weakActivity;
+        private WeakReference<DialogInterface.OnClickListener> weakDialogListener;
+        private SuggestDelegacy suggest;
+
+        public ShowConfirmDelegacyDialogRunnable(Activity activity,
+                                                 DialogInterface.OnClickListener listener,
+                                                 SuggestDelegacy suggest) {
+
+            this.weakActivity = new WeakReference<>(activity);
+            this.weakDialogListener = new WeakReference<>(listener);
+            this.suggest = suggest;
+        }
+
+        @Override
+        public void run() {
+            Activity activity = weakActivity.get();
+            DialogInterface.OnClickListener listener = weakDialogListener.get();
+
+            if (activity != null && listener != null) {
+                String message = activity.getString(R.string.msg_noti_suggest_delegacy,
+                        suggest.getHandoverFullName());
+
+                AlertDialog confirmDelegacyDialog = new AlertDialog.Builder(activity)
+                        .setTitle(R.string.title_confirm_delegacy)
+                        .setMessage(message)
+                        .setPositiveButton(R.string.action_yes, listener)
+                        .setNegativeButton(R.string.action_no, listener).create();
+
+                confirmDelegacyDialog.show();
+            }
+        }
+    }
+
+    @Override
+    public void onShowConfirmSuggestDelegacy(SuggestDelegacy suggest) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new ShowConfirmDelegacyDialogRunnable(getActivity(),this,suggest));
+        }
+    }
+
+    // Khi người dùng bấm các nút trên hộp thoại XÁC NHẬN ĐỀ NGHỊ BÀN GIAO
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                if (viewModel != null) {
+                    viewModel.onAcceptHandOver();
+                }
+                dialog.dismiss();
+                break;
+
+            case DialogInterface.BUTTON_NEGATIVE:
+                if (viewModel != null) {
+                    viewModel.onDisagreeHandOver();
+                }
+                dialog.dismiss();
+                break;
+        }
+    }
+
+    private static class ShowResponseDelegacyDialogRunnable implements Runnable{
+        private WeakReference<Activity> weakActivity;
+        private DelegacyResponse response;
+
+        public ShowResponseDelegacyDialogRunnable(Activity activity, DelegacyResponse response) {
+
+            this.weakActivity = new WeakReference<>(activity);
+            this.response = response;
+        }
+
+        @Override
+        public void run() {
+            Activity activity = weakActivity.get();
+
+            if (activity != null) {
+                String message = "";
+
+                if (response.isOk()) {
+                    String fails = response.getFails();
+
+                    if (StringUtils.isEmpty(fails)) {
+                        message = activity.getString(R.string.msg_noti_response_delegacy_accept, response.getDelegacyFullName());
+                    }
+                    else{
+                        message = activity.getString(
+                                R.string.msg_noti_response_delegacy_accept_failed,
+                                response.getDelegacyFullName(),
+                                fails
+                        );
+                    }
+                }
+                else{
+                    message = activity.getString(
+                            R.string.msg_noti_response_delegacy_refuse,
+                            response.getDelegacyFullName(),
+                            response.getMessage()
+                    );
+                }
+
+                AlertDialog confirmDelegacyDialog = new AlertDialog.Builder(activity)
+                        .setTitle(R.string.title_response_delegacy)
+                        .setMessage(message)
+                        .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).create();
+
+                confirmDelegacyDialog.show();
+            }
+        }
+    }
+
+    // Hiển thị hộp thoại thông báo phản hồi bàn giao
+    @Override
+    public void onShowNotiResponseDelegacy(DelegacyResponse response) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new ShowResponseDelegacyDialogRunnable(getActivity(), response));
+        }
+    }
+
     /*
     * END ListOrdersContract.View
     * */
+
+    // Hiển thị hộp thoại nhập username, tìm tài khoản nhân viên
+    private void onShowFindUserDialog() {
+        ActivityUtils.removePrevFragment(getFragmentManager(), Constant.TAG_DIALOG);
+
+        if (getFragmentManager() != null) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            FindAccountDialog dialog = FindAccountDialog.newInstance(viewModel.getUser().getUsername());
+            dialog.setCallback(viewModel.getOnSubmitDelegacyUserNameCallback());
+            dialog.show(transaction, Constant.TAG_DIALOG);
+        }
+    }
 }

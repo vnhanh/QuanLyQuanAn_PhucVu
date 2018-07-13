@@ -19,9 +19,6 @@ public class Region implements Cloneable{
     @SerializedName("description")
     @Expose
     String description;
-    @SerializedName("actived")
-    @Expose
-    boolean actived;
 
     public String getId() {
         return id;
@@ -45,14 +42,6 @@ public class Region implements Cloneable{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isActived() {
-        return actived;
-    }
-
-    public void setActived(boolean actived) {
-        this.actived = actived;
     }
 
     @Override

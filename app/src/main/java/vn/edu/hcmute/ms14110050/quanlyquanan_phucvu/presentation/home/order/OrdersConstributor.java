@@ -2,7 +2,6 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +12,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.abstracts.IOnCheckOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.recycler.ItemOrderAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
 
@@ -33,6 +33,14 @@ public class OrdersConstributor implements TabLayout.OnTabSelectedListener, IOnC
     public void setUsername(String username) {
         this.username = username;
         FLAG_LOADED_USER = true;
+
+        if (orderAdapter != null) {
+            if (orderAdapter instanceof ItemOrderAdapter) {
+                ItemOrderAdapter adapter = (ItemOrderAdapter) orderAdapter;
+                adapter.setUsername(username);
+            }
+        }
+
         onCheckShowData();
     }
 
@@ -41,6 +49,10 @@ public class OrdersConstributor implements TabLayout.OnTabSelectedListener, IOnC
         if (orderAdapter instanceof ItemOrderAdapter) {
             ItemOrderAdapter adapter = (ItemOrderAdapter) orderAdapter;
             adapter.setOnCheckItemListener(this);
+
+            if (FLAG_LOADED_USER) {
+                adapter.setUsername(username);
+            }
         }
     }
 

@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,6 +28,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivitySetupOrderBinding;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISetupOrder;
@@ -94,8 +95,12 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
 
             }else{
                 switch (item.getItemId()) {
-                    case R.id.menu_confirm_order:
-                        viewModel.onClickConfirmMenu();
+                    case R.id.menu_serve_order:
+                        viewModel.onClickMenuServeOrder();
+                        return true;
+
+                    case R.id.menu_pay_order:
+                        viewModel.onClickMenuPayOrder();
                         return true;
 
                     case android.R.id.home:
@@ -178,7 +183,7 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         binding.recyclerviewTables.setLayoutManager(manager);
-        tablesAdapter = new TableAdapter(this);
+        tablesAdapter = new TableAdapter(this, true);
         binding.recyclerviewTables.setAdapter(tablesAdapter);
         tablesAdapter.setContainerVM(viewModel);
         viewModel.setTableDataListener(tablesAdapter);
@@ -197,6 +202,7 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PROCESS_MODE)) {
             int processMode = getIntent().getIntExtra(EXTRA_PROCESS_MODE, -1);
             viewModel.setProcessMode(processMode);
+
             if (getIntent().hasExtra(EXTRA_USER)) {
                 String waiterJson = getIntent().getStringExtra(EXTRA_USER);
                 Gson gson = new Gson();
@@ -375,14 +381,16 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
         MenuItem menuCreateOrder = menu.findItem(R.id.menu_create_order);
         MenuItem menuSelectTable = menu.findItem(R.id.menu_select_table);
         MenuItem menuSelectFood = menu.findItem(R.id.menu_select_food);
-        MenuItem menuConfirmOrder = menu.findItem(R.id.menu_confirm_order);
+        MenuItem menuServeOrder = menu.findItem(R.id.menu_serve_order);
+        MenuItem menuPay = menu.findItem(R.id.menu_pay_order);
 
-        // được phép shown menu
+        // không được phép shown menu
         if (!availableShow) {
             menuCreateOrder.setVisible(false);
             menuSelectTable.setVisible(false);
             menuSelectFood.setVisible(false);
-            menuConfirmOrder.setVisible(false);
+            menuServeOrder.setVisible(false);
+            menuPay.setVisible(false);
         }
         else{
             // đang tạo order
@@ -390,31 +398,42 @@ public class SetupOrderActivity extends BaseActivity<ActivitySetupOrderBinding, 
                 menuCreateOrder.setVisible(true);
                 menuSelectTable.setVisible(true);
                 menuSelectFood.setVisible(true);
-                menuConfirmOrder.setVisible(false);
+                menuServeOrder.setVisible(false);
+                menuPay.setVisible(false);
             }
             else{
                 menuCreateOrder.setVisible(false);
                 menuSelectTable.setVisible(false);
                 menuSelectFood.setVisible(false);
-                menuConfirmOrder.setVisible(true);
+                menuServeOrder.setVisible(true);
 
                 switch (statusFlag) {
                     case OrderFlag.PENDING:
                         // order đã được tạo, chờ bếp xác nhận
                         // có thể hủy
-                        menuConfirmOrder.setTitle(R.string.title_remove_order);
+                        menuServeOrder.setTitle(R.string.title_remove_order);
+                        menuPay.setVisible(false);
+                        return true;
+
+                    case OrderFlag.PREPARE:
+                        // bếp nấu xong, chuẩn bị dọn ra
+                        menuServeOrder.setTitle(R.string.title_prepare);
+                        menuPay.setVisible(true);
                         return true;
 
                     case OrderFlag.PAYING:
 
                     case OrderFlag.COMPLETE:
-                        menuConfirmOrder.setVisible(false);
+                        menuServeOrder.setVisible(false);
+                        menuPay.setVisible(false);
                         return true;
 
+                        // EATING
                     default:
                         // order đã được bếp xác nhận
                         // có thể thanh toán
-                        menuConfirmOrder.setTitle(R.string.title_confirm_paying);
+                        menuServeOrder.setVisible(false);
+                        menuPay.setVisible(true);
                         return true;
                 }
             }

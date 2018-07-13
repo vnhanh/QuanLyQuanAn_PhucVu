@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "vn.edu.hcmute.ms14110050.quanlyquanan_phucvu"
         minSdkVersion 19
@@ -19,6 +20,10 @@ android {
     }
     dataBinding {
         enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

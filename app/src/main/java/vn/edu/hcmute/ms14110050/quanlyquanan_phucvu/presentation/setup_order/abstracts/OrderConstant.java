@@ -10,5 +10,6 @@ public class OrderConstant {
     public static final String EXTRA_USER = "EXTRA_USER";
 
     public static final String METHOD_REMOVE_ORDER = "TAG_METHOD_REMOVE_ORDER";
+    public static final String METHOD_PREPARE_ORDER = "METHOD_PREPARE_ORDER";
     public static final String METHOD_PAY_ORDER = "TAG_METHOD_UPDATE_ORDER";
 }

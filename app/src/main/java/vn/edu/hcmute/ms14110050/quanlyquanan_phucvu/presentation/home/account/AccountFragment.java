@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.FragmentAccountBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity;
@@ -190,4 +193,5 @@ public class AccountFragment
         getActivity().finish();
         getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
 }

@@ -15,6 +15,13 @@ public class FoodResponse extends ResponseValue {
     @Expose
     private Food food;
 
+    public FoodResponse() {
+    }
+
+    public FoodResponse(boolean success, String message) {
+        super(success, message);
+    }
+
     public Food getFood() {
         return food;
     }

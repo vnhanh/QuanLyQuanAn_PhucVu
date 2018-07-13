@@ -12,6 +12,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IViewHolde
 public interface IProgressView {
     void onToast(@StringRes int msgIdRes);
 
+    void onToast(String message);
+
     void onShowMessage(String message, @ColorRes int colorTextIsRes);
 
     void onShowMessage(@StringRes int messageIdRes, @ColorRes int colorTextIsRes);

@@ -19,20 +19,23 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.ApiUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.FoodService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.OrderService;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.RegionTableService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.retrofit.TableService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.NewIdResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.FullOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.PayableOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TablesResponse;
 
@@ -43,7 +46,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TablesRe
 public class OrderRequestManager {
     private OrderService service;
     private FoodService foodService;
-    private RegionTableService tableService;
+    private TableService tableService;
 
     public OrderRequestManager() {
         createService();
@@ -105,7 +108,7 @@ public class OrderRequestManager {
                 }).doOnNext(new Consumer<FoodResponse>() {
                     @Override
                     public void accept(FoodResponse response) throws Exception {
-                        if (response.getSuccess()) {
+                        if (response.isSuccess()) {
                             Food food = response.getFood();
                             fields.put("foodName", food.getName());
                             fields.put("priceUnit", food.getUnitPrice());
@@ -130,6 +133,8 @@ public class OrderRequestManager {
                 .doOnError(new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":updateFoodForOrder() failed:" + throwable.getMessage());
                         FoodResponse response = new FoodResponse();
                         response.setSuccess(false);
                         foodCallback.onFinish(response);
@@ -143,7 +148,7 @@ public class OrderRequestManager {
                 }).doOnNext(new Consumer<FoodResponse>() {
                     @Override
                     public void accept(FoodResponse response) throws Exception {
-                        if (response.getSuccess()) {
+                        if (response.isSuccess()) {
                             Food food = response.getFood();
                             fields.put("foodName", food.getName());
                             fields.put("priceUnit", food.getUnitPrice());
@@ -154,7 +159,7 @@ public class OrderRequestManager {
                 }).flatMap(new Function<FoodResponse, ObservableSource<OrderResponse>>() {
                     @Override
                     public ObservableSource<OrderResponse> apply(FoodResponse response) throws Exception {
-                        if (response.getSuccess()) {
+                        if (response.isSuccess()) {
                             return service.updateOrCreateDetailOrder(token, fields)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread());
@@ -176,6 +181,31 @@ public class OrderRequestManager {
                                 + ":updateFoodForDetailOrder():onError():" + e.getMessage());
                         OrderResponse response = new OrderResponse(false, "Lỗi xử lý");
                         orderCallback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public Disposable makeOrder(String token, String orderID, final GetCallback<UpdateStatusOrderResponse> callback){
+
+        return service.makeOrder(token, orderID)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<UpdateStatusOrderResponse>() {
+                    @Override
+                    public void onNext(UpdateStatusOrderResponse response) {
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":makeOrder():onError():" + e.getMessage());
+                        UpdateStatusOrderResponse response = new UpdateStatusOrderResponse(false, "Lỗi xử lý");
+                        callback.onFinish(response);
                     }
 
                     @Override
@@ -214,15 +244,18 @@ public class OrderRequestManager {
                 });
     }
 
-    public void orderTable(final String token, final WeakHashMap<String, Object> fields, final GetCallback<TableResponse> callback) {
+    public Disposable orderTable(String token, String orderID, final String tableID,
+                           final GetCallback<TableResponse> callback) {
 
-        service.orderTable(token, fields)
+        WeakHashMap<String, Object> map = new WeakHashMap<>();
+        map.put("orderID", orderID);
+        map.put("tableID", tableID);
+
+        return service.orderTable(token, map)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<TableResponse>() {
+                .subscribeWith(new DisposableObserver<TableResponse>() {
                     @Override
                     public void onNext(TableResponse tableResponse) {
-                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                + ":updateTableForOrder():onNext()");
                         callback.onFinish(tableResponse);
                     }
 
@@ -230,8 +263,8 @@ public class OrderRequestManager {
                     public void onError(Throwable e) {
                         Log.d("LOG", OrderRequestManager.class.getSimpleName()
                                 + ":updateTableForOrder():onError():" + e.getMessage());
-                        TableResponse responseValue = new TableResponse();
-                        responseValue.setSuccess(false);
+
+                        TableResponse responseValue = new TableResponse(false, "Lỗi xử lý");
                         callback.onFinish(responseValue);
                     }
 
@@ -242,10 +275,10 @@ public class OrderRequestManager {
                 });
     }
 
-    public void removeTableFromOrder(String token, final WeakHashMap<String, Object> fields, final GetCallback<TableResponse> callback){
-        service.removeTableFromOrder(token, fields)
+    public Disposable removeTableFromOrder(String token, final WeakHashMap<String, Object> fields, final GetCallback<TableResponse> callback){
+        return service.removeTableFromOrder(token, fields)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<TableResponse>() {
+                .subscribeWith(new DisposableObserver<TableResponse>() {
                     @Override
                     public void onNext(TableResponse tableResponse) {
                         callback.onFinish(tableResponse);
@@ -253,7 +286,7 @@ public class OrderRequestManager {
 
                     @Override
                     public void onError(Throwable e) {
-                        TableResponse response = new TableResponse();
+                        TableResponse response = new TableResponse(false, "Lỗi xử lý");
                         response.setSuccess(false);
                         callback.onFinish(response);
                     }
@@ -271,7 +304,7 @@ public class OrderRequestManager {
                 .flatMap(new Function<OrderResponse, ObservableSource<FullOrderResponse>>() {
                     @Override
                     public ObservableSource<FullOrderResponse> apply(OrderResponse response) throws Exception {
-                        if (response.getSuccess()) {
+                        if (response.isSuccess()) {
                             final Order order = response.getOrder();
                             if (order != null) {
                                 List<Observable<FoodResponse>> foodSources = new ArrayList<>();
@@ -328,10 +361,10 @@ public class OrderRequestManager {
                     public void onNext(FullOrderResponse orderResponse) {
                         if (orderResponse.getFoods() != null) {
 //                            Log.d("LOG", OrderRequestManager.class.getSimpleName()
-//                                    + ":get order:success:" + orderResponse.getSuccess() + ":count of details:" + orderResponse.getFoods().size());
+//                                    + ":get order:success:" + orderResponse.isSuccess() + ":count of details:" + orderResponse.getFoods().size());
                         }else{
                             Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                    + ":get order:is success:" + orderResponse.getSuccess() + "no food");
+                                    + ":get order:is success:" + orderResponse.isSuccess() + "no food");
                         }
                         callback.onFinish(orderResponse);
                     }
@@ -352,10 +385,11 @@ public class OrderRequestManager {
                 });
     }
 
-    public void updateNumberCustomer(String token, WeakHashMap<String,Object> map, final GetCallback<OrderResponse> callback) {
-        service.updateNumberCustomer(token, map)
+    public Disposable updateNumberCustomer(String token, WeakHashMap<String,Object> map, final GetCallback<OrderResponse> callback) {
+
+        return service.updateNumberCustomer(token, map)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<OrderResponse>() {
+                .subscribeWith(new DisposableObserver<OrderResponse>() {
                     @Override
                     public void onNext(OrderResponse response) {
                         callback.onFinish(response);
@@ -376,10 +410,11 @@ public class OrderRequestManager {
                 });
     }
 
-    public void updateDescription(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
-        service.updateDescription(token, map)
+    public Disposable updateDescription(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
+
+        return service.updateDescription(token, map)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<ResponseValue>() {
+                .subscribeWith(new DisposableObserver<ResponseValue>() {
                     @Override
                     public void onNext(ResponseValue responseValue) {
                         callback.onFinish(responseValue);
@@ -448,14 +483,15 @@ public class OrderRequestManager {
                 });
     }
 
-    public void restoreOrder(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
-        service.removeOrder(token, map)
+    public Disposable restoreOrder(String token, WeakHashMap<String, Object> map, final GetCallback<ResponseValue> callback) {
+
+        return service.removeOrder(token, map)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<ResponseValue>() {
+                .subscribeWith(new DisposableObserver<ResponseValue>() {
                     @Override
                     public void onNext(ResponseValue responseValue) {
                         Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                + ":restoreOrder():finish:success:" + responseValue.getSuccess()
+                                + ":restoreOrder():finish:success:" + responseValue.isSuccess()
                                 + ":message:" + responseValue.getMessage());
                         callback.onFinish(responseValue);
                     }
@@ -473,6 +509,7 @@ public class OrderRequestManager {
 
                     }
                 });
+
     }
 
     // Get tất cả order có thể phục vụ
@@ -483,9 +520,9 @@ public class OrderRequestManager {
                 .subscribe(new DisposableObserver<OrdersResponse>() {
                     @Override
                     public void onNext(OrdersResponse response) {
-                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
-                                + ":getOrdersForWaiter():finish:success:" + response.getSuccess()
-                                + ":message:" + response.getMessage());
+//                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+//                                + ":getOrdersForWaiter():finish:success:" + response.isSuccess()
+//                                + ":message:" + response.getMessage());
                         callback.onFinish(response);
                     }
 
@@ -504,5 +541,83 @@ public class OrderRequestManager {
                     }
                 });
 
+    }
+
+    public void suggestDelegacy(String token, WeakHashMap<String, Object> map,
+                                final GetCallback<ResponseValue> callback) {
+        service.suggestDelegacy(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue responseValue) {
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":restoreOrder():error:" + e.getMessage());
+
+                        ResponseValue response = new ResponseValue(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void agreeBecomeDelegacy(String token, WeakHashMap<String, Object> map,
+                                final GetCallback<ResponseValue> callback) {
+        service.agreeBecomeDelegacy(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue responseValue) {
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":agreeBecomeDelegacy():error:" + e.getMessage());
+
+                        ResponseValue response = new ResponseValue(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void disagreeBecomeDelegacy(String token, WeakHashMap<String, Object> map,
+                                final GetCallback<ResponseValue> callback) {
+        service.disagreeBecomeDelegacy(token, map)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<ResponseValue>() {
+                    @Override
+                    public void onNext(ResponseValue responseValue) {
+                        callback.onFinish(responseValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG", OrderRequestManager.class.getSimpleName()
+                                + ":disagreeBecomeDelegacy():error:" + e.getMessage());
+
+                        ResponseValue response = new ResponseValue(false, "");
+                        callback.onFinish(response);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

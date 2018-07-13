@@ -15,35 +15,43 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
-import java.util.UUID;
 import java.util.WeakHashMap;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputProcessorCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.NewIdResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.FullOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.PayableOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateDetailOrderSocketData;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderParamsMaker;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderParams;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.RegionTableRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.TableRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.ISetupOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_order.abstracts.IRecyclerAdapter;
@@ -63,7 +71,9 @@ import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.setup_or
  * Created by Vo Ngoc Hanh on 6/22/2018.
  */
 
-public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> implements IOrderVM, InputProcessorCallback {
+public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View>
+        implements IOrderVM, OnChangeSocketStateListener, InputProcessorCallback {
+
     public final ObservableBoolean isCreateOrder = new ObservableBoolean(true);
     public final ObservableField<Integer> toolbarTitle = new ObservableField<Integer>();
 
@@ -74,19 +84,24 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     private FoodSocketListener foodListener;
 
     private OrderRequestManager orderRM;
-    private RegionTableRequestManager tableRM;
+    private TableRequestManager tableRM;
     private FoodRequestManger foodRM;
 
     private int processMode;
     private Order order;
 
+    public final ObservableField<String> id = new ObservableField<String>();
     public final ObservableField<String> creater = new ObservableField<String>();
+
     public final ObservableBoolean isInValidCreatedTime = new ObservableBoolean(false);
     public final ObservableField<String> createdDate = new ObservableField<String>();
+
     public final ObservableField<String> numberCustomer = new ObservableField<String>();
     public final ObservableField<String> orderStatus = new ObservableField<String>();
     public final ObservableField<String> totalCost = new ObservableField<String>();
+
     public final ObservableField<String> descriptionOrder = new ObservableField<String>();
+    public final ObservableBoolean isEmptyDescription = new ObservableBoolean();
 
 
     // listener lắng nghe thay đổi dữ liệu của bàn và món
@@ -98,7 +113,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     private boolean FLAG_BACK_TO_PREV_ACTIVITY = false;
     private String error = "";
 
-    private boolean FLAG_CREATING_NEW_ORDER = false;
+    private boolean FLAG_CREATING_NEW_ORDER = true;
 
     private Handler handler = new Handler();
 
@@ -112,9 +127,11 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     public void setProcessMode(int processMode) {
         this.processMode = processMode;
+
         isCreateOrder.set(processMode == OrderMode.CREATE);
         FLAG_CREATED_ORDER_ON_SERVER = processMode == OrderMode.VIEW;
-        toolbarTitle.set(isCreateOrder.get() ? R.string.action_create_order : R.string.action_view_order);
+
+        toolbarTitle.set(isCreateOrder.get() ? R.string.action_create_order : R.string.action_serve_order);
     }
 
     public String getOrderID() {
@@ -147,6 +164,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     public void setWaiter(User waiter) {
         this.waiter = waiter;
+
         if (isCreateOrder.get()) {
             createOrder();
         }
@@ -155,11 +173,9 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     private void createOrder() {
         if (waiter != null) {
             order = new Order();
-            order.setId(UUID.randomUUID().toString().replace("-"," "));
             order.setWaiterUsername(waiter.getUsername());
             order.setWaiterFullname(waiter.getFullname());
             order.setStatusFlag(OrderFlag.CREATING);
-            // TODO: làm layout nhập số lượng khách
             order.setCustomerNumber(1);
         }
     }
@@ -169,7 +185,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     * */
 
     public SetupOrderViewModel() {
-
+        SocketManager.getInstance().addSocketStateListener(this);
     }
 
     private void createOrderSocketListener() {
@@ -181,7 +197,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     private void createTableRequestManager() {
         if (tableRM == null) {
-            tableRM = new RegionTableRequestManager();
+            tableRM = new TableRequestManager();
         }
     }
 
@@ -213,13 +229,10 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     public void onViewAttach(@NonNull ISetupOrder.View viewCallback) {
         super.onViewAttach(viewCallback);
         if (FLAG_BACK_TO_PREV_ACTIVITY) {
-            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+            showToast(error);
 
             getView().onExit();
-        }
-
-        if (FLAG_CREATING_NEW_ORDER) {
-            showCreatingNewOrder();
         }
 
         createOrderSocketListener();
@@ -250,31 +263,29 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     private void createNewOrder() {
         if (!FLAG_CREATED_ORDER_ON_SERVER && isCreateOrder.get() && order != null && orderRM != null) {
-            Log.d("LOG", getClass().getSimpleName()+":createNewOrder()");
+            FLAG_CREATING_NEW_ORDER = true;
 
             showCreatingNewOrder();
             FLAG_CREATED_ORDER_ON_SERVER = true;
 
             getToken();
-            WeakHashMap<String, Object> map = new WeakHashMap<>();
-            map.put("id", order.getId());
-            map.put("waiter_username", order.getWaiterUsername());
-            map.put("waiter_fullname", order.getWaiterFullname());
-            map.put("flag_status", order.getStatusFlag());
-            map.put("flag_set_table", order.getStatusFlag());
-            map.put("number_customer", order.getCustomerNumber());
+            order.setStatusFlag(OrderFlag.CREATING);
+            WeakHashMap<String, Object> map = OrderParams.createRequestCreateOrder(order);
 
             orderRM.createOrder(token, map, new GetCallback<OrderResponse>() {
                 @Override
                 public void onFinish(OrderResponse response) {
+
                     FLAG_CREATING_NEW_ORDER = false;
                     hideProgress();
-                    if (response.getSuccess()) {
+
+                    if (response.isSuccess()){
                         FLAG_CREATED_ORDER_ON_SERVER = true;
-                        Log.d("LOG", SetupOrderViewModel.class.getSimpleName() + ":createOrder():success");
+//                        Log.d("LOG", SetupOrderViewModel.class.getSimpleName() + ":createOrder():success");
                         order = response.getOrder();
                         showInformationOrder();
-                    }else{
+                    }
+                    else{
                         FLAG_CREATED_ORDER_ON_SERVER = false;
                         if (isViewAttached()) {
                             Toast.makeText(getContext(), getString(R.string.error_cant_create_new_order) + ". " + response.getMessage(),
@@ -292,33 +303,12 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     private void showInformationOrder() {
         if (isViewAttached() && order != null) {
-            String _creater = getString(R.string.display_creater_order, waiter.getFullname());
+            showOrderId();
+
+            String _creater = getString(R.string.display_creater_order, order.getWaiterFullname());
             creater.set(_creater);
 
-            String dateTimeStr = "";
-            if (!StringUtils.isEmpty(order.getCreatedTime())) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                sdf.setTimeZone(TimeZone.getTimeZone("GMT+04"));
-
-                SimpleDateFormat format =
-                        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-                try {
-                    Date date = format.parse(order.getCreatedTime());
-
-                    dateTimeStr = sdf.format(date);
-                    isInValidCreatedTime.set(false);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    dateTimeStr = " " + getString(R.string.not_determine);
-                    isInValidCreatedTime.set(true);
-                }
-            }else{
-                dateTimeStr = " " + getString(R.string.not_determine);
-                isInValidCreatedTime.set(true);
-            }
-            String dateTime = getResources().getString(R.string.content_created_date, dateTimeStr);
-            createdDate.set(dateTime);
+            showCreatedTime();
 
             showNumberCustomer();
             showStatusOrder();
@@ -329,19 +319,65 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isViewAttached()) {
-                            boolean availableShow = order.getWaiterUsername() != null
-                                    && order.getWaiterUsername().equals(waiter.getUsername());
+                        if (isViewAttached() && order != null) {
+                            String waiterUserName = order.getWaiterUsername();
 
-                            boolean updateMenuResult = getView().onUpdateMenu(availableShow, isCreateOrder.get(), order.getStatusFlag());
+                            boolean availableShow = waiterUserName != null
+                                    && waiterUserName.equals(waiter.getUsername());
+
+                            String username = waiter.getUsername();
+
+                            // lấy thông tin người được bàn giao cuối cùng (nếu có)
+                            ArrayList<String> delegacies = order.getDelegacies();
+                            String delegacy = "";
+                            if (delegacies != null && delegacies.size() > 0) {
+                                delegacy = delegacies.get(delegacies.size() - 1);
+                            }
+
+                            availableShow = availableShow || delegacy.equals(username);
+
+                            boolean updateMenuResult =
+                                    getView().onUpdateMenu(availableShow, isCreateOrder.get(), order.getStatusFlag());
+
                             if (!updateMenuResult) {
-                                handler.postDelayed(this, 500);
+                                handler.postDelayed(this, 400);
                             }
                         }
                     }
                 }, 500);
             }
         }
+    }
+
+    private void showCreatedTime() {
+        String dateTimeStr = "";
+
+        if (!isCreateOrder.get()) {
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+
+            SimpleDateFormat inputFormat =
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+
+            try {
+                Date date = inputFormat.parse(order.getCreatedTime());
+
+                dateTimeStr = outputFormat.format(date);
+                isInValidCreatedTime.set(false);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                dateTimeStr = " " + getString(R.string.not_determine);
+                isInValidCreatedTime.set(true);
+            }
+
+            String dateTime = getResources().getString(R.string.content_created_date, dateTimeStr);
+            createdDate.set(dateTime);
+        }
+    }
+
+    private void showOrderId() {
+        String buff = StringUtils.isEmpty(order.getId()) ? getString(R.string.no_value) : order.getId();
+        String content = getString(R.string.display_order_id, buff);
+        id.set(content);
     }
 
     private void showNumberCustomer() {
@@ -357,7 +393,10 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     }
 
     private void showDescriptionOrder() {
-        descriptionOrder.set(getString(R.string.display_description_order, order.getDescription()));
+        isEmptyDescription.set(StringUtils.isEmpty(order.getDescription()));
+
+        String buff = isEmptyDescription.get() ? getString(R.string.no_value) : order.getDescription();
+        descriptionOrder.set(getString(R.string.display_description_order, buff));
     }
 
     @Override
@@ -373,6 +412,9 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        disposables.clear();
+        disposables = null;
 
         foodListener.destroy();
         foodListener = null;
@@ -391,6 +433,8 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         orderRM = null;
         tableRM = null;
         foodRM = null;
+
+        SocketManager.getInstance().removeSocketStateListener(this);
     }
 
     // load thông tin order theo orderID
@@ -405,7 +449,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         orderRM.getOrder(token, order.getId(), new GetCallback<FullOrderResponse>() {
             @Override
             public void onFinish(FullOrderResponse orderResponse) {
-                if (orderResponse.getSuccess()) {
+                if (orderResponse.isSuccess()) {
                     order = orderResponse.getOrder();
                     ArrayList<Table> tables = orderResponse.getTables();
                     tableDataListener.onGetList(tables);
@@ -422,29 +466,6 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         });
     }
 
-    // được gọi sau khi load thành công order
-    private void loadOrderedTables() {
-        if (isViewAttached()) {
-            getView().onShowLoadTablesByOrderIDProgress();
-        }
-        if (StringUtils.isEmpty(token)) {
-            token = SSharedReference.getToken(getView().getContext());
-        }
-        tableRM.loadListSelectedTable(token, order.getId(), new GetCallback<ArrayList<Table>>() {
-            @Override
-            public void onFinish(ArrayList<Table> tables) {
-                onGetTablesByOrderID(tables);
-            }
-        });
-    }
-
-    private void onGetTablesByOrderID(ArrayList<Table> tables) {
-        if (isViewAttached()) {
-            tableDataListener.onGetList(tables);
-            getView().onHideLoadTablesByOrderIDProgress();
-        }
-    }
-
     /*
     * DATA BINDING
     * */
@@ -452,16 +473,31 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     // Bấm nút onBack toolbar
     public void onClickBackButton() {
         if (isCreateOrder.get()) {
+
             if (!isMainView.get()) {
                 isMainView.set(true);
-            }else{
+            }
+            else{
                 // chưa chọn bất cứ bàn và món nào
-                if ((order.getTables() == null || order.getTables().size() == 0)
+                if(order == null){
+                    onExit();
+                }
+                // chưa chọn bất cứ item nào
+                else if ((order.getTables() == null || order.getTables().size() == 0)
                         && (order.getDetailOrders() == null || order.getDetailOrders().size() == 0)) {
+
                     if (isViewAttached()) {
-                        getView().onExit();
+                        getView().openConfirmDialog(R.string.ask_want_to_exit, new GetCallback<Void>() {
+                            @Override
+                            public void onFinish(Void aVoid) {
+                                showProgress(R.string.removing_order);
+                                removeOrderAndRestoreData();
+                            }
+                        });
                     }
                 }else{
+                    // hiển thị hộp thoại xác nhận thoát
+                    // bấm OK ==> run onRemoveOrder()
                     if (isViewAttached()) {
                         OrderGetCallBackImpl removeCallback = new OrderGetCallBackImpl(this);
                         removeCallback.setTag(METHOD_REMOVE_ORDER);
@@ -472,6 +508,16 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         }
     }
 
+    private void onExit() {
+        if(isViewAttached()){
+            getView().onExit();
+        }
+        else{
+            FLAG_BACK_TO_PREV_ACTIVITY = true;
+            error = "";
+        }
+    }
+
     // Khi người dùng bấm nút OK trong hộp thoại confirm restore data trước khi thoát
     public void onRemoveOrder() {
         showProgress(R.string.restoring_tables_and_foods_in_order);
@@ -479,19 +525,39 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         removeOrderAndRestoreData();
     }
 
-    // Bấm nút TẠO order
+    // Bấm menu TẠO HÓA ĐƠN
     public void onClickCreateOrder() {
         if (isCreateOrder.get()) {
+            if (order == null) {
+                showMessage(R.string.order_null, Constant.COLOR_ERROR);
+                return;
+            }
+
             if (order.getDetailOrders() == null || order.getDetailOrders().size() == 0
                     || order.getTables() == null || order.getTables().size() == 0) {
                 Toast.makeText(getContext(), R.string.must_select_tables_and_foods_for_order, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            WeakHashMap<String, Object> map =
-                    OrderParamsMaker.createUpdateStatus(order.getId(), OrderFlag.PENDING);
+            if(StringUtils.isEmpty(order.getId())){
+                showMessage(R.string.order_id_null, Constant.COLOR_ERROR);
+                return;
+            }
 
-            requestUpdateStatusOrder(map, false);
+            createOrderRequestManager();
+            getToken();
+
+            disposables.add(orderRM.makeOrder(token, order.getId(), new GetCallback<UpdateStatusOrderResponse>() {
+                @Override
+                public void onFinish(UpdateStatusOrderResponse response) {
+                    if (response.isSuccess()) {
+                        showMessage(R.string.message_update_status_order_success, COLOR_SUCCESS);
+                        onExit();
+                    }else{
+                        showMessage(R.string.message_update_status_order_failed, COLOR_ERROR);
+                    }
+                }
+            }));
         }
     }
 
@@ -507,7 +573,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 @Override
                 public void onFinish(PayableOrderResponse responseValue) {
                     hideProgress();
-                    if (responseValue.getSuccess()) {
+                    if (responseValue.isSuccess()) {
                         showMessage(R.string.message_update_status_order_success, COLOR_SUCCESS);
                     }else{
                         StringBuilder builder = new StringBuilder();
@@ -537,7 +603,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 @Override
                 public void onFinish(OrderResponse responseValue) {
                     hideProgress();
-                    if (responseValue.getSuccess()) {
+                    if (responseValue.isSuccess()) {
                         showMessage(R.string.message_update_status_order_success, COLOR_SUCCESS);
                         if (isCreateOrder.get()) {
                             if (isViewAttached()) {
@@ -558,10 +624,11 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
     private void removeOrderAndRestoreData() {
         WeakHashMap<String, Object> _map = new WeakHashMap<>();
         _map.put("id", order.getId());
-        orderRM.restoreOrder(token, _map, new GetCallback<ResponseValue>() {
+
+        disposables.add(orderRM.restoreOrder(token, _map, new GetCallback<ResponseValue>() {
             @Override
             public void onFinish(ResponseValue responseValue) {
-                if (responseValue.getSuccess()) {
+                if (responseValue.isSuccess()) {
                     if (isViewAttached()) {
                         Toast.makeText(getContext(), R.string.remove_order_success, Toast.LENGTH_SHORT).show();
                     }
@@ -575,8 +642,10 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                     getView().onExit();
                 }
             }
-        });
+        }));
     }
+
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     public void onClickSelectFoods() {
         if (isMainView.get()) {
@@ -646,6 +715,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         if (currentNumberCustomerInput == order.getCustomerNumber()) {
             return;
         }
+
         showProgress(R.string.message_processing);
         createOrderRequestManager();
         getToken();
@@ -654,10 +724,10 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         map.put("order_id", order.getId());
         map.put("number_customer", currentNumberCustomerInput);
 
-        orderRM.updateNumberCustomer(token, map, new GetCallback<OrderResponse>() {
+        disposables.add(orderRM.updateNumberCustomer(token, map, new GetCallback<OrderResponse>() {
             @Override
             public void onFinish(OrderResponse responseValue) {
-                if (responseValue.getSuccess()) {
+                if (responseValue.isSuccess()) {
                     onUpdateNumberCustomer(responseValue.getOrder());
                 }else{
                     if (isViewAttached()) {
@@ -666,9 +736,13 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 }
                 hideProgress();
             }
-        });
+        }));
+
+        order.setCustomerNumber(currentNumberCustomerInput);
+        showNumberCustomer();
     }
 
+    // Nhận dữ liệu trả về từ server khi update số lượng khách trong hóa đơn
     private void onUpdateNumberCustomer(Order _order) {
         this.order = _order;
         showInformationOrder();
@@ -704,15 +778,21 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                             Toast.makeText(getContext(), getString(R.string.not_verify_order), Toast.LENGTH_SHORT).show();
                             return;
                         }
+                        order.setDescription(currentDescription);
+
+                        showDescriptionOrder();
+
                         createOrderRequestManager();
                         getToken();
+
                         WeakHashMap<String, Object> map = new WeakHashMap<>();
                         map.put("order_id", order.getId());
                         map.put("description", currentDescription);
-                        orderRM.updateDescription(token, map, new GetCallback<ResponseValue>() {
+
+                        disposables.add(orderRM.updateDescription(token, map, new GetCallback<ResponseValue>() {
                             @Override
                             public void onFinish(ResponseValue response) {
-                                if (response.getSuccess()) {
+                                if (response.isSuccess()) {
                                     order.setDescription(currentDescription);
                                     onUpdateDescriptionOrder();
                                 }else{
@@ -722,7 +802,7 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                                     }
                                 }
                             }
-                        });
+                        }));
                     }
                 });
             }
@@ -755,57 +835,63 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
 
     @Override
     public void onRequestAddTableToOrder(final Table table, final GetCallback<TableResponse> callback) {
+        createTableRequestManager();
         getToken();
+
         WeakHashMap<String, Object> map = new WeakHashMap<>();
         map.put("orderID", getOrderID());
         map.put("tableID", table.getId());
 
         createOrderRequestManager();
 
-        orderRM.orderTable(token, map, new GetCallback<TableResponse>() {
+        disposables.add(orderRM.orderTable(token, getOrderID(), table.getId(), new GetCallback<TableResponse>() {
             @Override
             public void onFinish(TableResponse tableResponse) {
-                if (tableResponse.getSuccess()) {
+                if (tableResponse.isSuccess()) {
 //                    Log.d("LOG", SetupOrderViewModel.class.getSimpleName()
 //                            + ":onRequestAddTableToOrder():tableResponse:success");
 
                     // nếu thành công thì thêm bàn vào recyclerview
                     order.getTables().add(table.getId());
                     tableDataListener.onAddItem(tableResponse.getTable());
-                }else{
+                }
+                else{
                     Log.d("LOG", SetupOrderViewModel.class.getSimpleName()
                             + ":onRequestAddTableToOrder():tableResponse:failed:"+tableResponse.getMessage());
                 }
                 callback.onFinish(tableResponse);
             }
-        });
+        }));
     }
 
     @Override
     public void onRequestRemoveTableFromOrder(final String tableID, final GetCallback<TableResponse> callback) {
         createOrderRequestManager();
         getToken();
+
         WeakHashMap<String, Object> map = new WeakHashMap<>();
         map.put("tableID", tableID);
         map.put("orderID", getOrderID());
-        orderRM.removeTableFromOrder(token, map, new GetCallback<TableResponse>() {
+
+        disposables.add(orderRM.removeTableFromOrder(token, map, new GetCallback<TableResponse>() {
             @Override
             public void onFinish(TableResponse response) {
-                if (response.getSuccess()) {
+                if (response.isSuccess()) {
                     String tableID = response.getTable().getId();
                     order.getTables().remove(tableID);
                     tableDataListener.onRemoveItem(tableID);
-                }else{
+                }
+                else{
                     Log.d("LOG", SetupOrderViewModel.class.getSimpleName()
                             + ":onRequestRemoveTableFromOrder():failed:" + response.getMessage());
                 }
                 callback.onFinish(response);
             }
-        });
+        }));
     }
 
     @Override
-    public RegionTableRequestManager getRegionTableRequestManager() {
+    public TableRequestManager getRegionTableRequestManager() {
         createTableRequestManager();
         return tableRM;
     }
@@ -883,8 +969,12 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 showMessage(R.string.order_updated_cooking, COLOR_WARNING);
                 return;
 
+            case OrderFlag.PREPARE:
+                showMessage(R.string.order_updated_preapare, COLOR_WARNING);
+                return;
+
             case OrderFlag.EATING:
-                showMessage(R.string.order_updated_running, COLOR_WARNING);
+                showMessage(R.string.order_updated_eating, COLOR_WARNING);
                 return;
 
             case OrderFlag.PAYING:
@@ -892,13 +982,16 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
                 return;
 
             case OrderFlag.COMPLETE:
-                FLAG_BACK_TO_PREV_ACTIVITY = true;
-                error = getString(R.string.order_updated_completed);
 
-                showMessage(R.string.order_updated_completed, COLOR_ERROR);
+                showMessage(R.string.order_updated_completed, COLOR_WARNING);
+
                 if (isViewAttached()) {
-                    getView().onToast(R.string.order_updated_completed);
+                    getView().onToast(R.string.msg_exit_setup_order);
                     getView().onExit();
+                }
+                else{
+                    FLAG_BACK_TO_PREV_ACTIVITY = true;
+                    error = getString(R.string.msg_exit_setup_order);
                 }
                 return;
         }
@@ -1004,27 +1097,53 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         showProgress(R.string.loading_order);
     }
 
-    // Người dùng bấm vào menu item xác nhận
-    public void onClickConfirmMenu() {
-        if (order != null) {
-            int statusOrder = order.getStatusFlag();
-            if (statusOrder == OrderFlag.CREATING) {
-                return;
-            }
-            // order đã được tạo, chờ bếp xác nhận
-            // có thể hủy
-            if (statusOrder == OrderFlag.PENDING) {
-                // mở hộp thoại xác nhận hủy order với nội dung xác định
+    // Người dùng bấm vào menu item phục vụ
+    public void onClickMenuServeOrder() {
+        if (order == null) {
+            showMessage(R.string.not_found_order, Constant.COLOR_ERROR);
+            return;
+        }
 
-                OrderGetCallBackImpl removeCallback = new OrderGetCallBackImpl(this);
-                removeCallback.setTag(METHOD_REMOVE_ORDER);
-                getView().openConfirmDialog(R.string.message_remove_order_in_pending, removeCallback);
-            }
-            // order đã bắt đầu nấu hoặc đã nấu xong
-            // có thể thanh toán
-            else{
-                onClickPayOrder();
-            }
+        int statusOrder = order.getStatusFlag();
+
+        if (statusOrder == OrderFlag.CREATING) {
+            showMessage(R.string.msg_cant_serve_order, Constant.COLOR_ERROR);
+        }
+        // order đã được tạo, chờ bếp xác nhận
+        // có thể hủy
+        else if (statusOrder == OrderFlag.PENDING) {
+            // mở hộp thoại xác nhận hủy order với nội dung xác định
+
+            OrderGetCallBackImpl removeCallback = new OrderGetCallBackImpl(this);
+            removeCallback.setTag(METHOD_REMOVE_ORDER);
+            getView().openConfirmDialog(R.string.message_remove_order_in_pending, removeCallback);
+        }
+        // order đã bắt đầu nấu hoặc đã nấu xong
+        // có thể thanh toán
+        else if(statusOrder == OrderFlag.PREPARE){
+
+            getView().openConfirmDialog(R.string.message_confirm_prepare_order, new GetCallback<Void>() {
+                @Override
+                public void onFinish(Void aVoid) {
+                    onConfirmPrepareOrder();
+                }
+            });
+        }
+    }
+
+    // Người dùng bấm vào menu item thanh toán
+    public void onClickMenuPayOrder() {
+        if (order == null) {
+            showMessage(R.string.not_found_order, Constant.COLOR_ERROR);
+            return;
+        }
+
+        int status = order.getStatusFlag();
+
+        if (status >= OrderFlag.COOKING && status <= OrderFlag.EATING) {
+            onClickPayOrder();
+        }else{
+            showMessage(R.string.msg_cant_pay_order, Constant.COLOR_ERROR);
         }
     }
 
@@ -1035,10 +1154,44 @@ public class SetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> 
         getView().openConfirmDialog(R.string.message_confirm_pay_order, payCallback);
     }
 
+    // Xác nhận đã dọn đồ ăn ra cho khách
+    public void onConfirmPrepareOrder() {
+        WeakHashMap<String, Object> map =
+                OrderParams.createUpdateStatus(order.getId(), OrderFlag.EATING);
+
+        requestUpdateStatusOrder(map, false);
+    }
+
+    // Xác nhận muốn thanh toán
     public void onConfirmPayOrder() {
         WeakHashMap<String, Object> map =
-                OrderParamsMaker.createUpdateStatus(order.getId(), OrderFlag.PAYING);
+                OrderParams.createUpdateStatus(order.getId(), OrderFlag.PAYING);
 
         requestUpdateStatusOrder(map, true);
     }
+
+    /*
+    * OnChangeSocketStateListener
+    * */
+
+    @Override
+    public void onSocketConnect() {
+
+    }
+
+    @Override
+    public void onSocketDisconnect() {
+        if (isViewAttached()) {
+            showMessage(R.string.server_disconnect, Constant.COLOR_WARNING);
+            getView().onExit();
+        }
+        else{
+            FLAG_BACK_TO_PREV_ACTIVITY = false;
+            error = getString(R.string.server_disconnect);
+        }
+    }
+
+    /*
+    * End OnChangeSocketStateListener
+    * */
 }

@@ -2,14 +2,20 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.view_food;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -18,10 +24,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.custom_view.MyProgressDialog;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivityViewFoodBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
@@ -47,16 +52,46 @@ public class ViewFoodActivity extends BaseActivity<ActivityViewFoodBinding, IVie
 
     @Override
     public void onBackPressed() {
+        if (viewModel != null) {
+            viewModel.onClickBackButton();
+        }
+    }
+
+    @Override
+    public void onBackPrevActivity() {
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.menu_view_food, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        else if (item.getItemId() == R.id.menu_confirm_order) {
+            onBackPrevActivity();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         readIntent();
-        if (StringUtils.isEmpty(viewModel.getOrderID()) || viewModel.getFood() == null || viewModel.getFood().getId() == null) {
+
+        if (viewModel.getFood() == null || viewModel.getFood().getId() == null) {
             Toast.makeText(this, getString(R.string.not_start_activity), Toast.LENGTH_SHORT).show();
             onBackPressed();
             return;
@@ -67,14 +102,6 @@ public class ViewFoodActivity extends BaseActivity<ActivityViewFoodBinding, IVie
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.title_order_food_count);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -127,11 +154,6 @@ public class ViewFoodActivity extends BaseActivity<ActivityViewFoodBinding, IVie
     }
 
     @Override
-    public void onBackPrevActivity() {
-        onBackPressed();
-    }
-
-    @Override
     public void openInputOrderCountDialog(int oldCount, InputCallback callback) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
@@ -145,6 +167,27 @@ public class ViewFoodActivity extends BaseActivity<ActivityViewFoodBinding, IVie
         _fragment.setListener(callback);
 
         _fragment.show(ft, "dialog");
+    }
+
+
+    @Override
+    public void openConfirmDialog(@StringRes int messageResId, final GetCallback<Void> callback) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.title_exit)
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        callback.onFinish(null);
+                    }
+                }).setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 
     @Override

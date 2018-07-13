@@ -24,6 +24,7 @@
     <color name="colorTopDialog">#666666</color>
     <color name="colorNormalDarkRed">#bf0000</color>
     <color name="colorRed">#e90000</color>
+    <color name="colorLightRed">#fa3b3b</color>
     <color name="colorYellow">#FFB818</color>
 
 </resources>

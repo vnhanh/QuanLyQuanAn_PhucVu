@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity">
+<layout>
+    <data>
 
-    <FrameLayout
-        android:id="@+id/frame_layout"
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/navigation"/>
+        tools:context="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity">
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:background="@color/colorPrimary"
-        app:itemIconTint="@color/selector_item_navi"
-        app:itemTextColor="@color/selector_item_navi"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/navigation" />
+        <FrameLayout
+            android:id="@+id/frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/navigation"/>
 
-</RelativeLayout>
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation"
+            android:background="@color/colorPrimary"
+            app:itemIconTint="@color/selector_item_navi"
+            app:itemTextColor="@color/selector_item_navi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:menu="@menu/navigation" />
+
+    </RelativeLayout>
+
+</layout>

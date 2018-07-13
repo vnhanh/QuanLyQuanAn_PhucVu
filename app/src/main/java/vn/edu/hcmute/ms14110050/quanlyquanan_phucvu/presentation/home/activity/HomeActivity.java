@@ -6,10 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -24,26 +29,42 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.ChangeNetworkStateContainer;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.NetworkChangeReceiver;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.MessageRunnable;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.ActivityUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.service.get_user.SocketUserService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivityHomeBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.account.AccountRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.account.AccountFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.order.ListOrdersFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.login.LoginActivity;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.NODEJS.USERNAME;
 
-public class HomeActivity extends AppCompatActivity implements ChangeNetworkStateContainer {
+public class HomeActivity extends BaseActivity<ActivityHomeBinding, IHomeView, HomeViewModel>
+        implements IHomeView, ChangeNetworkStateContainer {
+
     private Intent socketUserIntent;
-    private String username;
-    protected NetworkChangeReceiver networkChangeReceiver;
 
     public static void startActivity(Activity context, String username) {
         Intent intent = new Intent(context, HomeActivity.class);
         intent.putExtra(USERNAME, username);
         context.startActivity(intent);
+
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private void readIntent() {
+        if (getIntent() != null && getIntent().hasExtra(USERNAME)) {
+            String username = getIntent().getStringExtra(USERNAME);
+            viewModel.setUserName(username);
+        }
     }
 
     FrameLayout frameLayout;
@@ -58,11 +79,14 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
                     ListOrdersFragment fragment = new ListOrdersFragment();
                     fragment.setChangeNetworkStateContainer(HomeActivity.this);
                     ActivityUtils.replaceFragment(getSupportFragmentManager(), fragment, R.id.frame_layout);
+
                     return true;
+
                 case R.id.navigation_account:
                     AccountFragment _fragment = new AccountFragment();
                     _fragment.setChangeNetworkStateContainer(HomeActivity.this);
                     ActivityUtils.replaceFragment(getSupportFragmentManager(), _fragment, R.id.frame_layout);
+
                     return true;
             }
             return false;
@@ -72,13 +96,13 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
 
-        // khởi tạo và đăng ký NetworkChangeReceiver
-        initNetworkChangeReceiver();
+        readIntent();
 
-        frameLayout = findViewById(R.id.frame_layout);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        SocketManager.getInstance().addSocketStateListener(viewModel);
+
+        frameLayout = binding.frameLayout;
+        BottomNavigationView navigation = binding.navigation;
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         int MENU_ITEM_DEFAULT = R.id.navigation_order;
@@ -87,25 +111,39 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
     }
 
     @Override
+    protected ActivityHomeBinding initBinding() {
+        return DataBindingUtil.setContentView(this, R.layout.activity_home);
+    }
+
+    @Override
+    protected HomeViewModel initViewModel() {
+        return new HomeViewModel();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-        if (StringUtils.isEmpty(username)) {
-            if (getIntent() != null && getIntent().hasExtra(USERNAME)) {
-                username = getIntent().getStringExtra(USERNAME);
-            }
-        }
+
+        String username = viewModel.getUserName();
+
         if (!StringUtils.isEmpty(username)) {
-            username = getIntent().getStringExtra(USERNAME);
             socketUserIntent = new Intent(this, SocketUserService.class);
             socketUserIntent.putExtra(USERNAME, username);
             startService(socketUserIntent);
             bindService(socketUserIntent, socketUserServiceConnection, Context.BIND_AUTO_CREATE);
-        }else{
-            Toast.makeText(this, getString(R.string.error_extra_get_username), Toast.LENGTH_SHORT).show();
+        }
+        else{
+            onToast(R.string.error_extra_get_username);
+
             LoginActivity.startActivity(this);
             finish();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
+    }
+
+    @Override
+    protected void onAttachViewModel() {
+        viewModel.onViewAttach(this);
     }
 
     @Override
@@ -122,19 +160,8 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
         // xóa token và tài khoản user khi thoát app hoặc quay về màn hình login
         SSharedReference.clearToken(this);
         SSharedReference.clearUserName(this);
+        SocketManager.getInstance().removeSocketStateListener(viewModel);
         super.onDestroy();
-    }
-
-    private void initNetworkChangeReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        networkChangeReceiver = new NetworkChangeReceiver();
-        registerReceiver(networkChangeReceiver, filter);
-    }
-
-    @Override
-    public NetworkChangeReceiver getChangeNetworkStateListener() {
-        return networkChangeReceiver;
     }
 
     private ArrayList<GetCallback<User>> changeUserProfileLisenersQueue = new ArrayList<>();
@@ -187,4 +214,16 @@ public class HomeActivity extends AppCompatActivity implements ChangeNetworkStat
             socketUserBinded = false;
         }
     };
+
+    @Override
+    public void onLogout() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoginActivity.startActivity(HomeActivity.this);
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
+    }
 }
