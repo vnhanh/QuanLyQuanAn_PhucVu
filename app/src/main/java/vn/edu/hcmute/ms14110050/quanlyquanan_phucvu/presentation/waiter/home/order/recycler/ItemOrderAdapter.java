@@ -162,9 +162,14 @@ public class ItemOrderAdapter extends BaseAdapter<ItemOrderVH, OrderCheckable> {
         }
         int index = findItem(item.getOrder().getId());
         if (index > -1) {
-            list.remove(index);
-            list.add(0, item);
-            notifyItemMoved(index,0);
+            if (list.size() == 1) {
+                list.remove(index);
+                list.add(item);
+                runNotifyDataSetChanged();
+            }else{
+                list.set(index, item);
+                notifyItemChanged(index);
+            }
             return true;
         }
         return false;

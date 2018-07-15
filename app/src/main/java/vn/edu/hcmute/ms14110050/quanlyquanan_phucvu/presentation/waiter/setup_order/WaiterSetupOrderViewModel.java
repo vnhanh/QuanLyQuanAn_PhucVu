@@ -28,7 +28,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
@@ -371,7 +371,7 @@ public class WaiterSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.
     }
 
     private void showOrderId() {
-        String buff = StringUtils.isEmpty(order.getId()) ? getString(R.string.no_value) : order.getId();
+        String buff = StrUtil.isEmpty(order.getId()) ? getString(R.string.no_value) : order.getId();
         String content = getString(R.string.display_order_id, buff);
         id.set(content);
     }
@@ -389,7 +389,7 @@ public class WaiterSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.
     }
 
     private void showDescriptionOrder() {
-        isEmptyDescription.set(StringUtils.isEmpty(order.getDescription()));
+        isEmptyDescription.set(StrUtil.isEmpty(order.getDescription()));
 
         String buff = isEmptyDescription.get() ? getString(R.string.no_value) : order.getDescription();
         descriptionOrder.set(getString(R.string.display_description_order, buff));
@@ -535,7 +535,7 @@ public class WaiterSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.
                 return;
             }
 
-            if(StringUtils.isEmpty(order.getId())){
+            if(StrUtil.isEmpty(order.getId())){
                 showMessage(R.string.order_id_null, Constant.COLOR_ERROR);
                 return;
             }

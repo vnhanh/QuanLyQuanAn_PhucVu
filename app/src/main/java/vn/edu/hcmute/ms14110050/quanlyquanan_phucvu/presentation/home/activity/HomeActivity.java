@@ -22,7 +22,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.ActivityUtils;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.service.get_user.SocketUserService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ActivityHomeBinding;
@@ -125,7 +125,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding, IHomeView, H
 
         String username = viewModel.getUserName();
 
-        if (!StringUtils.isEmpty(username)) {
+        if (!StrUtil.isEmpty(username)) {
             socketUserIntent = new Intent(this, SocketUserService.class);
             socketUserIntent.putExtra(USERNAME, username);
             startService(socketUserIntent);

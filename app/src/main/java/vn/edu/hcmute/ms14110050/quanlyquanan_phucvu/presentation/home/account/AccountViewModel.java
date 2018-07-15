@@ -21,6 +21,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.RectangleImag
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.ScaleType;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.OnChangeSocketStateListener;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.account.ChangePasswordRequest;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.account.ResAccFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
@@ -164,8 +165,10 @@ public class AccountViewModel extends BaseNetworkViewModel<AccountContract.View>
                 new RectangleImageTransform(size, size, corner, ScaleType.CENTER_INSIDE);
         transform.setBackgroundColor(bgColor);
 
+        String url = StrUtil.getAbsoluteImgUrl(user.getUrlImgProfile());
+
         Picasso.get()
-                .load(user.getUrlImgProfile())
+                .load(url)
                 .placeholder(R.drawable.ic_account_120dp_0dp)
                 .error(R.drawable.ic_account_120dp_0dp)
                 .transform(transform).into(profileTarget);

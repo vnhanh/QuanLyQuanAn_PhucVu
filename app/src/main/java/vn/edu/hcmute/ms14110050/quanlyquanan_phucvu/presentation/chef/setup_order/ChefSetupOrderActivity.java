@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ChefActivitySetupOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.abstracts.ISetupOrder;
@@ -32,7 +32,7 @@ public class ChefSetupOrderActivity extends BaseActivity<ChefActivitySetupOrderB
 
     public static void startActivity(@NonNull Activity context, @NonNull String orderID) {
         Intent intent = new Intent(context, ChefSetupOrderActivity.class);
-        if (!StringUtils.isEmpty(orderID)) {
+        if (!StrUtil.isEmpty(orderID)) {
             intent.putExtra(EXTRA_ORDER_ID, orderID);
         }
         context.startActivity(intent);
@@ -86,7 +86,7 @@ public class ChefSetupOrderActivity extends BaseActivity<ChefActivitySetupOrderB
         readIntent();
         // sau khi đọc intent
         // nếu vẫn chưa xác định được mode xử lý order hoặc order id
-        if (StringUtils.isEmpty(viewModel.getOrderID())) {
+        if (StrUtil.isEmpty(viewModel.getOrderID())) {
             Log.d("LOG", getClass().getSimpleName() + ":onCreate(): not get nesccessary information");
             // trở về màn hình cũ
             onBackPressed();

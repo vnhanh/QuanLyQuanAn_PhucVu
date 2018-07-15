@@ -8,7 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 
 
 /**
@@ -34,7 +34,7 @@ public class SpinnerBindingUtils {
             }
         });
 
-        if (!StringUtils.isEmpty(value)) {
+        if (!StrUtil.isEmpty(value)) {
             int pos = ((ArrayAdapter<String>) spinner.getAdapter()).getPosition(value);
             spinner.setSelection(pos, true);
         }

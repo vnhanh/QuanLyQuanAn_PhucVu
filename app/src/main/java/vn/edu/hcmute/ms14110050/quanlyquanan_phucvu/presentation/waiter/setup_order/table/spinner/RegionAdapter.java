@@ -17,7 +17,7 @@ import java.util.Comparator;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStateListener;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.asynctask.SortTask;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.contract.ISpinnerDataListener;
@@ -150,8 +150,8 @@ public class RegionAdapter extends ArrayAdapter implements ISpinnerDataListener<
                 new Comparator<Region>() {
                     @Override
                     public int compare(Region region, Region _region) {
-                        String regionNameDeAccent = StringUtils.deAccent(region.getName());
-                        String _regionNameDeAccent = StringUtils.deAccent(_region.getName());
+                        String regionNameDeAccent = StrUtil.deAccent(region.getName());
+                        String _regionNameDeAccent = StrUtil.deAccent(_region.getName());
                         return regionNameDeAccent.compareToIgnoreCase(_regionNameDeAccent);
                     }
                 }, new GetCallback<ArrayList<Region>>() {
@@ -200,7 +200,7 @@ public class RegionAdapter extends ArrayAdapter implements ISpinnerDataListener<
         // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
         boolean isChangeItem = false;
 
-        if (!StringUtils.isEmpty(currentRegionID)) {
+        if (!StrUtil.isEmpty(currentRegionID)) {
             Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item was existed");
 
             // tìm vị trí của item đang select

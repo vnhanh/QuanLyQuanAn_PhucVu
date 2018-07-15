@@ -28,7 +28,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.ActivityUtils;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.WaiterFragmentListOrdersBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.DelegacyResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.SuggestDelegacy;
@@ -291,7 +291,7 @@ public class WaiterListOrdersFragment
                 if (response.isOk()) {
                     String fails = response.getFails();
 
-                    if (StringUtils.isEmpty(fails)) {
+                    if (StrUtil.isEmpty(fails)) {
                         message = activity.getString(R.string.msg_noti_response_delegacy_accept, response.getDelegacyFullName());
                     }
                     else{

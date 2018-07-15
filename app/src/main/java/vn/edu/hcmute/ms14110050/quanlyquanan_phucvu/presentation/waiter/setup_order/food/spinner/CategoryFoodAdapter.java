@@ -17,7 +17,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.asynctask.SortTask;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.contract.ISpinnerDataListener;
 
@@ -161,8 +161,8 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
                 new Comparator<CategoryFood>() {
                     @Override
                     public int compare(CategoryFood region, CategoryFood _region) {
-                        String regionNameDeAccent = StringUtils.deAccent(region.getName());
-                        String _regionNameDeAccent = StringUtils.deAccent(_region.getName());
+                        String regionNameDeAccent = StrUtil.deAccent(region.getName());
+                        String _regionNameDeAccent = StrUtil.deAccent(_region.getName());
                         return regionNameDeAccent.compareToIgnoreCase(_regionNameDeAccent);
                     }
                 }, new GetCallback<ArrayList<CategoryFood>>() {
@@ -214,7 +214,7 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
         // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
         boolean isChangeItem = false;
 //        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():selectedCatID:" + selectedCatID);
-        if (StringUtils.isEmpty(selectedCatID)) {
+        if (StrUtil.isEmpty(selectedCatID)) {
             if (categories != null && categories.size() > 0) {
                 isChangeItem = true;
                 selectedCatID = categories.get(0).getId();

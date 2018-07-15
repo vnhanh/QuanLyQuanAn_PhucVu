@@ -5,6 +5,7 @@ import android.util.Log;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.OrderSocketService;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.SuggestDelegacy;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.WaiterOrdersConstributor;
@@ -34,6 +35,16 @@ public class WaiterListOrdersSocketListener {
     }
 
     public void startListening() {
+        service.onEventUpdateOrder(new GetCallback<Order>() {
+            @Override
+            public void onFinish(Order order) {
+                if (order != null) {
+                    if (constributor != null) {
+                        constributor.onUpdateOrder(order);
+                    }
+                }
+            }
+        });
         service.onEventUpdateStatusOrder(new GetCallback<UpdateStatusOrderResponse>() {
             @Override
             public void onFinish(UpdateStatusOrderResponse data) {

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderCheckable;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
@@ -168,12 +168,13 @@ public class WaiterOrdersConstributor implements TabLayout.OnTabSelectedListener
         tabLayout.getTabAt(_tabIndex).setCustomView(tab);
     }
 
+    // Nhận event update trạng thái hóa đơn
     public void onUpdateStatus(int oldStatus, Order order) {
         if (order == null) {
             return;
         }
         String orderID = order.getId();
-        if (StringUtils.isEmpty(orderID)) {
+        if (StrUtil.isEmpty(orderID)) {
             return;
         }
 
@@ -226,6 +227,21 @@ public class WaiterOrdersConstributor implements TabLayout.OnTabSelectedListener
             }else{
 //                Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():update item to list data");
                 list.set(index, item);
+            }
+        }
+    }
+
+    // Nhận event socket thay đổi thông tin hóa đơn
+    public void onUpdateOrder(Order order) {
+        if (order != null) {
+            int index = findItem(order.getId());
+            if (index > -1) {
+                int status = order.getStatusFlag();
+                if (status == tabIndex + 1) {
+                    OrderCheckable item = list.get(index);
+                    item.setOrder(order);
+                    orderAdapter.onUpdateItem(item);
+                }
             }
         }
     }

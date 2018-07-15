@@ -11,7 +11,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
@@ -112,7 +112,7 @@ public class SelectTableViewModel
         if (isViewAttached()) {
             getView().onShowLoadRegionsProgress();
         }
-        if (StringUtils.isEmpty(token)) {
+        if (StrUtil.isEmpty(token)) {
             token = SSharedReference.getToken(getView().getContext());
         }
         requestManager.loadRegions(token, new GetCallback<ArrayList<Region>>() {
@@ -154,7 +154,7 @@ public class SelectTableViewModel
     }
 
     private boolean isInvalidRegion(Region region) {
-        return region == null || StringUtils.isEmpty(region.getId());
+        return region == null || StrUtil.isEmpty(region.getId());
     }
 
     private void onAddRegion(Region region) {
@@ -172,7 +172,7 @@ public class SelectTableViewModel
     }
 
     private void onDeleteRegion(String regionID) {
-        if (StringUtils.isEmpty(regionID)) {
+        if (StrUtil.isEmpty(regionID)) {
             return;
         }
         regionDataListener.onDeleteItem(regionID);
@@ -290,7 +290,7 @@ public class SelectTableViewModel
 
     // remove table ra khỏi recyclerview nếu nó tồn tại
     private void onRemoveTable(String tableID) {
-        if (isViewAttached() && !StringUtils.isEmpty(tableID)) {
+        if (isViewAttached() && !StrUtil.isEmpty(tableID)) {
             tableDataListener.onRemoveItem(tableID);
         }
     }
@@ -302,7 +302,7 @@ public class SelectTableViewModel
     @Override
     public void onSelectSpinnerItemId(String regionID) {
         selectedRegionID = regionID;
-        if (StringUtils.isEmpty(regionID)) {
+        if (StrUtil.isEmpty(regionID)) {
             tableDataListener.onGetList(new ArrayList<Table>());
             return;
         }
@@ -329,7 +329,7 @@ public class SelectTableViewModel
     private ArrayList<Table> copyEmptyTables(ArrayList<Table> _tables) {
         ArrayList<Table> valids = new ArrayList<>();
         for (Table _table : _tables) {
-            if (_table.isActived() && (StringUtils.isEmpty(_table.getOrderID()) || getOrderID().equals(_table.getOrderID()))) {
+            if (_table.isActived() && (StrUtil.isEmpty(_table.getOrderID()) || getOrderID().equals(_table.getOrderID()))) {
                 valids.add(_table);
             }
         }
@@ -361,7 +361,7 @@ public class SelectTableViewModel
                 }else{
                     Log.d("LOG", SelectTableViewModel.class.getSimpleName()
                             + ":onRequestAddTableToOrder:failed:"+response.getMessage());
-                    if (!StringUtils.isEmpty(response.getMessage())) {
+                    if (!StrUtil.isEmpty(response.getMessage())) {
                         response.setMessage(getString(R.string.add_table_to_order_failed));
                     }
                     callback.onFinish(response);
@@ -381,7 +381,7 @@ public class SelectTableViewModel
                     callback.onFinish(response);
                 }else{
                     Log.d("LOG", getClass().getSimpleName() + ":onRequestRemoveTableFromOrder:failed:"+response.getMessage());
-                    if (!StringUtils.isEmpty(response.getMessage())) {
+                    if (!StrUtil.isEmpty(response.getMessage())) {
                         response.setMessage(getString(R.string.remove_table_from_order_failed));
                     }
                     callback.onFinish(response);
@@ -402,7 +402,7 @@ public class SelectTableViewModel
 
     @Override
     public String getToken() {
-        if (StringUtils.isEmpty(token)) {
+        if (StrUtil.isEmpty(token)) {
             token = centerVM.getToken();
         }
         return token;

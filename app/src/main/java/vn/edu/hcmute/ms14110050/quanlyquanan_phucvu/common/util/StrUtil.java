@@ -8,11 +8,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET;
+
 /**
  * Created by Vo Ngoc Hanh on 5/20/2018.
  */
 
-public class StringUtils {
+public class StrUtil {
     public static boolean isEmpty(String string) {
         return string == null || string.equals("");
     }
@@ -36,4 +38,9 @@ public class StringUtils {
         calendar.setTime(date);
         return calendar;
     }
+
+    public static String getAbsoluteImgUrl(String relativeUrl){
+        return relativeUrl.replace("localhost", SOCKET.SERVER_IP);
+    }
+
 }

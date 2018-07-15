@@ -69,10 +69,19 @@ public class FoodAdapter extends BaseAdapter<FoodVH,Food>{
 
     @Override
     public void onAddItem(Food item) {
-        int index = findItem(item.getId());
-        if (index < 0) {
+        if(!constainData()){
+            if (list == null) {
+                list = new ArrayList<>();
+            }
             list.add(item);
-            sortList();
+            runNotifyDataSetChanged();
+        }
+        else{
+            int index = findItem(item.getId());
+            if (index < 0) {
+                list.add(0,item);
+                notifyItemInserted(0);
+            }
         }
     }
 

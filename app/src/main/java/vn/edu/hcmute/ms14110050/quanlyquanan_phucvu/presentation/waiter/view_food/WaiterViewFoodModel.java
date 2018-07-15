@@ -25,7 +25,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.databinding.BindableF
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.RectangleImageTransform;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.ScaleType;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
@@ -34,7 +34,6 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodRespo
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderParams;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
 
@@ -152,10 +151,19 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
     @Override
     public void onViewDetached() {
+        super.onViewDetached();
+        if (foodSS != null) {
+            foodSS.stopAllEvents();
+        }
         inputOrderCountCallback = null;
         getFoodCallback = null;
         orderFoodCallback = null;
-        super.onViewDetached();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        foodSS = null;
     }
 
     private void showOrderIfExist() {
@@ -184,7 +192,9 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
             RectangleImageTransform transform =
                     new RectangleImageTransform(imageFoodWidth, height, 0, ScaleType.CENTER_CROP);
 
-            Picasso.get().load(food.getImageUrls().get(0))
+            String url = StrUtil.getAbsoluteImgUrl(food.getImageUrls().get(0));
+
+            Picasso.get().load(url)
                     .placeholder(R.drawable.bg_light_gray_border_gray)
                     .error(R.drawable.bg_light_gray_border_gray)
                     .transform(transform)
@@ -383,7 +393,7 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
                     hideProgress();
                     String message = getString(newCount == 0 ? R.string.remove_order_food_failed : R.string.order_food_failed);
 
-                    if(!StringUtils.isEmpty(orderResponse.getMessage())){
+                    if(!StrUtil.isEmpty(orderResponse.getMessage())){
                         message += ". " + orderResponse.getMessage();
                     }
 
@@ -419,7 +429,7 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
                 orderFoodError =
                         newCount == 0 ? getString(R.string.remove_order_food_failed) : getString(R.string.order_food_failed);
 
-                if (!StringUtils.isEmpty(response.getMessage())) {
+                if (!StrUtil.isEmpty(response.getMessage())) {
                     orderFoodError += response.getMessage();
                 }
 

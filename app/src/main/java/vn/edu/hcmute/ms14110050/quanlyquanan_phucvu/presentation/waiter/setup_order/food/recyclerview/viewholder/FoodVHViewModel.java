@@ -12,6 +12,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseVHViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.databinding.BindableFieldTarget;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.SquareCornerTransform;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.food.IFoodVM;
@@ -50,9 +51,10 @@ public class FoodVHViewModel extends BaseVHViewModel<IFoodVH> {
 
     public void setFood(Food food) {
         this.food = food;
+        String url = StrUtil.getAbsoluteImgUrl(food.getImageUrls().get(0));
 
         // ảnh món
-        Picasso.get().load(food.getImageUrls().get(0))
+        Picasso.get().load(url)
                 .placeholder(R.drawable.bg_light_gray_border_gray)
                 .error(R.drawable.bg_light_gray_border_gray)
                 .transform(new SquareCornerTransform(getContext(), R.dimen.size_image_food, R.dimen.normal_space))
@@ -71,7 +73,7 @@ public class FoodVHViewModel extends BaseVHViewModel<IFoodVH> {
         discount.set(getContext().getString(R.string.content_food_discount, _discount));
 
         // set thông tin đã order (nếu có)
-        getDetailOrder();
+        detailOrder = containerVM.getDetailOrderByFood(food.getId());
 
         if (detailOrder != null) {
             count.set(detailOrder.getCount());
@@ -89,6 +91,10 @@ public class FoodVHViewModel extends BaseVHViewModel<IFoodVH> {
     private void getDetailOrder() {
         if (detailOrder == null) {
             detailOrder = containerVM.getDetailOrderByFood(food.getId());
+            if (detailOrder != null) {
+                Log.d("LOG", getClass().getSimpleName() + ":getDetailOrder():id" + detailOrder.getFoodId()+ ":name:"
+                        + detailOrder.getFoodName() + ":count:" + detailOrder.getCount());
+            }
         }
 
     }
@@ -111,7 +117,7 @@ public class FoodVHViewModel extends BaseVHViewModel<IFoodVH> {
             return;
         }
         if (isViewAttached()) {
-            getDetailOrder();
+//            getDetailOrder();
             getView().onStartViewFoodActivity(containerVM.getContext(), containerVM.getOrderID(), detailOrder, food);
         }
     }

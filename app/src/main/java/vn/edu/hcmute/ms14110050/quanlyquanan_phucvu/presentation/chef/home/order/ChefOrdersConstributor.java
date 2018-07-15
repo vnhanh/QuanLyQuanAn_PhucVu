@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IRecyclerAdapter;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
 
@@ -105,7 +105,7 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
             return;
         }
         String orderID = order.getId();
-        if (StringUtils.isEmpty(orderID)) {
+        if (StrUtil.isEmpty(orderID)) {
             return;
         }
 

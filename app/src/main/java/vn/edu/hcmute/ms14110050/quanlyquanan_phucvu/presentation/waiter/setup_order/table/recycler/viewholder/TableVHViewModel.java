@@ -8,7 +8,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.BaseVHViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IViewHolder;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
@@ -38,7 +38,7 @@ public class TableVHViewModel extends BaseVHViewModel<IViewHolder> {
         this.table = table;
 
         String orderID = getOrderID();
-        boolean isSelect = !StringUtils.isEmpty(orderID) && orderID.equals(table.getOrderID());
+        boolean isSelect = !StrUtil.isEmpty(orderID) && orderID.equals(table.getOrderID());
         isSelected.set(isSelect);
     }
 
@@ -112,7 +112,7 @@ public class TableVHViewModel extends BaseVHViewModel<IViewHolder> {
     }
 
     private void showErrorMessage(String message, String messageResponse) {
-        if (!StringUtils.isEmpty(messageResponse)) {
+        if (!StrUtil.isEmpty(messageResponse)) {
             message += ". " + messageResponse;
         }
 

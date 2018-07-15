@@ -32,7 +32,7 @@ public abstract class BaseAdapter<VH extends BaseViewHolder, DATA> extends Recyc
     @Override
     public void onGetList(ArrayList<DATA> list) {
         this.list = list;
-        Log.d("LOG", getClass().getSimpleName() + ":onGetList()");
+//        Log.d("LOG", getClass().getSimpleName() + ":onGetList()");
         sortList();
     }
 

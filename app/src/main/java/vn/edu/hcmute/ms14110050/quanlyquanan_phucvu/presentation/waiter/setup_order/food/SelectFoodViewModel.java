@@ -11,7 +11,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.OnSpinnerStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.CategoryFood;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
@@ -34,6 +34,7 @@ public class SelectFoodViewModel
     private IOrderVM centerVM;
 
     private FoodRequestManger requestManager;
+
     // lắng nghe dữ liệu food và category food thay đổi
     private FoodSocketService socketService;
 
@@ -199,7 +200,7 @@ public class SelectFoodViewModel
         if (isViewAttached()) {
             getView().onLoadingCategories();
         }
-        if (StringUtils.isEmpty(token)) {
+        if (StrUtil.isEmpty(token)) {
             token = SSharedReference.getToken(getView().getContext());
         }
         requestManager.loadCategories(token, new GetCallback<ArrayList<CategoryFood>>() {
@@ -223,14 +224,14 @@ public class SelectFoodViewModel
     @Override
     public void onSelectSpinnerItemId(String id) {
         selectedCatID = id != null ? id : "";
-        if (StringUtils.isEmpty(id)) {
+        if (StrUtil.isEmpty(id)) {
             if (isViewAttached()) {
                 catDataListener.onGetList(new ArrayList<CategoryFood>());
             }
             return;
         }
         showLoadingFoods();
-        if (StringUtils.isEmpty(token)) {
+        if (StrUtil.isEmpty(token)) {
             token = SSharedReference.getToken(getView().getContext());
         }
         requestManager.loadFoodsByCatID(token, selectedCatID, new GetCallback<ArrayList<Food>>() {
@@ -291,7 +292,7 @@ public class SelectFoodViewModel
 
     @Override
     public String getToken() {
-        if (StringUtils.isEmpty(token)) {
+        if (StrUtil.isEmpty(token)) {
             token = centerVM.getToken();
         }
         return token;

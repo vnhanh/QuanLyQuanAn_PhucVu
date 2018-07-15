@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 
 import io.socket.emitter.Emitter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.socket.SocketManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
@@ -85,7 +83,7 @@ public class SocketUserService extends Service {
     }
 
     private void setupRequestUser() {
-        if (StringUtils.isEmpty(username)) {
+        if (StrUtil.isEmpty(username)) {
             return;
         }
 

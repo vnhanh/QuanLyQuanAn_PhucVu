@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkDialogFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.WaiterLayoutFindAccountBinding;
 
 public class FindAccountDialog
@@ -110,6 +110,6 @@ public class FindAccountDialog
     }
 
     private boolean checkValid(String username) {
-        return !StringUtils.isEmpty(username);
+        return !StrUtil.isEmpty(username);
     }
 }

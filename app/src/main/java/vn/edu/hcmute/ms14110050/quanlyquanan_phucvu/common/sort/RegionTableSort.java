@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.asynctask.SortTask;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
@@ -20,8 +20,8 @@ public class RegionTableSort {
         Comparator<Table> comparator = new Comparator<Table>() {
             @Override
             public int compare(Table table1, Table table2) {
-                String id1 = StringUtils.deAccent(table1.getId());
-                String id2 = StringUtils.deAccent(table2.getId());
+                String id1 = StrUtil.deAccent(table1.getId());
+                String id2 = StrUtil.deAccent(table2.getId());
                 return id1.compareToIgnoreCase(id2);
             }
         };
@@ -32,8 +32,8 @@ public class RegionTableSort {
         Comparator<Food> comparator = new Comparator<Food>() {
             @Override
             public int compare(Food item1, Food item2) {
-                String id1 = StringUtils.deAccent(item1.getId());
-                String id2 = StringUtils.deAccent(item2.getId());
+                String id1 = StrUtil.deAccent(item1.getId());
+                String id2 = StrUtil.deAccent(item2.getId());
                 return id1.compareToIgnoreCase(id2);
             }
         };

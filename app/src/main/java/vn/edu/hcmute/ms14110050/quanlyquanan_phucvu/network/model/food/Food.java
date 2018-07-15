@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET;
+
 /**
  * Created by Vo Ngoc Hanh on 6/18/2018.
  */

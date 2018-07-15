@@ -9,7 +9,7 @@ import android.widget.EditText;
 import java.util.Observable;
 import java.util.regex.Pattern;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StringUtils;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.TAG_VALIDATE;
 
@@ -35,7 +35,7 @@ public class TextWatcherHandler extends Observable implements TextWatcher, IVali
 
     public TextWatcherHandler(String reg, @StringRes int errMsgId) {
         this.errMsgId = errMsgId;
-        if (!StringUtils.isEmpty(reg)) {
+        if (!StrUtil.isEmpty(reg)) {
             pattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         }
     }
