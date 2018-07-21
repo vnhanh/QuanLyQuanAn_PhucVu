@@ -3,6 +3,7 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_ord
 
 import android.support.annotation.StringRes;
 
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
 
 
@@ -23,5 +24,7 @@ public interface ISetupOrder {
         boolean onUpdateMenu(int statusFlag);
 
         void onToast(@StringRes int messageIdRes);
+
+        <DATA> void openConfirmDialog(@StringRes int titleResId, @StringRes int msgResId, GetCallback<DATA> callback);
     }
 }

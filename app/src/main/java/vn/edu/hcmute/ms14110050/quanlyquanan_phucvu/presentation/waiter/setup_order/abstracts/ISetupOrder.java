@@ -21,20 +21,12 @@ public interface ISetupOrder {
 
         void onExit();
 
-        void openInputNumberCustomerView(int customerNumber, InputCallback numberCustomerListener);
-
-        void onAnimationShowStatus();
-
-        void onAnimationNumberCustomer();
-
-        void onAnimationFinalCost();
-
-        void openDescriptionDialog(String description, InputCallback inputCallback);
-
-        void onAnimationDescriptionOrder();
-
-        void openConfirmDialog(@StringRes int messageResId, GetCallback<Void> callback);
-
         boolean onUpdateMenu(boolean availableShow, boolean isCreateOrder, @OrderFlag int statusFlag);
+
+        void onOpenSelectFoodsView();
+
+        void onOpenInfoView();
+
+        <DATA> void openConfirmDialog(@StringRes int titleResId, @StringRes int msgResId, GetCallback<DATA> callback);
     }
 }

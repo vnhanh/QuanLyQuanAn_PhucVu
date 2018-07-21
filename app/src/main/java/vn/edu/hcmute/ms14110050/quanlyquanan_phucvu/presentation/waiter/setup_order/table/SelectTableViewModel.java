@@ -16,7 +16,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTab
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.TableRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.TableRequestApi;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.contract.ISpinnerDataListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IRecyclerAdapter;
@@ -29,7 +29,7 @@ public class SelectTableViewModel
         extends BaseNetworkViewModel<ITableView>
         implements OnSpinnerStateListener.DataProcessor, ITableVM {
 
-    private TableRequestManager requestManager;
+    private TableRequestApi requestManager;
     private RegionTableSocketService socketService;
 
     private String selectedRegionID;
@@ -391,7 +391,7 @@ public class SelectTableViewModel
     }
 
     @Override
-    public TableRequestManager getRegionTableRequestManager() {
+    public TableRequestApi getRegionTableRequestManager() {
         return requestManager;
     }
 

@@ -16,53 +16,53 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 public class Order{
     @SerializedName("id")
     @Expose
-    String id;
+    private String id;
     @SerializedName("number_customer")
     @Expose
-    int customerNumber;
+    private int customerNumber;
     @SerializedName("customer_name")
     @Expose
-    String customerName;
+    private String customerName;
     @SerializedName("waiter_username")
     @Expose
-    String waiterUsername;
+    private String waiterUsername;
     @SerializedName("waiter_fullname")
     @Expose
-    String waiterFullname;
+    private String waiterFullname;
     @SerializedName("cashier_username")
     @Expose
-    String cashierUsername;
+    private String cashierUsername;
     @SerializedName("cashier_fullname")
     @Expose
     String cashierFullname;
     @SerializedName("flag_status")
     @Expose
     @OrderFlag
-    int statusFlag;
+    private int statusFlag;
     @SerializedName("time_created")
     @Expose
-    String createdTime;
+    private String createdTime;
     @SerializedName("paid_cost")
     @Expose
-    long paidCost;
+    private long paidCost;
     @SerializedName("final_cost")
     @Expose
-    long finalCost;
+    private long finalCost;
     @SerializedName("description")
     @Expose
-    String description;
+    private String description;
     @SerializedName("detail_orders")
     @Expose
-    ArrayList<DetailOrder> detailOrders;
+    private ArrayList<DetailOrder> detailOrders;
     @SerializedName("tables")
     @Expose
-    ArrayList<String> tables;
+    private ArrayList<String> tables;
     @SerializedName("region_id")
     @Expose
-    ArrayList<String> regionId;
+    private ArrayList<String> regionId;
     @SerializedName("delegacy")
     @Expose
-    ArrayList<String> delegacies;
+    private ArrayList<String> delegacies;
 
     public String getId() {
         return id;

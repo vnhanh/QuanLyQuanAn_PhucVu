@@ -6,7 +6,7 @@ import android.util.Log;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.OrderSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.UpdateStatusOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.SuggestDelegacy;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.WaiterOrdersConstributor;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.WaiterListOrdersViewModel;
@@ -51,7 +51,9 @@ public class WaiterListOrdersSocketListener {
 //                Log.d("LOG", OrderSocketListener.class.getSimpleName() + ":onEventUpdateStatusOrder():data");
                 if (data != null) {
                     if (constributor != null) {
-                        constributor.onUpdateStatus(data.getOldStatus(), data.getOrder());
+                        constributor.onUpdateStatus(
+                                data.getOrder(), data.getOldStatus(),
+                                data.getDetailOrderID(), data.getOldDetailOrderStatus(), data.getNewDetailOrderStatus());
                     }
                 }
             }

@@ -15,40 +15,40 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.SOCKET;
 public class Food {
     @SerializedName("id")
     @Expose
-    String id;
+    private String id;
     @SerializedName("name")
     @Expose
-    String name;
+    private String name;
     @SerializedName("actived")
     @Expose
-    boolean actived;
+    private boolean actived;
     @SerializedName("date_created")
     @Expose
-    String createdDate;
+    private String createdDate;
     @SerializedName("category_id")
     @Expose
-    String categoryID;
+    private String categoryID;
     @SerializedName("category_name")
     @Expose
-    String categoryName;
+    private String categoryName;
     @SerializedName("description")
     @Expose
-    String description;
+    private String description;
     @SerializedName("discount")
     @Expose
-    long discount;
+    private long discount;
     @SerializedName("inventory")
     @Expose
-    int inventory;
+    private int inventory;
     @SerializedName("price_unit")
     @Expose
-    long unitPrice;
+    private long unitPrice;
     @SerializedName("unit")
     @Expose
-    String unit;
+    private String unit;
     @SerializedName("url_image")
     @Expose
-    ArrayList<String> imageUrls = new ArrayList<>();
+    private ArrayList<String> imageUrls = new ArrayList<>();
 
     public String getId() {
         return id;

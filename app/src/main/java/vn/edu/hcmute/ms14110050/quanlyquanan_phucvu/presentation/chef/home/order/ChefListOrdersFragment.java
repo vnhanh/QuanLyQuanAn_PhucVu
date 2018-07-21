@@ -2,11 +2,14 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.orde
 
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +19,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.fragment.BaseNetworkFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ChefFragmentListOrdersBinding;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.recycler.ChefItemOrderAdapter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.helper.ChefOrdersConstributor;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.recycler.ChefDetailOrderAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.ChefSetupOrderActivity;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.home.activity.HomeActivity;
 
@@ -30,7 +35,7 @@ public class ChefListOrdersFragment
         extends BaseNetworkFragment<ChefFragmentListOrdersBinding, ListOrdersContract.View, ChefListOrdersViewModel>
         implements ListOrdersContract.View{
 
-    private ChefItemOrderAdapter adapter;
+    private ChefDetailOrderAdapter adapter;
 
     public ChefListOrdersFragment() {
         // Required empty public constructor
@@ -63,8 +68,9 @@ public class ChefListOrdersFragment
 
     @Override
     public void onDestroy() {
-        itemOrderListener.destroy();
         super.onDestroy();
+        adapter.destroy();
+        itemOrderListener.destroy();
     }
 
     @Override
@@ -81,7 +87,7 @@ public class ChefListOrdersFragment
         if (itemOrderListener == null) {
             itemOrderListener = new OnClickItemOrderListener(getActivity());
         }
-        adapter = new ChefItemOrderAdapter(getActivity(), itemOrderListener);
+        adapter = new ChefDetailOrderAdapter(getActivity(), itemOrderListener, viewModel);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.recyclerview.setLayoutManager(manager);
         binding.recyclerview.setHasFixedSize(true);
@@ -146,6 +152,26 @@ public class ChefListOrdersFragment
     /*
     * ListOrdersContract.View
     * */
+
+    @Override
+    public void openConfirmDialog(@StringRes int titleResId, @StringRes int messageResId, final GetCallback<Void> callback) {
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(titleResId)
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        callback.onFinish(null);
+                    }
+                }).setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
+    }
 
     /*
     * END ListOrdersContract.View

@@ -120,6 +120,12 @@ public class SelectFoodDialogFragment
         binding.recyclerview.setEnabled(true);
     }
 
+    public void onSelected() {
+        if (viewModel != null) {
+            viewModel.onViewAttach(this);
+        }
+    }
+
     /*
     * End IFoodView
     * */

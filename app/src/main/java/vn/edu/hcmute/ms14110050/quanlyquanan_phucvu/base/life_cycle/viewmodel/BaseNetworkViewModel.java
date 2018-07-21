@@ -11,7 +11,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.Lif
  * Created by Vo Ngoc Hanh on 6/20/2018.
  */
 
-public class BaseNetworkViewModel<VIEW extends LifeCycle.View> extends BaseViewModel<VIEW>
+public abstract class BaseNetworkViewModel<VIEW extends LifeCycle.View> extends BaseViewModel<VIEW>
                                                                 implements OnChangeNetworkStateListener {
     public final ObservableBoolean isNetworkConnected = new ObservableBoolean(false);
 

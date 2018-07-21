@@ -9,23 +9,21 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.animation.AnimationUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.FragmentViewPagerAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.WaiterActivitySetupOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
@@ -33,10 +31,8 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.abstracts.ISetupOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.contract.OrderMode;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.food.SelectFoodDialogFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.food.recyclerview.FoodAdapter;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.table.recycler.TableAdapter;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.order_info.WaiterOrderInfoFragment;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.table.SelectTableDialogFragment;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.view_food.InputOneTextDialogFragment;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.abstracts.OrderConstant.EXTRA_ORDER_ID;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.abstracts.OrderConstant.EXTRA_PROCESS_MODE;
@@ -75,7 +71,7 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
         if (viewModel != null) {
             if (viewModel.isCreateOrder.get()) {
                 switch (item.getItemId()) {
-                    case R.id.menu_create_order:
+                    case R.id.menu_process_order:
                         viewModel.onClickCreateOrder();
                         return true;
 
@@ -93,6 +89,10 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
 
             }else{
                 switch (item.getItemId()) {
+                    case R.id.menu_process_order:
+                        viewModel.onCLickReProcessOrder();
+                        return true;
+
                     case R.id.menu_serve_order:
                         viewModel.onClickMenuServeOrder();
                         return true;
@@ -128,6 +128,7 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("LOG", getClass().getSimpleName() + ":onCreate()");
 
         readIntent();
         // sau khi đọc intent
@@ -141,12 +142,41 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
             return;
         }
 
-        initRecyclerViews();
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        FragmentViewPagerAdapter pagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager());
+
+        WaiterOrderInfoFragment orderInfoFragment = new WaiterOrderInfoFragment();
+        orderInfoFragment.setViewmodel(viewModel);
+        pagerAdapter.add(null, orderInfoFragment);
+
+        SelectFoodDialogFragment selectFoodFragment = new SelectFoodDialogFragment();
+        selectFoodFragment.setCenterViewModel(viewModel);
+        pagerAdapter.add(null, selectFoodFragment);
+
+        binding.viewPager.setAdapter(pagerAdapter);
+        binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 1) {
+                    SelectFoodDialogFragment fragment = (SelectFoodDialogFragment) pagerAdapter.getItem(1);
+                    fragment.onSelected();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -160,40 +190,6 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(getString(viewModel.toolbarTitle.get()));
         }
-
-        initSelectFoodFragment();
-    }
-
-    private void initSelectFoodFragment() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
-        SelectFoodDialogFragment fragment = SelectFoodDialogFragment.newInstance();
-        fragment.setCenterViewModel(viewModel);
-        ft.replace(R.id.frame_layout, fragment, "dialog");
-        ft.commit();
-    }
-
-    private TableAdapter tablesAdapter;
-    private FoodAdapter foodAdapter;
-
-    private void initRecyclerViews() {
-        LinearLayoutManager manager =
-                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        binding.recyclerviewTables.setLayoutManager(manager);
-        tablesAdapter = new TableAdapter(this, true);
-        binding.recyclerviewTables.setAdapter(tablesAdapter);
-        tablesAdapter.setContainerVM(viewModel);
-        viewModel.setTableDataListener(tablesAdapter);
-
-        LinearLayoutManager _manager =
-                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        foodAdapter = new FoodAdapter(this);
-        binding.recyclerviewFoods.setLayoutManager(_manager);
-        binding.recyclerviewFoods.setAdapter(foodAdapter);
-        foodAdapter.setContainerVM(viewModel);
-        viewModel.setFoodDataListener(foodAdapter);
     }
 
     private void readIntent() {
@@ -241,23 +237,14 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
     * */
 
     public void onClickAddTables() {
-//        removeDiaglogFragmentIfExist();
+        removePrevFragDialog();
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         SelectTableDialogFragment fragment = SelectTableDialogFragment.newInstance();
         fragment.setChangeNetworkStateContainer(this);
         fragment.setCenterViewModel(viewModel);
         fragment.show(ft, "dialog");
-    }
-
-    private void removeDiaglogFragmentIfExist() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev).commit();
-        }
-        ft.addToBackStack(null);
-        ft.commit();
     }
 
     /*
@@ -269,51 +256,11 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
     * */
 
     @Override
-    public void onShowLoadTablesByOrderIDProgress() {
-        binding.recyclerviewTables.setEnabled(false);
-    }
+    public <Void> void openConfirmDialog(@StringRes int titleResId, @StringRes int messageResId,
+                                         final GetCallback<Void> callback) {
 
-    @Override
-    public void onAnimationShowStatus() {
-        binding.txtStatus.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
-    }
-
-    @Override
-    public void onAnimationNumberCustomer() {
-        binding.txtNumberCustomer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
-    }
-
-    @Override
-    public void onAnimationFinalCost() {
-        binding.txtTotalCost.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
-    }
-
-    @Override
-    public void onAnimationDescriptionOrder() {
-        binding.txtDescription.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
-    }
-
-    @Override
-    public void onHideLoadTablesByOrderIDProgress() {
-        binding.recyclerviewTables.setEnabled(true);
-    }
-
-    @Override
-    public void onExit() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-            }
-        });
-    }
-
-
-    @Override
-    public void openConfirmDialog(@StringRes int messageResId, final GetCallback<Void> callback) {
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.title_exit)
+                .setTitle(titleResId)
                 .setMessage(messageResId)
                 .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -331,32 +278,34 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
     }
 
     @Override
-    public void openInputNumberCustomerView(int customerNumber, InputCallback callback) {
-        removePrevFragDialog();
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
-        InputOneTextDialogFragment _fragment  =
-                InputOneTextDialogFragment.newInstance(
-                        getString(R.string.title_input_number_customer),
-                        getString(R.string.hint_number_customer),
-                        InputType.TYPE_CLASS_NUMBER, String.valueOf(customerNumber));
-        _fragment.setListener(callback);
-        _fragment.show(ft, "dialog");
+    public void onOpenInfoView() {
+        binding.viewPager.setCurrentItem(0);
     }
 
     @Override
-    public void openDescriptionDialog(String description, InputCallback listener) {
-        removePrevFragDialog();
+    public void onOpenSelectFoodsView() {
+        binding.viewPager.setCurrentItem(1);
+    }
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        InputOneTextDialogFragment _fragment  =
-                InputOneTextDialogFragment.newInstance(
-                        getString(R.string.title_input_description),
-                        getString(R.string.hint_input_description),
-                        InputType.TYPE_CLASS_TEXT, description);
-        _fragment.setListener(listener);
-        _fragment.show(ft, "dialog");
+    @Override
+    public void onShowLoadTablesByOrderIDProgress() {
+//        binding.recyclerviewTables.setEnabled(false);
+    }
+
+    @Override
+    public void onHideLoadTablesByOrderIDProgress() {
+//        binding.recyclerviewTables.setEnabled(true);
+    }
+
+    @Override
+    public void onExit() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
     }
 
     private void removePrevFragDialog() {
@@ -376,7 +325,7 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
             return false;
         }
 
-        MenuItem menuCreateOrder = menu.findItem(R.id.menu_create_order);
+        MenuItem menuProcessOrder = menu.findItem(R.id.menu_process_order);
         MenuItem menuSelectTable = menu.findItem(R.id.menu_select_table);
         MenuItem menuSelectFood = menu.findItem(R.id.menu_select_food);
         MenuItem menuServeOrder = menu.findItem(R.id.menu_serve_order);
@@ -384,7 +333,7 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
 
         // không được phép shown menu
         if (!availableShow) {
-            menuCreateOrder.setVisible(false);
+            menuProcessOrder.setVisible(false);
             menuSelectTable.setVisible(false);
             menuSelectFood.setVisible(false);
             menuServeOrder.setVisible(false);
@@ -393,16 +342,26 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
         else{
             // đang tạo order
             if (isCreateOrder) {
-                menuCreateOrder.setVisible(true);
+                menuProcessOrder.setTitle(R.string.action_create_order);
+                menuProcessOrder.setVisible(true);
                 menuSelectTable.setVisible(true);
                 menuSelectFood.setVisible(true);
                 menuServeOrder.setVisible(false);
                 menuPay.setVisible(false);
             }
             else{
-                menuCreateOrder.setVisible(false);
+                if (statusFlag < OrderFlag.PAYING) {
+                    menuProcessOrder.setTitle(R.string.action_confirm_order);
+                    menuProcessOrder.setVisible(true);
+                    menuSelectFood.setVisible(true);
+                }else{
+                    menuProcessOrder.setVisible(false);
+                    menuSelectFood.setVisible(false);
+
+                    // ngăn lướt viewpager
+                    binding.viewPager.beginFakeDrag();
+                }
                 menuSelectTable.setVisible(false);
-                menuSelectFood.setVisible(false);
                 menuServeOrder.setVisible(true);
 
                 switch (statusFlag) {
@@ -420,6 +379,7 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
                         return true;
 
                     case OrderFlag.PAYING:
+
 
                     case OrderFlag.COMPLETE:
                         menuServeOrder.setVisible(false);

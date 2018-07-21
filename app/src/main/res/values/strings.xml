@@ -238,7 +238,7 @@
     <string name="ask_want_to_exit">Bạn muốn thoát ?</string>
     <string name="server_disconnect">Mất kết nối tới server. Tiến hành đăng xuất</string>
     <string name="display_order_id">Mã hóa đơn: %1$s</string>
-    <string name="title_prepare">DỌN XONG</string>
+    <string name="title_prepare">ĐÃ DỌN</string>
     <string name="not_found_order">Không tìm thấy hóa đơn!</string>
     <string name="msg_cant_pay_order">Hóa đơn này chưa thể thanh toán !</string>
     <string name="msg_cant_serve_order">Hóa đơn này không thể phục vụ !</string>
@@ -265,5 +265,23 @@
     <string name="title_confirm_start_cooking">BẮT ĐẦU NẤU</string>
     <string name="title_confirm_cook_finish">NẤU XONG</string>
     <string name="loading_orders_waiting">Đang lấy danh sách order cần phục vụ &#8230;</string>
+    <string name="undefined">Dữ liệu không xác định</string>
+    <string name="failed">Thất bại !</string>
+    <string name="category_content">Loại: %1$s</string>
+    <string name="message_process_success">Thao tác thành công !</string>
+    <string name="message_process_failed">Thao tác thất bại !</string>
+    <string name="confirming">Đang xác nhận &#8230;</string>
+    <string name="confirm_failed">Xác nhận thất bại !</string>
+    <string name="ask_confirm_order">Muốn xác nhận ?</string>
+    <string name="status_order_not_changed">Trạng thái không thay đổi !</string>
+    <string name="show_order_status">Trạng thái: %1$s</string>
+    <string name="content_serial">STT: %1$d</string>
+    <string name="eating">ĐANG ĂN</string>
+    <string name="no_detail_order">Chưa có món nào được đặt !</string>
+    <string name="removing_detail_order">Đang hủy món &#8230;</string>
+    <string name="title_remove_detail_order">HỦY MÓN</string>
+    <string name="ask_confirm_remove_detail_order">Xác nhận hủy món ?</string>
+    <string name="title_confirm">XÁC NHẬN</string>
+    <string name="ask_confirm_reprocess_order">Bạn muốn xác nhận lại hóa đơn ?</string>
 
 </resources>

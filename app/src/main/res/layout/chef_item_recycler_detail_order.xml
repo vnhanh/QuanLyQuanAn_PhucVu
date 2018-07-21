@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.recycler.viewholder.ChefItemOrderVM" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@drawable/bg_border_white_rectangle_corner_small"
+        android:layout_marginStart="@dimen/normal_space"
+        android:layout_marginEnd="@dimen/normal_space"
+        android:layout_marginTop="@dimen/small_space"
+        android:layout_marginBottom="@dimen/small_space"
+        android:paddingTop="@dimen/small_space"
+        android:paddingBottom="@dimen/small_space"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/image"
+            android:visibility="@{viewmodel.isError ? View.GONE : View.VISIBLE}"
+            android:src="@{viewmodel.foodDrawable}"
+            android:layout_marginStart="@dimen/normal_space"
+            android:layout_width="@dimen/size_image_food"
+            android:layout_height="@dimen/size_image_food"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/txt_indicator"
+            android:text="@{viewmodel.indicator}"
+            android:textColor="@{viewmodel.isError ? @color/colorRed : @color/colorBlack }"
+            android:textSize="@dimen/txtSize_small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_space"
+            app:layout_goneMarginStart="@dimen/normal_space"
+            app:layout_constraintStart_toEndOf="@id/image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/txt_name"
+            android:text="@{viewmodel.name}"
+            android:textColor="@{viewmodel.isError ? @color/colorRed : @color/colorBlack }"
+            style="@style/NormalTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_space"
+            android:layout_marginTop="@dimen/xsmall_space"
+            app:layout_goneMarginStart="@dimen/normal_space"
+            app:layout_constraintStart_toEndOf="@id/image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_indicator"/>
+
+        <TextView
+            android:id="@+id/txt_category_food"
+            android:visibility="@{viewmodel.isError ? View.GONE : View.VISIBLE}"
+            android:text="@{viewmodel.categoryName}"
+            style="@style/NormalTextView"
+            android:layout_marginTop="@dimen/xsmall_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/txt_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_name"/>
+
+        <TextView
+            android:id="@+id/txt_count"
+            android:visibility="@{viewmodel.isError ? View.GONE : View.VISIBLE}"
+            android:text="@{viewmodel.orderedCount}"
+            android:textColor="@color/colorOrange"
+            style="@style/NormalTextView"
+            android:layout_marginTop="@dimen/small_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/txt_name"
+            app:layout_constraintEnd_toEndOf="@id/txt_name"
+            app:layout_constraintTop_toBottomOf="@+id/txt_category_food"/>
+
+        <TextView
+            android:id="@+id/txt_status"
+            android:visibility="@{viewmodel.isError ? View.GONE : View.VISIBLE}"
+            android:text="@{viewmodel.detailOrderStatus}"
+            style="@style/NormalTextView"
+            android:layout_marginTop="@dimen/small_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/txt_name"
+            app:layout_constraintEnd_toEndOf="@id/txt_name"
+            app:layout_constraintTop_toBottomOf="@+id/txt_count"/>
+
+        <TextView
+            android:onClick="@{(view)->viewmodel.onClickProcessButton()}"
+            android:text="@{viewmodel.processOrder}"
+            android:visibility="@{viewmodel.isShowProcessButton ? View.VISIBLE : View.GONE}"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/txtSize_normal"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/large_space"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_status" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

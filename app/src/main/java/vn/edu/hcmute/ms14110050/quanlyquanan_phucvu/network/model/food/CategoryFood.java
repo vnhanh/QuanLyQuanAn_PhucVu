@@ -10,13 +10,10 @@ import com.google.gson.annotations.SerializedName;
 public class CategoryFood {
     @SerializedName("id")
     @Expose
-    String id;
+    private String id;
     @SerializedName("name")
     @Expose
-    String name;
-    @SerializedName("actived")
-    @Expose
-    boolean actived;
+    private String name;
 
     public String getId() {
         return id;
@@ -32,13 +29,5 @@ public class CategoryFood {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isActived() {
-        return actived;
-    }
-
-    public void setActived(boolean actived) {
-        this.actived = actived;
     }
 }

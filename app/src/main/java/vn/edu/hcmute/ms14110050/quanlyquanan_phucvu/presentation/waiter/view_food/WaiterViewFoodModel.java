@@ -14,12 +14,16 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.WeakHashMap;
 
+import io.reactivex.observers.DisposableObserver;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputProcessorCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.RxObserver;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.SendObject;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.databinding.BindableFieldTarget;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.picasso.RectangleImageTransform;
@@ -33,15 +37,21 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrder
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.FullOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrderFoodResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestApi;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestApi;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.ChefSetupOrderViewModel;
 
 /**
  * Created by Vo Ngoc Hanh on 6/27/2018.
  */
 
 public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> implements InputProcessorCallback{
+    private @interface Index{
+        int ORDER = 0;
+    }
     public final ObservableField<Drawable> foodDrawable = new ObservableField<Drawable>();
     private BindableFieldTarget foodTarget;
 
@@ -55,10 +65,10 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
     public ObservableBoolean isProgress = new ObservableBoolean(false);
     public ObservableBoolean hasOrdered = new ObservableBoolean(false);
 
-    private FoodRequestManger foodRM;
+    private FoodRequestApi foodRM;
     private FoodSocketService foodSS;
 
-    private OrderRequestManager orderRM;
+    private OrderRequestApi orderRM;
 
     /*
     * Property
@@ -121,7 +131,6 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
         getFoodCallback = new GetFoodCallback(this);
         inputOrderCountCallback = new InputCallbackImpl(this);
-        orderFoodCallback = new GetFoodOrderResponseCallback(this);
 
         listenFoodSocket();
 
@@ -133,13 +142,13 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
     private void createOrderRequestManager() {
         if (orderRM == null) {
-            orderRM = new OrderRequestManager();
+            orderRM = new OrderRequestApi();
         }
     }
 
     private void createFoodRequestManager() {
         if (foodRM == null) {
-            foodRM = new FoodRequestManger();
+            foodRM = new FoodRequestApi();
         }
     }
 
@@ -157,7 +166,6 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
         }
         inputOrderCountCallback = null;
         getFoodCallback = null;
-        orderFoodCallback = null;
     }
 
     @Override
@@ -371,53 +379,8 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
         // reset giá trị lỗi hiển thị khi order thất bại
         orderFoodError = "";
-        orderRM.orderFood(token, fields, new GetCallback<FoodResponse>() {
-            @Override
-            public void onFinish(FoodResponse response) {
-                if (!response.isSuccess()) {
-                    Log.d("LOG", WaiterViewFoodModel.class.getSimpleName()
-                            + ":orderFoodForOrder():failed:" + response.getMessage());
-                }else{
-                    food = response.getFood();
-                    showFood();
-                }
-            }
-        }, new GetCallback<OrderResponse>() {
-            @Override
-            public void onFinish(OrderResponse orderResponse) {
-                Log.d("LOG", WaiterViewFoodModel.class.getSimpleName()
-                        + ":order food:isSuccess():" + orderResponse.isSuccess()
-                        + ":message:" + orderResponse.getMessage());
-
-                if (!orderResponse.isSuccess()) {
-                    hideProgress();
-                    String message = getString(newCount == 0 ? R.string.remove_order_food_failed : R.string.order_food_failed);
-
-                    if(!StrUtil.isEmpty(orderResponse.getMessage())){
-                        message += ". " + orderResponse.getMessage();
-                    }
-
-                    showMessage(message, Constant.COLOR_ERROR);
-                }
-                else{
-                    Order order = orderResponse.getOrder();
-                    ArrayList<DetailOrder> details = order.getDetailOrders();
-                    int size = details.size();
-                    int i = 0;
-                    for (; i < size; i++) {
-                        if (details.get(i).getFoodId().equals(food.getId())) {
-                            detailOrder = details.get(i);
-                            break;
-                        }
-                    }
-                    if (i >= size) {
-                        detailOrder = null;
-                    }
-                    showOrderIfExist();
-                    hideProgress();
-                }
-            }
-        });
+        RxObserver observer = new RxObserver(this, Index.ORDER);
+        addDisposable(orderRM.orderFood(token, fields, observer));
     }
 
     public void onOrderFoodResponse(FoodOrderResponse response) {
@@ -501,7 +464,59 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
     private InputCallbackImpl inputOrderCountCallback;
 
-    private GetFoodOrderResponseCallback orderFoodCallback;
-
     private GetFoodCallback getFoodCallback;
+
+    private void onOrderFoodSuccess(OrderFoodResponse response) {
+        if (!response.isSuccess()) {
+            hideProgress();
+            String message = getString(newCount == 0 ? R.string.remove_order_food_failed : R.string.order_food_failed);
+
+            if(!StrUtil.isEmpty(response.getMessage())){
+                message += ". " + response.getMessage();
+            }
+
+            showMessage(message, Constant.COLOR_ERROR);
+        }
+        else{
+            food = response.getFood();
+            showFood();
+
+            Order order = response.getOrder();
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            int size = details.size();
+            int i = 0;
+            for (; i < size; i++) {
+                if (details.get(i).getFoodId().equals(food.getId())) {
+                    detailOrder = details.get(i);
+                    break;
+                }
+            }
+            if (i >= size) {
+                detailOrder = null;
+            }
+            showOrderIfExist();
+            hideProgress();
+        }
+    }
+
+    /*
+    * RxJava
+    * */
+
+    @Override
+    public void update(Observable o, Object arg) {
+        super.update(o, arg);
+
+        if (arg instanceof SendObject) {
+            SendObject object = (SendObject) arg;
+            int tag = object.getTag();
+            switch (tag) {
+                case Index.ORDER:
+                    OrderFoodResponse _response = (OrderFoodResponse) object.getValue();
+                    onOrderFoodSuccess(_response);
+                    break;
+            }
+        }
+    }
+
 }

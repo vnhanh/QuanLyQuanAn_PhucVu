@@ -13,13 +13,13 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSh
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.IWebData;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderCheckable;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrdersResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.ResOrderFlag;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.DelegacyResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.SuggestDelegacy;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.user.User;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderParams;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestApi;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.abstracts.WaiterListOrdersContract;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.listener.WaiterListOrdersSocketListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.home.order.listener.WaiterOnSubmitDelegacyUserName;
@@ -32,7 +32,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IRecyclerA
 public class WaiterListOrdersViewModel extends BaseNetworkViewModel<WaiterListOrdersContract.View>
         implements GetCallback<User>, Callback<IWebData> {
 
-    private OrderRequestManager orderRM;
+    private OrderRequestApi orderRM;
     private String token;
     private User user;
     private WaiterListOrdersSocketListener socketListener;
@@ -123,7 +123,7 @@ public class WaiterListOrdersViewModel extends BaseNetworkViewModel<WaiterListOr
 
     private void createOrderRequestManager() {
         if (orderRM == null) {
-            orderRM = new OrderRequestManager();
+            orderRM = new OrderRequestApi();
         }
     }
 

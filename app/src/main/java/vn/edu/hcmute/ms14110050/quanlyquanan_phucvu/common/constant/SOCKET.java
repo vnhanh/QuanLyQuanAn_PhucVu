@@ -35,9 +35,12 @@ public class SOCKET {
 
     public static String SOCKET_EVENT_UPDATE_STATUS_ORDER = "server-update-status-order";
     public static String SOCKET_EVENT_UPDATE_ORDER = "server-update-order";
+    public static String SOCKET_EVENT_CREATE_DETAIL_ORDER = "server-create-detail-order";
     public static String SOCKET_EVENT_UPDATE_DETAIL_ORDER = "server-update-detail-order";
-    public static String SOCKET_EVENT_DELETE_DETAIL_ORDER = "server-remove-detail-order";
+    public static String SOCKET_EVENT_REMOVE_DETAIL_ORDER = "server-remove-detail-order";
     public static String SOCKET_EVENT_REMOVE_ORDER = "server-remove-order";
+    public static String SOCKET_EVENT_ADD_DETAIL_ORDER = "server-add-detail-order";
+    public static String SOCKET_EVENT_UPDATE_STATUS_DETAIL_ORDER = "server-update-status-detail-order";
 
     public static String SOCKET_EVENT_REQUEST_DELEGACY_WAITER = "server-request-delegacy-waiter";
     public static String SOCKET_EVENT_RESPONSE_DELEGACY_WAITER = "server-response-delegacy-waiter";

@@ -1,14 +1,10 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.abstracts;
 
-import android.app.Activity;
 import android.content.Context;
 
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateDetailOrderSocketData;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.UpdateStatusOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.socket_data.UpdateDetailOrderSocketData;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.food.IFoodVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.table.ITableVM;
 
@@ -22,11 +18,19 @@ public interface IOrderVM extends ITableVM, IFoodVM{
 
     Context getContext();
 
-    void onOrderUpdatedStatus(Order order);
+    void onStart();
+
+    void onOrderUpdatedStatus(UpdateStatusOrderResponse data);
+
+    void onOrderUpdated(Order order);
 
     void onUpdateDetailOrder(UpdateDetailOrderSocketData data);
 
     void onDeleteDetailOrder(UpdateDetailOrderSocketData data);
 
     void onOrderRemoved();
+
+    void onRequestRemoveDetailOrder(String detailOrderID);
+
+    void onRequestUpdateDetailOrderStatus(String detailOrderID, int status);
 }

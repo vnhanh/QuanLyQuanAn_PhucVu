@@ -4,7 +4,7 @@
     tools:context="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.order.activity.AddEditOrderActivity">
 
     <item
-        android:id="@+id/menu_create_order"
+        android:id="@+id/menu_process_order"
         android:visible="false"
         android:orderInCategory="100"
         android:icon="@drawable/ic_order_32_0"

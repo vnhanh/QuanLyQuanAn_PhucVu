@@ -63,7 +63,7 @@ public class FoodAdapter extends BaseAdapter<FoodVH,Food>{
     @Override
     public void onBindViewHolder(@NonNull FoodVH holder, int position) {
         if (constainData()) {
-            holder.onBind(list.get(position));
+            holder.onBind(list.get(position), position);
         }
     }
 

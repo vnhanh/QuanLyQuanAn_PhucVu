@@ -3,7 +3,6 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs;
 import com.google.gson.reflect.TypeToken;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.TableOrderSocket;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.region.Region;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 

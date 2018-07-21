@@ -18,7 +18,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodOrderSocketData;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestManger;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestApi;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IRecyclerAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.contract.ISpinnerDataListener;
@@ -33,7 +33,7 @@ public class SelectFoodViewModel
 
     private IOrderVM centerVM;
 
-    private FoodRequestManger requestManager;
+    private FoodRequestApi requestManager;
 
     // lắng nghe dữ liệu food và category food thay đổi
     private FoodSocketService socketService;
@@ -84,11 +84,11 @@ public class SelectFoodViewModel
 
     @Override
     public void onViewDetached() {
+        super.onViewDetached();
         requestManager = null;
         socketService = null;
         order = null;
         token = null;
-        super.onViewDetached();
     }
 
     private void onSetupServerConnection() {
@@ -100,7 +100,7 @@ public class SelectFoodViewModel
         socketService.onEventAddCatFood(new GetCallback<CategoryFood>() {
             @Override
             public void onFinish(CategoryFood categoryFood) {
-                if (catDataListener != null && categoryFood.isActived()) {
+                if (catDataListener != null) {
                     catDataListener.onAddItem(categoryFood);
                 }
             }
@@ -276,7 +276,7 @@ public class SelectFoodViewModel
     }
 
     @Override
-    public FoodRequestManger getFoodRequestManager() {
+    public FoodRequestApi getFoodRequestManager() {
         return requestManager;
     }
 

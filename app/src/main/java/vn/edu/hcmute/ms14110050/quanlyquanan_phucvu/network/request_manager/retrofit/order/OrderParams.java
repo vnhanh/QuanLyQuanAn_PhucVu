@@ -58,4 +58,13 @@ public class OrderParams {
 
         return fields;
     }
+
+    public static WeakHashMap<String, Object> updateDetailOrderStatus(String orderID, String detailOrderID, int status) {
+        WeakHashMap<String, Object> fields = new WeakHashMap<>();
+        fields.put("order_id", orderID);
+        fields.put("detail_order_id", detailOrderID);
+        fields.put("flag_status", status);
+
+        return fields;
+    }
 }

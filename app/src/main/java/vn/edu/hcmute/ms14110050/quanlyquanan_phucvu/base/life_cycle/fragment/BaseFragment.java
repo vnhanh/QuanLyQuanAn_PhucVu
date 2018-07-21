@@ -78,6 +78,10 @@ public abstract class BaseFragment<B extends ViewDataBinding, V extends LifeCycl
     @Override
     public void onStop() {
         super.onStop();
+        stop();
+    }
+
+    protected void stop() {
         if (viewModel != null) {
             if (viewModel instanceof OnChangeNetworkStateListener) {
                 unRegisterChangeNetworkStateListener();
@@ -92,6 +96,10 @@ public abstract class BaseFragment<B extends ViewDataBinding, V extends LifeCycl
     @CallSuper
     public void onDestroy() {
         super.onDestroy();
+        destroy();
+    }
+
+    protected void destroy() {
         viewModel.onDestroy();
         viewModel = null;
         binding = null;

@@ -30,12 +30,12 @@
             android:layout_width="@dimen/size_image_food"
             android:layout_height="@dimen/size_image_food"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/txt_name"
-            android:text="@{viewmodel.name}"
+            android:id="@+id/txt_info"
+            android:text="@{viewmodel.foodInfo}"
+            android:lineSpacingExtra="3dp"
             style="@style/NormalTextView"
             android:layout_marginStart="@dimen/small_space"
             android:padding="@dimen/small_space"
@@ -45,75 +45,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:id="@+id/txt_inventory_count"
-            android:text="@{viewmodel.inventory}"
-            style="@style/NormalTextView"
-            android:layout_marginStart="@dimen/small_space"
-            android:padding="@dimen/small_space"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_name"/>
-
-        <TextView
-            android:id="@+id/txt_unit_price"
-            android:text="@{viewmodel.unitPrice}"
-            style="@style/NormalTextView"
-            android:padding="@dimen/small_space"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/txt_name"
-            app:layout_constraintEnd_toEndOf="@id/txt_name"
-            app:layout_constraintTop_toBottomOf="@+id/txt_inventory_count"/>
-
-        <TextView
-            android:id="@+id/txt_discount"
-            android:text="@{viewmodel.discount}"
-            style="@style/NormalTextView"
-            android:padding="@dimen/small_space"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/txt_name"
-            app:layout_constraintEnd_toEndOf="@id/txt_name"
-            app:layout_constraintTop_toBottomOf="@+id/txt_unit_price"/>
-
-        <TextView
-            android:id="@+id/txt_count"
-            android:text="@{viewmodel.orderedCount}"
-            android:visibility="@{viewmodel.count > 0 ? View.VISIBLE : View.GONE}"
-            style="@style/NormalTextView"
-            android:padding="@dimen/small_space"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/txt_name"
-            app:layout_constraintEnd_toEndOf="@id/txt_name"
-            app:layout_constraintTop_toBottomOf="@+id/txt_discount"/>
-
-        <TextView
-            android:id="@+id/txt_cash"
-            android:text="@{viewmodel.cash}"
-            android:visibility="@{viewmodel.count > 0 ? View.VISIBLE : View.GONE}"
-            style="@style/NormalTextView"
-            android:padding="@dimen/small_space"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_goneMarginTop="0dp"
-            app:layout_constraintStart_toStartOf="@id/txt_name"
-            app:layout_constraintEnd_toEndOf="@id/txt_name"
-            app:layout_constraintTop_toBottomOf="@+id/txt_count"/>
-
         <ImageView
             android:id="@+id/btn_order"
-            android:src="@{viewmodel.isOrdering ? @drawable/ic_check_48dp_5dp : @drawable/ic_cart_48dp_5dp}"
+            android:src="@drawable/ic_cart_48dp_5dp"
             android:layout_marginTop="@dimen/small_space"
             android:layout_marginEnd="@dimen/huge_large_space"
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:layout_goneMarginTop="@dimen/small_space"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_cash"/>
+            app:layout_constraintTop_toBottomOf="@+id/txt_info"/>
 
         <TextView
             android:id="@+id/action_view_order"

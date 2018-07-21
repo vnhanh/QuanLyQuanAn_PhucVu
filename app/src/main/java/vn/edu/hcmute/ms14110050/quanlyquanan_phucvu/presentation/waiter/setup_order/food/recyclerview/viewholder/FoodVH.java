@@ -30,10 +30,10 @@ public class FoodVH extends BaseViewHolder<WaiterItemRecyclerFoodBinding, FoodVH
         viewmodel.setContainerViewModel(containerViewModel);
     }
 
-    public void onBind(Food food) {
+    public void onBind(Food food, int position) {
         Animation alphaAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
         binding.getRoot().startAnimation(alphaAnim);
-        viewmodel.setFood(food);
+        viewmodel.setData(food, position);
     }
 
     @Override

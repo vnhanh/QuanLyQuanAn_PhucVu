@@ -211,12 +211,9 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
     // Tái xác định item được chọn sau khi sortList()
     private void onResetSelectItem() {
         int index = 0;
-        // cờ đánh dấu có thay đổi item hay không ? (để thực hiện việc load lại dữ liệu)
-        boolean isChangeItem = false;
 //        Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():selectedCatID:" + selectedCatID);
         if (StrUtil.isEmpty(selectedCatID)) {
             if (categories != null && categories.size() > 0) {
-                isChangeItem = true;
                 selectedCatID = categories.get(0).getId();
             }
         } else {
@@ -234,7 +231,6 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
 
             if (_index == size) {
 //                Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item just change");
-                isChangeItem = true;
                 selectedCatID = "";
             }
         }
@@ -243,8 +239,6 @@ public class CategoryFoodAdapter extends ArrayAdapter implements ISpinnerDataLis
         // set selected index cho spinner
         viewListener.onSelectSpinnerItemIndex(index);
         // truyền region id cho viewmodel load list món theo loại món
-        if (isChangeItem) {
-            dataProcessorListener.onSelectSpinnerItemId(selectedCatID);
-        }
+        dataProcessorListener.onSelectSpinnerItemId(selectedCatID);
     }
 }

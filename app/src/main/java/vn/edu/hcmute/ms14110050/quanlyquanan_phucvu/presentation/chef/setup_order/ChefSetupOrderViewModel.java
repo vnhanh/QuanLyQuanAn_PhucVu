@@ -5,39 +5,42 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Observable;
 import java.util.WeakHashMap;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.RxDisposableSubscriber;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.SendObject;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.recyclerview.IRecyclerAdapter;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.sharedpreferences.SSharedReference;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.FoodSocketService;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.Food;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.FullOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.FullOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateDetailOrderSocketData;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.UpdateDetailOrderStatusResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderParams;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.ChefListOrdersViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.recycler.viewholder.IDetailOrderProcessor;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.abstracts.IOrderVM;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.abstracts.ISetupOrder;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.helper.SetupOrderRequestManager;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.socket_listener.OrderSocketListener;
 
-import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_ERROR;
-import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_SUCCESS;
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant.COLOR_WARNING;
 
 
@@ -45,12 +48,13 @@ import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Const
  * Created by Vo Ngoc Hanh on 6/22/2018.
  */
 
-public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View> implements IOrderVM {
+public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.View>
+        implements IOrderVM, IDetailOrderProcessor {
+
     public final ObservableField<Integer> toolbarTitle = new ObservableField<Integer>();
 
+    private SetupOrderRequestManager resManager;
     private OrderSocketListener orderListener;
-
-    private OrderRequestManager orderRM;
 
     private Order order;
 
@@ -60,11 +64,12 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
     public final ObservableField<String> numberCustomer = new ObservableField<String>();
     public final ObservableField<String> orderStatus = new ObservableField<String>();
     public final ObservableField<String> totalCost = new ObservableField<String>();
+    public final ObservableBoolean isShowDescription = new ObservableBoolean();
     public final ObservableField<String> descriptionOrder = new ObservableField<String>();
 
     // listener lắng nghe thay đổi dữ liệu của bàn và món
     private IRecyclerAdapter<Table> tableDataListener;
-    private IRecyclerAdapter<Food> foodDataListener;
+    private IRecyclerAdapter<DetailOrder> detailOrderAdapter;
 
     private boolean FLAG_BACK_TO_PREV_ACTIVITY = false;
     private String error = "";
@@ -91,8 +96,8 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
         this.tableDataListener = tableDataListener;
     }
 
-    public void setFoodDataListener(IRecyclerAdapter<Food> foodDataListener) {
-        this.foodDataListener = foodDataListener;
+    public void setDetailOrderAdapter(IRecyclerAdapter<DetailOrder> detailOrderAdapter) {
+        this.detailOrderAdapter = detailOrderAdapter;
     }
 
     @Override
@@ -105,20 +110,13 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
     * */
 
     public ChefSetupOrderViewModel() {
-
+        resManager = new SetupOrderRequestManager();
     }
 
     private void createOrderSocketListener() {
         if (orderListener == null) {
-            Log.d("LOG", getClass().getSimpleName() + ":createOrderSocketListener()");
             orderListener = new OrderSocketListener();
             orderListener.setCenterViewModel(this);
-        }
-    }
-
-    private void createOrderRequestManager() {
-        if (orderRM == null) {
-            orderRM = new OrderRequestManager();
         }
     }
 
@@ -133,7 +131,7 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
         createOrderSocketListener();
         orderListener.startListening();
 
-        createOrderRequestManager();
+        resManager.onStart(getContext());
 
         toolbarTitle.set(R.string.title_confirm_order);
 
@@ -204,23 +202,31 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
     }
 
     private void showDescriptionOrder() {
-        descriptionOrder.set(getString(R.string.display_description_order, order.getDescription()));
+        String des = order.getDescription();
+        isShowDescription.set(!StrUtil.isEmpty(des));
+
+        if (isShowDescription.get()) {
+            descriptionOrder.set(getString(R.string.display_description_order, order.getDescription()));
+        }
     }
 
     @Override
     public void onViewDetached() {
         super.onViewDetached();
+
         orderListener.stopListening();
+        resManager.onStop();
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+
         orderListener.destroy();
         orderListener = null;
-        orderRM = null;
+        resManager = null;
         tableDataListener = null;
-        foodDataListener = null;
-        super.onDestroy();
+        detailOrderAdapter = null;
     }
 
     // load thông tin order theo orderID
@@ -231,26 +237,28 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
             return;
         }
 
-        showLoadingOrder();
-        getToken();
-        orderRM.getOrder(token, order.getId(), new GetCallback<FullOrderResponse>() {
-            @Override
-            public void onFinish(FullOrderResponse orderResponse) {
-                if (orderResponse.isSuccess()) {
-                    order = orderResponse.getOrder();
-                    ArrayList<Table> tables = orderResponse.getTables();
-                    tableDataListener.onGetList(tables);
-                    ArrayList<Food> foods = orderResponse.getFoods();
-                    foodDataListener.onGetList(foods);
-                    showInformationOrder();
-                }else{
-                    if (isViewAttached()) {
-                        Toast.makeText(getContext(), R.string.get_order_failed, Toast.LENGTH_SHORT).show();
-                    }
-                }
-                hideProgress();
+        showProgress(R.string.loading_order);
+
+        setupForNewRequest();
+        RxDisposableSubscriber subscriber = new RxDisposableSubscriber(this, Index.LOAD_ORDER);
+        disposable = asyncProcessor.subscribeWith(subscriber);
+        resManager.loadOrder(order.getId()).subscribe(asyncProcessor);
+    }
+
+    private void onGetFullOrderResponse(FullOrderResponse response){
+        if (response.isSuccess()) {
+            order = response.getOrder();
+            ArrayList<Table> tables = response.getTables();
+            tableDataListener.onGetList(tables);
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            detailOrderAdapter.onGetList(details);
+            showInformationOrder();
+        }else{
+            if (isViewAttached()) {
+                Toast.makeText(getContext(), R.string.get_order_failed, Toast.LENGTH_SHORT).show();
             }
-        });
+        }
+        hideProgress();
     }
 
     /*
@@ -264,53 +272,6 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
     /*
     * IOrderVM
     * */
-
-    private String token;
-
-    @Override
-    public DetailOrder getDetailOrderByFood(String foodID) {
-//        Log.d("LOG", getClass().getSimpleName() + ":getDetailOrderByFood():foodID:" + foodID);
-        if(order == null)
-            return null;
-        ArrayList<DetailOrder> details = order.getDetailOrders();
-        for (DetailOrder detail : details) {
-            if (detail.getFoodId() != null && detail.getFoodId().equals(foodID)) {
-//                Log.d("LOG", getClass().getSimpleName() + ":getDetailOrderByFood():find detail");
-                return detail;
-            }
-        }
-//        Log.d("LOG", getClass().getSimpleName() + ":getDetailOrderByFood():find no detail");
-        return null;
-    }
-
-    @Override
-    public int getDetailOrderIndexByFood(String foodID) {
-        if(order == null)
-            return -1;
-        ArrayList<DetailOrder> details = order.getDetailOrders();
-        int size = details.size();
-        for (int i = 0; i < size; i++) {
-            DetailOrder detail = details.get(i);
-            if (detail.getFoodId() != null && detail.getFoodId().equals(foodID)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    @Override
-    public FoodSocketService getFoodSocketService() {
-        return null;
-    }
-
-    @Override
-    public String getToken() {
-        if (token == null) {
-            token = SSharedReference.getToken(getContext());
-        }
-        return token;
-    }
 
     @Override
     public void onOrderUpdatedStatus(Order order) {
@@ -356,78 +317,6 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
         }
     }
 
-    // Khi socket lắng nghe dữ liệu order hoặc lấy được dữ liệu từ request manager
-    @Override
-    public void onDetailOrderUpdated(UpdateDetailOrderSocketData data) {
-        if (data != null) {
-            order.setFinalCost(data.getFinalCost());
-            onUpdateFinalCost();
-
-            if (order.getDetailOrders() == null) {
-                return;
-            }
-
-            DetailOrder _detail = data.getDetailOrder();
-            if (_detail == null || _detail.getFoodId() == null) {
-                return;
-            }
-            ArrayList<DetailOrder> details = order.getDetailOrders();
-            int size = details.size();
-
-            for (int i = 0; i < size; i++) {
-                if (_detail.getFoodId().equals(details.get(i).getFoodId())) {
-                    details.set(i, _detail);
-                    if (foodDataListener != null) {
-                        RecyclerView.Adapter adapter = foodDataListener.getAdapter();
-                        adapter.notifyItemChanged(i);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    private void onUpdateFinalCost() {
-        showFinalCost();
-        if (isViewAttached()) {
-            getView().onAnimationFinalCost();
-        }
-    }
-
-    // Khi socket lắng nghe dữ liệu order hoặc lấy được dữ liệu từ request manager
-    @Override
-    public void onDetailOrderRemoved(UpdateDetailOrderSocketData data) {
-        if (data == null) {
-            return;
-        }
-
-        order.setFinalCost(data.getFinalCost());
-        onUpdateFinalCost();
-
-        if (order.getDetailOrders() == null) {
-            return;
-        }
-
-        DetailOrder _detail = data.getDetailOrder();
-        if (_detail == null || _detail.getFoodId() == null) {
-            return;
-        }
-        ArrayList<DetailOrder> details = order.getDetailOrders();
-        int size = details.size();
-
-        for (int i = 0; i < size; i++) {
-            if (_detail.getFoodId().equals(details.get(i).getFoodId())) {
-                details.remove(i);
-                if (foodDataListener != null) {
-                    RecyclerView.Adapter adapter = foodDataListener.getAdapter();
-                    foodDataListener.getList().remove(i);
-                    adapter.notifyItemRemoved(i);
-                }
-                break;
-            }
-        }
-    }
-
     // Order đã được remove
     // lắng nghe từ socket
     @Override
@@ -450,15 +339,9 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
     * End IOrderVM
     * */
 
-    private void showLoadingOrder() {
-        showProgress(R.string.loading_order);
-    }
-
-
     // Khi người dùng bấm vào menu XÁC NHẬN
     public void onClickConfirmMenu() {
         if (order != null && (order.getStatusFlag()== OrderFlag.PENDING || order.getStatusFlag()== OrderFlag.COOKING)) {
-            createOrderRequestManager();
 
             WeakHashMap<String, Object> map =
                     OrderParams.createUpdateStatus(order.getId(), order.getStatusFlag() + 1);
@@ -470,17 +353,143 @@ public class ChefSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.Vi
                 showProgress(R.string.message_confirm_finish_cook);
             }
 
-            orderRM.updateStatusOrder(token, map, new GetCallback<OrderResponse>() {
+            setupForNewRequest();
+
+            RxDisposableSubscriber subscriber = new RxDisposableSubscriber(this, Index.COOK_ORDER);
+            disposable = asyncProcessor.subscribeWith(subscriber);
+            resManager.processCooking(map).subscribe(asyncProcessor);
+        }
+    }
+
+    private void onGetOrderResponse(OrderResponse response) {
+        if (response.isSuccess()) {
+            order = response.getOrder();
+            showStatusOrder();
+            if (detailOrderAdapter != null) {
+                ArrayList<DetailOrder> detailOrders = order.getDetailOrders();
+                detailOrderAdapter.clearAll();
+                detailOrderAdapter.onGetList(detailOrders);
+            }
+            showMessage(R.string.message_process_success, Constant.COLOR_SUCCESS);
+        }
+        else{
+            String message = response.getMessage();
+            if (StrUtil.isEmpty(message)) {
+                message = getString(R.string.message_process_failed);
+            }
+            showMessage(message, Constant.COLOR_ERROR);
+        }
+        hideProgress();
+    }
+
+    /*
+    * DisposableObserver interface
+    * */
+
+    @Override
+    public void update(Observable o, Object arg) {
+        super.update(o, arg);
+
+        if (arg instanceof SendObject) {
+            SendObject object = (SendObject) arg;
+            int tag = object.getTag();
+            switch (tag) {
+                case Index.LOAD_ORDER:
+                    FullOrderResponse response = (FullOrderResponse) object.getValue();
+                    onGetFullOrderResponse(response);
+                    break;
+
+                case Index.COOK_ORDER:
+                    OrderResponse orderResponse = (OrderResponse) object.getValue();
+                    onGetOrderResponse(orderResponse);
+                    break;
+
+                case Index.UPDATE_DETAIL_ORDER_STATUS:
+                    UpdateDetailOrderStatusResponse updateDetailResponse = (UpdateDetailOrderStatusResponse) object.getValue();
+                    onGetUpdateDetailOrderStatusResponse(updateDetailResponse);
+                    break;
+            }
+        }
+    }
+
+    /*
+    * End
+    * */
+
+    @Override
+    public void requestUpdateStatusDetailOrder(DetailOrder detailOrder, int newStatus) {
+        if (detailOrder == null) {
+            Log.d("LOG", getClass().getSimpleName()
+                    + ":requestUpdateStatusDetailOrder():detail order is null");
+            return;
+        }
+        int oldStatus = detailOrder.getStatusFlag();
+        if (oldStatus == newStatus) {
+            Log.d("LOG", getClass().getSimpleName()
+                    + ":requestUpdateStatusDetailOrder():not change status");
+            showMessage(R.string.status_order_not_changed, Constant.COLOR_ERROR);
+            return;
+        }
+        if (isViewAttached()) {
+            int titleResId;
+            if (oldStatus == OrderFlag.PENDING) {
+                titleResId = R.string.title_confirm_start_cooking;
+            }else if (oldStatus == OrderFlag.COOKING){
+                titleResId = R.string.title_confirm_cook_finish;
+            }else{
+                return;
+            }
+            getView().openConfirmDialog(titleResId, R.string.ask_confirm_order, new GetCallback<Void>() {
                 @Override
-                public void onFinish(OrderResponse response) {
-                    if (response.isSuccess()) {
-                        showMessage(R.string.message_update_status_order_success, COLOR_SUCCESS);
-                    }else{
-                        showMessage(R.string.message_update_status_order_failed, COLOR_ERROR);
-                    }
-                    hideProgress();
+                public void onFinish(Void aVoid) {
+                    updateStatusDetailOrder(detailOrder, newStatus);
                 }
             });
         }
+    }
+
+    private void updateStatusDetailOrder(DetailOrder detailOrder, int newStatus) {
+        if (resManager != null) {
+            showProgress(R.string.confirming);
+            WeakHashMap<String, Object> map =
+                    OrderParams.updateDetailOrderStatus(detailOrder.getOrderID(), detailOrder.getId(), newStatus);
+            setupForNewRequest();
+            RxDisposableSubscriber subscriber = new RxDisposableSubscriber(this, Index.UPDATE_DETAIL_ORDER_STATUS);
+            disposable = asyncProcessor.subscribeWith(subscriber);
+            resManager.updateDetailOrderStatus(map).subscribe(asyncProcessor);
+        }
+    }
+
+    private void onGetUpdateDetailOrderStatusResponse(UpdateDetailOrderStatusResponse response) {
+        hideProgress();
+        if (response.isSuccess()) {
+            order = response.getOrder();
+            showInformationOrder();
+
+            String detailOrderID = response.getDetailOrderID();
+            if (detailOrderID == null) {
+                Log.d("LOG", getClass().getSimpleName()
+                        + ":on get update detail order status response:detailOrderID is null");
+                return;
+            }
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            for (DetailOrder detail : details) {
+                String _id = detail.getId();
+                if (detailOrderID.equals(_id)) {
+                    detailOrderAdapter.onUpdateItem(detail);
+                    break;
+                }
+            }
+        }
+        else{
+            showMessage(response.getMessage(), Constant.COLOR_ERROR);
+        }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface Index{
+        int LOAD_ORDER = 0;
+        int COOK_ORDER = 1;
+        int UPDATE_DETAIL_ORDER_STATUS = 2;
     }
 }

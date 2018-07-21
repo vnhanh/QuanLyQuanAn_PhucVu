@@ -4,7 +4,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.api.nodejs.RegionTableSocketService;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.TableRequestManager;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.table.TableRequestApi;
 
 /**
  * Created by Vo Ngoc Hanh on 6/24/2018.
@@ -17,7 +17,7 @@ public interface ITableVM {
 
     void onRequestRemoveTableFromOrder(String tableID, GetCallback<TableResponse> callback);
 
-    TableRequestManager getRegionTableRequestManager();
+    TableRequestApi getRegionTableRequestManager();
 
     RegionTableSocketService getRegionTableSocketService();
 

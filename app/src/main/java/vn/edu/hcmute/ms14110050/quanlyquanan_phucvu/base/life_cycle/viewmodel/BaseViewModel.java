@@ -5,12 +5,22 @@ import android.content.res.Resources;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.util.Log;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.processors.AsyncProcessor;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.broadcast.OnChangeNetworkStateListener;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.contract.LifeCycle;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 
 
-public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCycle.ViewModel<V> {
+public abstract class BaseViewModel <V extends LifeCycle.View>
+        implements LifeCycle.ViewModel<V>, Observer{
 
     private V view;
 
@@ -26,12 +36,14 @@ public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCy
 
     @Override
     public void onViewDetached() {
+        if (disposable != null) {
+            disposable.dispose();
+        }
         this.view = null;
     }
 
     @Override
     public void onDestroy() {
-
     }
 
     protected void showToast(@StringRes int messageIdRes) {
@@ -92,5 +104,35 @@ public abstract class BaseViewModel <V extends LifeCycle.View> implements LifeCy
 
     protected String getString(@StringRes int idRes) {
         return view != null ? view.getContext().getString(idRes) : "";
+    }
+
+    /*
+     * RxJava
+     * */
+    protected AsyncProcessor<ResponseValue> asyncProcessor;
+
+    protected Disposable disposable;
+
+    protected void createAsyncProcessor() {
+        asyncProcessor = AsyncProcessor.create();
+    }
+
+    protected void setupForNewRequest() {
+        createAsyncProcessor();
+        if (disposable != null) {
+            disposable.dispose();
+        }
+    }
+
+    protected void addDisposable(Disposable disposable) {
+        if (this.disposable != null) {
+            disposable.dispose();
+        }
+        this.disposable = disposable;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public abstract class BaseAdapter<VH extends BaseViewHolder, DATA> extends RecyclerView.Adapter<VH>
         implements IRecyclerAdapter<DATA> {
-    private WeakReference<Activity> weakActivity;
+    protected WeakReference<Activity> weakActivity;
     protected ArrayList<DATA> list = new ArrayList<>();
 
     public BaseAdapter(Activity activity) {
@@ -66,5 +66,10 @@ public abstract class BaseAdapter<VH extends BaseViewHolder, DATA> extends Recyc
     @Override
     public int getItemCount() {
         return constainData() ? list.size() : 1;
+    }
+
+    @Override
+    public boolean onUpdateOrAddItem(DATA item) {
+        return false;
     }
 }

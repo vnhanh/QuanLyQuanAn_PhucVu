@@ -17,45 +17,44 @@ import java.util.Date;
 public class User implements Cloneable{
     @SerializedName("_id")
     @Expose
-    String _id = "";
+    private String _id;
     @SerializedName("id")
     @Expose
-    String id = "";
+    private String id;
     @SerializedName("email")
     @Expose
-    String email = "";
+    private String email;
     @SerializedName("username")
     @Expose
-    String username = "";
+    private String username;
     @SerializedName("fullname")
     @Expose
-    String fullname = "";
+    private String fullname;
     @SerializedName("gender")
     @Expose
-    boolean gender;
+    private boolean gender;
     @SerializedName("identity_card")
     @Expose
-    String identityCard = "";
+    private String identityCard;
     @SerializedName("phone")
     @Expose
-    String phone = "";
+    private String phone;
     @SerializedName("birthdate")
     @Expose
-    String birthDate = "";
+    private String birthDate;
     @SerializedName("url_profile")
     @Expose
-    String urlImgProfile = "";
+    private String urlImgProfile;
     @SerializedName("address")
     @Expose
-    String address = "";
+    private String address;
     @TypeAcc
     @SerializedName("type_account")
     @Expose
-    int typeUser;
-
+    private int typeUser;
     @SerializedName("actived")
     @Expose
-    boolean actived;
+    private boolean actived;
 
     public String getBirthDateStrValue() {
         DateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -73,6 +72,9 @@ public class User implements Cloneable{
     }
 
     public String get_id() {
+        if (_id == null) {
+            _id = "";
+        }
         return _id;
     }
 
@@ -81,6 +83,9 @@ public class User implements Cloneable{
     }
 
     public String getId() {
+        if (id == null) {
+            id = "";
+        }
         return id;
     }
 
@@ -89,6 +94,9 @@ public class User implements Cloneable{
     }
 
     public String getEmail() {
+        if (email == null) {
+            email = "";
+        }
         return email;
     }
 
@@ -97,6 +105,9 @@ public class User implements Cloneable{
     }
 
     public String getUsername() {
+        if (username == null) {
+            username = "";
+        }
         return username;
     }
 
@@ -105,6 +116,9 @@ public class User implements Cloneable{
     }
 
     public String getFullname() {
+        if (fullname == null) {
+            fullname = "";
+        }
         return fullname;
     }
 
@@ -121,6 +135,9 @@ public class User implements Cloneable{
     }
 
     public String getIdentityCard() {
+        if (identityCard == null) {
+            identityCard = "";
+        }
         return identityCard;
     }
 
@@ -129,6 +146,9 @@ public class User implements Cloneable{
     }
 
     public String getPhone() {
+        if (phone == null) {
+            phone = "";
+        }
         return phone;
     }
 
@@ -137,6 +157,9 @@ public class User implements Cloneable{
     }
 
     public String getBirthDate() {
+        if (birthDate == null) {
+            birthDate = "";
+        }
         return birthDate;
     }
 
@@ -145,6 +168,9 @@ public class User implements Cloneable{
     }
 
     public String getUrlImgProfile() {
+        if (urlImgProfile == null) {
+            urlImgProfile = "";
+        }
         return urlImgProfile;
     }
 
@@ -161,6 +187,9 @@ public class User implements Cloneable{
     }
 
     public String getAddress() {
+        if (address == null) {
+            address = "";
+        }
         return address;
     }
 

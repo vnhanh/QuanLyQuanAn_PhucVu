@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.WaiterSetupOrderViewModel" />
+
+        <variable
+            name="displayer"
+            type="vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.waiter.setup_order.WaiterSetupOrderDisplay" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txt_id"
+                    android:text="@{displayer.id}"
+                    style="@style/TextView.RegularBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/txt_creater"
+                    android:text="@{displayer.creater}"
+                    style="@style/TextView.RegularBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_id"/>
+
+                <TextView
+                    android:id="@+id/txt_created_date"
+                    android:visibility="@{!displayer.isCreateOrder ? View.VISIBLE : View.GONE}"
+                    android:textColor="@{displayer.isInValidCreatedTime ? @color/colorNormalDarkRed : @color/colorBlack}"
+                    android:text="@{displayer.createdDate}"
+                    style="@style/TextView.RegularBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_creater"/>
+
+                <TextView
+                    android:id="@+id/txt_number_customer"
+                    android:text="@{displayer.numberCustomer}"
+                    style="@style/TextView.RegularBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_goneMarginTop="0dp"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_created_date"/>
+
+                <ImageView
+                    android:src="@drawable/ic_edit_32_4"
+                    android:visibility="@{displayer.isCreateOrder ? View.VISIBLE : View.GONE}"
+                    android:onClick="@{()->viewmodel.onClickNumberCustomerView()}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_space"
+                    app:layout_constraintEnd_toEndOf="@id/txt_number_customer"
+                    app:layout_constraintTop_toTopOf="@id/txt_number_customer"
+                    app:layout_constraintBottom_toBottomOf="@id/txt_number_customer"/>
+
+                <TextView
+                    android:id="@+id/txt_status"
+                    android:text="@{displayer.orderStatus}"
+                    style="@style/TextView.RegularBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_number_customer"/>
+
+                <TextView
+                    android:id="@+id/txt_total_cost"
+                    android:text="@{displayer.totalCost}"
+                    style="@style/TextView.RegularBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_status"/>
+
+                <TextView
+                    android:id="@+id/txt_description"
+                    android:visibility="@{displayer.isShowDescription ? View.VISIBLE : View.GONE}"
+                    android:textColor="@{displayer.isEmptyDescription ? @color/colorGray : @color/colorBlack}"
+                    android:text="@{displayer.descriptionOrder}"
+                    style="@style/TextView.RegularBox"
+                    android:maxLines="4"
+                    android:lineSpacingExtra="3dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/xxhuge_large_space"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_total_cost"/>
+
+                <ImageView
+                    android:id="@+id/btn_edit_description"
+                    android:visibility="@{displayer.isCreateOrder ? View.VISIBLE : View.GONE}"
+                    android:background="#fff"
+                    android:src="@drawable/ic_edit_32_4"
+                    android:onClick="@{()->viewmodel.onClickEditDescription()}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_space"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/txt_description"
+                    app:layout_constraintBottom_toBottomOf="@id/txt_description"/>
+
+                <View
+                    android:id="@+id/line1"
+                    android:visibility="@{viewmodel.isShowTables ? View.VISIBLE : View.GONE}"
+                    android:background="#a8a8a8"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    app:layout_goneMarginTop="0dp"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_description"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_tables"
+                    android:visibility="@{viewmodel.isShowTables ? View.VISIBLE : View.GONE}"
+                    android:paddingTop="@dimen/normal_space"
+                    android:paddingBottom="@dimen/normal_space"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/line1"/>
+
+                <View
+                    android:id="@+id/line2"
+                    android:background="#a8a8a8"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_goneMarginTop="0dp"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerview_tables"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_foods"
+                    android:paddingTop="@dimen/normal_space"
+                    android:paddingBottom="@dimen/normal_space"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/line2"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </ScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

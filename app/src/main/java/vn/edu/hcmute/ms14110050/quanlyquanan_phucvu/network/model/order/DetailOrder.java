@@ -12,21 +12,53 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.Table;
  */
 
 public class DetailOrder {
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("order_id")
+    @Expose
+    private String orderID;
     @SerializedName("food_id")
     @Expose
-    String foodId;
+    private String foodId;
+    @SerializedName("food_image")
+    @Expose
+    private String foodImage;
     @SerializedName("food_name")
     @Expose
-    String foodName;
+    private String foodName;
     @SerializedName("price_unit")
     @Expose
-    long unitPrice;
+    private long unitPrice;
     @SerializedName("discount")
     @Expose
-    long discount;
+    private long discount;
     @SerializedName("count")
     @Expose
-    int count;
+    private int count;
+    @OrderFlag
+    @SerializedName("flag_status")
+    @Expose
+    private int statusFlag;
+    @SerializedName("category_name")
+    @Expose
+    private String categoryName;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
 
     public String getFoodId() {
         if (foodId == null) {
@@ -37,6 +69,14 @@ public class DetailOrder {
 
     public void setFoodId(String foodId) {
         this.foodId = foodId;
+    }
+
+    public String getFoodImage() {
+        return foodImage;
+    }
+
+    public void setFoodImage(String foodImage) {
+        this.foodImage = foodImage;
     }
 
     public String getFoodName() {
@@ -69,5 +109,21 @@ public class DetailOrder {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public int getStatusFlag() {
+        return statusFlag;
+    }
+
+    public void setStatusFlag(int statusFlag) {
+        this.statusFlag = statusFlag;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

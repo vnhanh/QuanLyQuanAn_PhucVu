@@ -22,6 +22,9 @@ public class ResponseValue {
     @Expose
     protected String error;
 
+    // cờ đánh dấu
+    protected int tag;
+
     public ResponseValue() {
 
     }
@@ -61,5 +64,13 @@ public class ResponseValue {
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
     }
 }

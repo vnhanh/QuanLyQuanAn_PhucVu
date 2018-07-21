@@ -13,11 +13,13 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.food.FoodResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.NewIdResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrdersResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.PayableOrderResponse;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.UpdateStatusOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.FullOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrderFoodResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrdersResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.PayableOrderResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.UpdateDetailOrderStatusResponse;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.UpdateStatusOrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableResponse;
 
 /**
@@ -26,12 +28,15 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.table.TableRes
 
 public interface OrderService {
 
+    @GET("order/loadOrder/{id}")
+    Observable<FullOrderResponse> loadOrder(@Header("Authorization") String token, @Path("id") String orderID);
+
     @GET("order/getOrder/{id}")
     Observable<OrderResponse> getOrder(@Header("Authorization") String token, @Path("id") String orderID);
 
     @PUT("foods/orderFood")
     @FormUrlEncoded
-    Observable<FoodResponse> updateFoodForOrder(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
+    Observable<OrderFoodResponse> updateFoodForOrder(@Header("Authorization") String token, @FieldMap Map<String,Object> fields);
 
     @PUT("order/updateOrCreateDetailOrder")
     @FormUrlEncoded
@@ -87,5 +92,17 @@ public interface OrderService {
     @PUT("order/disagreeBecomeDelegacy")
     @FormUrlEncoded
     Observable<ResponseValue> disagreeBecomeDelegacy(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/updateStatusDetailOrder")
+    @FormUrlEncoded
+    Observable<UpdateDetailOrderStatusResponse> updateDetailOrderStatus(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/removeStatusDetailOrder")
+    @FormUrlEncoded
+    Observable<OrderResponse> removeStatusDetailOrder(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
+
+    @PUT("order/reProcessOrder")
+    @FormUrlEncoded
+    Observable<ResponseValue> reProcessOrder(@Header("Authorization") String token, @FieldMap Map<String, Object> fields);
 
 }

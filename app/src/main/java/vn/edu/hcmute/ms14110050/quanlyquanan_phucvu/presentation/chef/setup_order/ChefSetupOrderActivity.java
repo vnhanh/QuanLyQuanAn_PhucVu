@@ -1,11 +1,14 @@
 package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
@@ -15,17 +18,19 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.activity.BaseActivity;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.util.StrUtil;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.databinding.ChefActivitySetupOrderBinding;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.recycler.ChefDetailOrderAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.abstracts.ISetupOrder;
-import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.food.recyclerview.ChefFoodAdapter;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.table.recycler.ChefTableAdapter;
 
 import static vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.abstracts.OrderConstant.EXTRA_ORDER_ID;
 
-public class ChefSetupOrderActivity extends BaseActivity<ChefActivitySetupOrderBinding, ISetupOrder.View, ChefSetupOrderViewModel>
+public class ChefSetupOrderActivity
+        extends BaseActivity<ChefActivitySetupOrderBinding, ISetupOrder.View, ChefSetupOrderViewModel>
         implements ISetupOrder.View{
 
     private Menu menu;
@@ -115,7 +120,7 @@ public class ChefSetupOrderActivity extends BaseActivity<ChefActivitySetupOrderB
     }
 
     private ChefTableAdapter tablesAdapter;
-    private ChefFoodAdapter foodAdapter;
+    private ChefDetailOrderAdapter detailOrderAdapter;
 
     private void initRecyclerViews() {
         LinearLayoutManager manager =
@@ -129,11 +134,10 @@ public class ChefSetupOrderActivity extends BaseActivity<ChefActivitySetupOrderB
         LinearLayoutManager _manager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
-        foodAdapter = new ChefFoodAdapter(this);
+        detailOrderAdapter = new ChefDetailOrderAdapter(this, null, viewModel);
         binding.recyclerviewFoods.setLayoutManager(_manager);
-        binding.recyclerviewFoods.setAdapter(foodAdapter);
-        foodAdapter.setContainerVM(viewModel);
-        viewModel.setFoodDataListener(foodAdapter);
+        binding.recyclerviewFoods.setAdapter(detailOrderAdapter);
+        viewModel.setDetailOrderAdapter(detailOrderAdapter);
     }
 
     /*
@@ -207,6 +211,28 @@ public class ChefSetupOrderActivity extends BaseActivity<ChefActivitySetupOrderB
             return true;
         }
         return false;
+    }
+
+    @Override
+    public <Void> void openConfirmDialog(@StringRes int titleResId, @StringRes int messageResId,
+                                         final GetCallback<Void> callback) {
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(titleResId)
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        callback.onFinish(null);
+                    }
+                }).setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 
     /*

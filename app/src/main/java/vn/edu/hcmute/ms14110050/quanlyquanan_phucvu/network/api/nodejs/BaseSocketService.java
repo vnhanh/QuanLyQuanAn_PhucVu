@@ -72,6 +72,7 @@ public class BaseSocketService {
         SocketManager.getInstance().onSocket(event, listener);
     }
 
+    // listen và convert giá trị trả về chứa 2 đối tượng trở lên
     protected  <MODEL> void listenEvent(final String event, final GetCallback<MODEL> callback,
                                         final Type typeClass) {
         events.add(event);
