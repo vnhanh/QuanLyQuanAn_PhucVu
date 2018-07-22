@@ -22,6 +22,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.R;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.GetCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.callbacks.InputProcessorCallback;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.BaseNetworkViewModel;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.RxDisposableSubscriber;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.RxObserver;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.SendObject;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
@@ -42,6 +43,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.response.OrderResponse;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.order.OrderRequestApi;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.request_manager.retrofit.food.FoodRequestApi;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.home.order.ChefListOrdersViewModel;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.presentation.chef.setup_order.ChefSetupOrderViewModel;
 
 /**
@@ -379,8 +381,11 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
         // reset giá trị lỗi hiển thị khi order thất bại
         orderFoodError = "";
-        RxObserver observer = new RxObserver(this, Index.ORDER);
-        addDisposable(orderRM.orderFood(token, fields, observer));
+
+        setupForNewRequest();
+        RxDisposableSubscriber subscriber = new RxDisposableSubscriber(this, Index.ORDER);
+        disposable = asyncProcessor.subscribeWith(subscriber);
+        orderRM.orderFood(token, fields).subscribe(asyncProcessor);
     }
 
     public void onOrderFoodResponse(FoodOrderResponse response) {
@@ -466,6 +471,16 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
     private GetFoodCallback getFoodCallback;
 
+    private void onOrderFoodFinish(ResponseValue response) {
+        hideProgress();
+        String message = getString(newCount == 0 ? R.string.remove_order_food_failed : R.string.order_food_failed);
+
+        if(!StrUtil.isEmpty(response.getMessage())){
+            message += ". " + response.getMessage();
+        }
+        showMessage(message, Constant.COLOR_ERROR);
+    }
+
     private void onOrderFoodSuccess(OrderFoodResponse response) {
         if (!response.isSuccess()) {
             hideProgress();
@@ -512,8 +527,13 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
             int tag = object.getTag();
             switch (tag) {
                 case Index.ORDER:
-                    OrderFoodResponse _response = (OrderFoodResponse) object.getValue();
-                    onOrderFoodSuccess(_response);
+                    if (object.getValue() instanceof OrderFoodResponse) {
+                        OrderFoodResponse _response = (OrderFoodResponse) object.getValue();
+                        onOrderFoodSuccess(_response);
+                    } else if (object.getValue() instanceof ResponseValue) {
+                        ResponseValue _response = (ResponseValue) object.getValue();
+                        onOrderFoodFinish(_response);
+                    }
                     break;
             }
         }

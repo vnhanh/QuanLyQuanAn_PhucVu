@@ -388,9 +388,13 @@ public class WaiterSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.
                             isShowTables.set(status < OrderFlag.PAYING);
 
                             ArrayList<Table> tables = orderResponse.getTables();
+                            tableDataListener.clearAll();
                             tableDataListener.onGetList(tables);
+
                             ArrayList<DetailOrder> details = order.getDetailOrders();
+                            detailOrderAdapter.clearAll();
                             detailOrderAdapter.onGetList(details);
+
                             if (displayer != null) {
                                 displayer.showInfo();
                             }

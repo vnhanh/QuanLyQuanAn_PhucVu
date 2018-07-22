@@ -34,14 +34,13 @@ public class WaiterViewFoodActivity extends BaseActivity<WaiterActivityViewFoodB
     private static final String EXTRA_DETAIL_ORDER = "EXTRA_DETAIL_ORDER";
     private static final String EXTRA_FOOD = "EXTRA_FOOD";
 
-    public static void startActivity(Activity activity, String orderID, DetailOrder detailOrder, Food food) {
+    public static void startActivity(Activity activity, String orderID, DetailOrder detailOrder, String foodID) {
         Intent intent = new Intent(activity, WaiterViewFoodActivity.class);
 
         Gson gson = new Gson();
-        String foodJson = gson.toJson(food);
         String detailOrderJson = gson.toJson(detailOrder);
         intent.putExtra(EXTRA_ORDER_ID, orderID);
-        intent.putExtra(EXTRA_FOOD, foodJson);
+        intent.putExtra(EXTRA_FOOD, foodID);
         intent.putExtra(EXTRA_DETAIL_ORDER, detailOrderJson);
 
         activity.startActivity(intent);
@@ -129,13 +128,15 @@ public class WaiterViewFoodActivity extends BaseActivity<WaiterActivityViewFoodB
         if (getIntent() != null) {
             if (getIntent().hasExtra(EXTRA_FOOD) && getIntent().hasExtra(EXTRA_DETAIL_ORDER)) {
                 String orderID = getIntent().getStringExtra(EXTRA_ORDER_ID);
-                String foodJson = getIntent().getStringExtra(EXTRA_FOOD);
+                String foodID = getIntent().getStringExtra(EXTRA_FOOD);
                 String detailOrderJson = getIntent().getStringExtra(EXTRA_DETAIL_ORDER);
                 Gson gson = new Gson();
-                Food food = gson.fromJson(foodJson, new TypeToken<Food>(){}.getType());
+//                Food food = gson.fromJson(foodJson, new TypeToken<Food>(){}.getType());
                 DetailOrder detailOrder = gson.fromJson(detailOrderJson, new TypeToken<DetailOrder>(){}.getType());
 
                 viewModel.setOrderID(orderID);
+                Food food = new Food();
+                food.setId(foodID);
                 viewModel.setFood(food);
                 viewModel.setDetailOrder(detailOrder);
             }

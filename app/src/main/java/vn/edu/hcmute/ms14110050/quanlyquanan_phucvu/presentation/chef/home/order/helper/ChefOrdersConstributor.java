@@ -117,8 +117,10 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
             return;
         }
         Order order = data.getOrder();
+        int oldStatus = data.getOldStatus();
+
         String detailOrderID = data.getDetailOrderID();
-        if (order == null || detailOrderID == null) {
+        if (order == null) {
             return;
         }
 
@@ -130,6 +132,27 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
         int index = findItem(order.getId());
         int oldDetailOrderStatus = data.getOldDetailOrderStatus();
         int newDetailOrderStatus = data.getNewDetailOrderStatus();
+
+        int status = order.getStatusFlag();
+        if (status >= OrderFlag.PAYING) {
+            for (Order _order : list) {
+                if (orderID.equals(_order.getId())) {
+                    ArrayList<DetailOrder> detailOrders = _order.getDetailOrders();
+                    int size = detailOrders.size();
+                    for (int i = 0; i < size; i++) {
+                        DetailOrder _detail = detailOrders.get(i);
+                        int _status = _detail.getStatusFlag();
+                        if (_status > 0 && _status <= counts.length) {
+                            counts[_status - 1]--;
+                        }
+                    }
+                }
+            }
+            showCountStatusOnTabLayout();
+            list.remove(index);
+            detailOrderAdapter.onRemoveDetails(orderID);
+            return;
+        }
 
 //        Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():tabIndex:" + tabIndex
 //                + ":isOutRange:" + isOutRange);
@@ -155,7 +178,7 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
             }
         }
 
-        // update số hóa đơn ĐANG CHỜ
+        // update Tab
         if (oldDetailOrderStatus > 0 && oldDetailOrderStatus <= counts.length) {
             counts[oldDetailOrderStatus - 1]--;
             updateTab(oldDetailOrderStatus - 1);
@@ -197,9 +220,16 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
             int status = order.getStatusFlag();
 
             // update số hóa đơn ĐANG CHỜ
-            if (status == OrderFlag.PENDING) {
-                // TODO
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            int size = details.size();
+            for (int i = 0; i < size; i++) {
+                DetailOrder _detail = details.get(i);
+                int _status = _detail.getStatusFlag();
+                if (_status > 0 && _status <= counts.length) {
+                    counts[_status - 1]--;
+                }
             }
+            showCountStatusOnTabLayout();
 
             list.remove(index);
         }
@@ -373,31 +403,54 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
                 _order.setDetailOrders(details);
                 list.set(index, _order);
             }
+        }else{
+            list.add(order);
+        }
 
-            // update recyclerview
-            if (oldDetailOrderStatus == tabIndex + 1) {
-                detailOrderAdapter.onRemoveItem(detailOrderID);
-            }
-            if (newStatus == tabIndex + 1) {
-                detailOrderAdapter.onAddItem(details.get(i));
-            }
+        // update recyclerview
+        if (oldDetailOrderStatus == tabIndex + 1) {
+            detailOrderAdapter.onRemoveItem(detailOrderID);
+        }
+        if (newStatus == tabIndex + 1) {
+            detailOrderAdapter.onAddItem(detailOrder);
+        }
 
-            // update TabLayout
-            if (oldDetailOrderStatus > 0) {
-                counts[oldDetailOrderStatus -1]--;
-                updateTab(oldDetailOrderStatus - 1);
-            }
-            if (newStatus > 0) {
-                counts[newStatus - 1]++;
-                updateTab(newStatus - 1);
-            }
+        // update TabLayout
+        if (oldDetailOrderStatus > 0) {
+            counts[oldDetailOrderStatus -1]--;
+            updateTab(oldDetailOrderStatus - 1);
+        }
+        if (newStatus > 0) {
+            counts[newStatus - 1]++;
+            updateTab(newStatus - 1);
         }
     }
 
-    public void onDetailOrderCreated(UpdateDetailOrderSocketData data) {
+    public void onDetailOrderUpdated(UpdateDetailOrderSocketData data) {
         if (data == null || data.getOrderID() == null || data.getDetailOrder() == null) {
             return;
         }
+        String orderID = data.getOrderID();
+        String detailOrderID = data.getDetailOrder().getId();
+        DetailOrder newDetail = data.getDetailOrder();
+        int status = newDetail.getStatusFlag();
 
+        int index = findItem(orderID);
+        if (index > -1) {
+            Order order = list.get(index);
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            int size = details.size();
+            for (int i = 0; i < size; i++) {
+                DetailOrder detail = details.get(i);
+                String _detailOrderID = detail.getId();
+                if (detailOrderID.equals(_detailOrderID)) {
+                    if (status == tabIndex + 1) {
+                        detailOrderAdapter.onUpdateItem(newDetail);
+                    }
+                    details.set(i, newDetail);
+                    break;
+                }
+            }
+        }
     }
 }

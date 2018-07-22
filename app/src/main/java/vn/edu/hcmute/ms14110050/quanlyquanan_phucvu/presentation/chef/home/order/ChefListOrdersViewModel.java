@@ -13,6 +13,7 @@ import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.life_cycle.viewmodel.Ba
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.RxDisposableSubscriber;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.base.observable.SendObject;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant.Constant;
+import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.base_value.ResponseValue;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.DetailOrder;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.Order;
 import vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.network.model.order.OrderFlag;
@@ -191,6 +192,11 @@ public class ChefListOrdersViewModel extends BaseNetworkViewModel<ListOrdersCont
         }
     }
 
+    private void onGetUpdateDetailOrderStatusResponse(ResponseValue response) {
+        hideProgress();
+        showMessage(response.getMessage(), Constant.COLOR_ERROR);
+    }
+
     /*
     * End
     * */
@@ -205,8 +211,13 @@ public class ChefListOrdersViewModel extends BaseNetworkViewModel<ListOrdersCont
 
             switch (tag) {
                 case Index.UPDATE_DETAIL_ORDER_STATUS:
-                    UpdateDetailOrderStatusResponse orderResponse = (UpdateDetailOrderStatusResponse) object.getValue();
-                    onGetUpdateDetailOrderStatusResponse(orderResponse);
+                    if (object.getValue() instanceof UpdateDetailOrderStatusResponse) {
+                        UpdateDetailOrderStatusResponse orderResponse = (UpdateDetailOrderStatusResponse) object.getValue();
+                        onGetUpdateDetailOrderStatusResponse(orderResponse);
+                    } else if (object.getValue() instanceof ResponseValue) {
+                        ResponseValue orderResponse = (ResponseValue) object.getValue();
+                        onGetUpdateDetailOrderStatusResponse(orderResponse);
+                    }
                     break;
             }
         }

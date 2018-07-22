@@ -137,7 +137,7 @@ public class FoodVHViewModel extends BaseVHViewModel<IFoodVH> {
         }
         if (isViewAttached()) {
             boolean isCreateOrder = containerVM.isCreatedOrder();
-            if (isCreateOrder || detailOrder.getStatusFlag() == OrderFlag.PENDING) {
+            if (isCreateOrder || detailOrder == null || detailOrder.getStatusFlag() == OrderFlag.PENDING) {
                 getView().onStartViewFoodActivity(containerVM.getContext(), containerVM.getOrderID(), detailOrder, food);
             }else{
                 getView().onStartViewFoodActivity(containerVM.getContext(), containerVM.getOrderID(), null, food);

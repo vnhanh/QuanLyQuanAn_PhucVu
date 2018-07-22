@@ -86,6 +86,15 @@ public class OrderRequestApi {
                 .subscribeWith(observer);
     }
 
+    public Flowable<OrderFoodResponse> orderFood(@NonNull final String token,
+                          final Map<String, Object> fields) {
+
+        return service.updateFoodForOrder(token, fields)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .toFlowable(BackpressureStrategy.BUFFER);
+    }
+
     public Disposable makeOrder(String token, String orderID, final GetCallback<UpdateStatusOrderResponse> callback){
 
         return service.makeOrder(token, orderID)

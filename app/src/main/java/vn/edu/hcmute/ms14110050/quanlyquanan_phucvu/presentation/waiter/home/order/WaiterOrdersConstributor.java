@@ -211,110 +211,129 @@ public class WaiterOrdersConstributor implements TabLayout.OnTabSelectedListener
         // tạo mới item ==> chưa được check
         OrderCheckable item = new OrderCheckable(order, false);
 
-        // update hiển thị UI
+        if (index > -1) {
+            HashMap<Integer, Integer> statusMap = new HashMap<>();
 
-        // kiểm tra hóa đơn có đang show trên UI (recyclerview)
-        boolean hasConstainedInShowed = false;
-        HashMap<Integer, Integer> statusMap = new HashMap<>();
+            // kiểm tra xem có chi tiết hóa đơn nào có trạng thái trùng với Tab
+            boolean hasNoStatusCompatible = true;
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            int size = details.size();
+            for (int i = 0; i < size; i++) {
+                DetailOrder detail = details.get(i);
+                int _status = detail.getStatusFlag();
+                String _detailOrderID = detail.getId();
 
-        ArrayList<OrderCheckable> showedOrders = orderAdapter.getList();
-        int showedSize = showedOrders.size();
+                if (detailOrderID.equals(_detailOrderID)) {
+                    if (_status == tabIndex + 1) {
+                        hasNoStatusCompatible = false;
+                    }
+                }
 
-        for (int i = 0; i < showedSize; i++) {
-            OrderCheckable _item = showedOrders.get(i);
-            Order _order = _item.getOrder();
-            if (_order != null) {
-                String _orderID = _order.getId();
-                if (orderID.equals(_orderID)) {
-                    hasConstainedInShowed = true;
+                if (!statusMap.containsKey(_status)) {
+                    statusMap.put(_status, 1);
+                }
+            }
 
-                    ArrayList<DetailOrder> details = _order.getDetailOrders();
-                    for (DetailOrder detail : details) {
+            // kiểm tra hóa đơn có đang show trên UI (recyclerview)
+            boolean hasConstainedInShowed = false;
+            ArrayList<OrderCheckable> showedOrders = orderAdapter.getList();
+            int showedSize = showedOrders.size();
+
+            for (int i = 0; i < showedSize; i++) {
+                OrderCheckable _item = showedOrders.get(i);
+                Order __order = _item.getOrder();
+                if (__order != null) {
+                    String _orderID = __order.getId();
+                    if (orderID.equals(_orderID)) {
+                        hasConstainedInShowed = true;
+                        break;
+                    }
+                }
+            }
+
+            int listSize = list.size();
+            for (int i = 0; i < listSize; i++) {
+                Order _order = list.get(i).getOrder();
+                if (_order.getId().equals(orderID)) {
+                    ArrayList<DetailOrder> _details = _order.getDetailOrders();
+                    for (DetailOrder detail : _details) {
                         int _status = detail.getStatusFlag();
-                        if (!statusMap.containsKey(_status)) {
-                            statusMap.put(_status, 1);
+                        if (statusMap.containsKey(_status)) {
+                            statusMap.put(_status, 0);
+                        }else{
+                            statusMap.put(_status, -1);
                         }
                     }
                     break;
                 }
             }
+
+            // hóa đơn trước đó không show
+            // nhưng trong các chi tiết hóa đơn có một số có trạng thái tương ứng với tab đang chọn
+            if (!hasConstainedInShowed && !hasNoStatusCompatible) {
+                orderAdapter.onAddItem(item);
+            }
+            // hoá đơn đang được show
+            // nhưng sau khi update, không có chi tiết hóa đơn nào có trạng thái tương ứng với tab trạng thái đang chọn
+            else if(hasConstainedInShowed && hasNoStatusCompatible){
+                orderAdapter.onRemoveItem(orderID);
+            }
+            // hóa đơn đang được show
+            // và sau khi được update thì có một số chi tiết hóa đơn có trạng thái tương ứng với tab trạng thái đang chọn
+            else if (hasConstainedInShowed && !hasNoStatusCompatible) {
+                orderAdapter.onUpdateItem(item);
+            }
+
+            // update TabLayout
+            String creater = order.getWaiterUsername();
+            if (creater != null && creater.equals(username)) {
+//            Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():update tablayout");
+
+                for (Map.Entry<Integer, Integer> entry : statusMap.entrySet()) {
+                    int _status = entry.getKey();
+                    int _index = entry.getValue();
+                    counts[_status - 1] += _index;
+                    if (_index != 0 && _status > 0 && _status <= counts.length) {
+                        updateTab(_status - 1);
+                    }
+                }
+            }
+
+            if (status > 0 && status < OrderFlag.COMPLETE) {
+                list.set(index, item);
+            }else{
+                list.remove(index);
+            }
         }
 
         // kiểm tra trạng thái các chi tiết hóa đơn có trùng với tab đang được chọn
-        boolean hasConstainDetailCompatibleStatus = false;
-        // cờ đánh dấu các chi tiết hóa đơn trong hóa đơn vừa được update đều nằm ngoài range
-        boolean allOutRange = true;
-
-        ArrayList<DetailOrder> details = order.getDetailOrders();
-        for (DetailOrder detail : details) {
-            int _status = detail.getStatusFlag();
-            if (!isOutRange(_status)) {
-                allOutRange = false;
-            }
-            if (_status == tabIndex + 1) {
-                hasConstainDetailCompatibleStatus = true;
-                break;
-            }
-
-            if (statusMap.containsKey(_status)) {
-                Integer value = statusMap.get(_status);
-                // đánh dấu trạng thái này đã có
-                if (value > 0) {
-                    statusMap.put(_status, 0);
-                }
-            }
-            // trạng thái mới
-            else{
-                statusMap.put(_status, -1);
-            }
-        }
-
-        // hóa đơn trước đó không show
-        // nhưng trong các chi tiết hóa đơn có một số có trạng thái tương ứng với tab đang chọn
-        if (!hasConstainedInShowed && hasConstainDetailCompatibleStatus) {
-           orderAdapter.onAddItem(item);
-        }
-        // hoá đơn đang được show
-        // nhưng sau khi update, không có chi tiết hóa đơn nào có trạng thái tương ứng với tab trạng thái đang chọn
-        else if(hasConstainedInShowed && !hasConstainDetailCompatibleStatus){
-            orderAdapter.onRemoveItem(orderID);
-        }
-        // hóa đơn đang được show
-        // và sau khi được update thì có một số chi tiết hóa đơn có trạng thái tương ứng với tab trạng thái đang chọn
-        else if (hasConstainedInShowed && hasConstainDetailCompatibleStatus) {
-            orderAdapter.onUpdateItem(item);
-        }
-
-        // update TabLayout
-        String creater = order.getWaiterUsername();
-        if (creater != null && creater.equals(username)) {
-//            Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():update tablayout");
-
-            for (Map.Entry<Integer, Integer> entry : statusMap.entrySet()) {
-                int _status = entry.getKey();
-                int _index = entry.getValue();
-                counts[_status - 1] -= _index;
-                if (_index != 0) {
-                    updateTab(_status - 1);
-                }
-            }
-        }
-
-        // update dữ liệu
-        if (index == -1) {
-            if (!isOutRange) {
-//                Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():add item to list data");
-                list.add(item);
-            }
-        }else{
-            if (allOutRange) {
-//                Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():remove item to list data");
-                list.remove(index);
-            }else{
-//                Log.d("LOG", getClass().getSimpleName() + ":onUpdateStatus():update item to list data");
-                list.set(index, item);
-            }
-        }
+//        boolean hasConstainDetailCompatibleStatus = false;
+//        // cờ đánh dấu các chi tiết hóa đơn trong hóa đơn vừa được update đều nằm ngoài range
+//        boolean allOutRange = true;
+//
+//        ArrayList<DetailOrder> details = order.getDetailOrders();
+//        for (DetailOrder detail : details) {
+//            int _status = detail.getStatusFlag();
+//            if (!isOutRange(_status)) {
+//                allOutRange = false;
+//            }
+//            if (_status == tabIndex + 1) {
+//                hasConstainDetailCompatibleStatus = true;
+//                break;
+//            }
+//
+//            if (statusMap.containsKey(_status)) {
+//                Integer value = statusMap.get(_status);
+//                // đánh dấu trạng thái này đã có
+//                if (value > 0) {
+//                    statusMap.put(_status, 0);
+//                }
+//            }
+//            // trạng thái mới
+//            else{
+//                statusMap.put(_status, -1);
+//            }
+//        }
     }
 
     // Nhận event socket thay đổi thông tin hóa đơn

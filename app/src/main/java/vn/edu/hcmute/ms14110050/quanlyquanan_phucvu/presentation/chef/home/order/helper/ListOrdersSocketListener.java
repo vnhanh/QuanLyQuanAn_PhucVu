@@ -28,14 +28,6 @@ public class ListOrdersSocketListener {
     }
 
     public void startListening() {
-        service.onEventCreateDetailOrder(new GetCallback<UpdateDetailOrderSocketData>() {
-            @Override
-            public void onFinish(UpdateDetailOrderSocketData data) {
-                if (constributor != null) {
-                    constributor.onDetailOrderCreated(data);
-                }
-            }
-        });
         service.onEventUpdateStatusDetailOrder(new GetCallback<UpdateStatusDetailOrderSocketData>() {
             @Override
             public void onFinish(UpdateStatusDetailOrderSocketData data) {
@@ -62,6 +54,14 @@ public class ListOrdersSocketListener {
             public void onFinish(String orderID) {
                 if (orderID != null) {
                     constributor.onRemoveItem(orderID);
+                }
+            }
+        });
+        service.onEventUpdateDetailOrder(new GetCallback<UpdateDetailOrderSocketData>() {
+            @Override
+            public void onFinish(UpdateDetailOrderSocketData data) {
+                if (constributor != null) {
+                    constributor.onDetailOrderUpdated(data);
                 }
             }
         });

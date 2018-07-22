@@ -101,6 +101,10 @@ public class WaiterSetupOrderActivity extends BaseActivity<WaiterActivitySetupOr
                         viewModel.onClickMenuPayOrder();
                         return true;
 
+                    case R.id.menu_select_food:
+                        viewModel.onClickSelectFoods();
+                        return true;
+
                     case android.R.id.home:
                         onExit();
                         return true;

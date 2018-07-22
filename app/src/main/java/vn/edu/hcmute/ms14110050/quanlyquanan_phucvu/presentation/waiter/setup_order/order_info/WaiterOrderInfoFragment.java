@@ -107,12 +107,12 @@ public class WaiterOrderInfoFragment
 
     @Override
     protected void stop() {
-        Log.d("LOG", getClass().getSimpleName()+":stop");
+//        Log.d("LOG", getClass().getSimpleName()+":stop");
     }
 
     @Override
     protected void destroy() {
-        Log.d("LOG", getClass().getSimpleName()+":destroy");
+//        Log.d("LOG", getClass().getSimpleName()+":destroy");
         binding = null;
     }
 

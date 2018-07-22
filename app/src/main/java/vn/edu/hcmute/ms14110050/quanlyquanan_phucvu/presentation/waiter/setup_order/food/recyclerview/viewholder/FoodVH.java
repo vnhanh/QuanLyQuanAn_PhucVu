@@ -53,7 +53,7 @@ public class FoodVH extends BaseViewHolder<WaiterItemRecyclerFoodBinding, FoodVH
     @Override
     public void onStartViewFoodActivity(Context context, String orderID, DetailOrder detailOrder, Food food) {
         if (context instanceof Activity) {
-            WaiterViewFoodActivity.startActivity((Activity) context, orderID, detailOrder, food);
+            WaiterViewFoodActivity.startActivity((Activity) context, orderID, detailOrder, food.getId());
         }
     }
 }

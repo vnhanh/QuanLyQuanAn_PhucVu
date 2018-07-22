@@ -4,6 +4,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.squareup.picasso.Picasso;
 
@@ -145,7 +146,18 @@ public class DetailOrderVM extends BaseVHViewModel<IDetailOrderVH> {
     }
 
     public void onClickItem() {
-
+        if (centerVM == null) {
+            Log.d("LOG", getClass().getSimpleName() + ":onClickItem():not found containerVM");
+            return;
+        }
+        if (isViewAttached()) {
+            boolean isCreateOrder = centerVM.isCreatedOrder();
+            if (isCreateOrder || detailOrder.getStatusFlag() == OrderFlag.PENDING) {
+                getView().onStartViewFoodActivity(centerVM.getContext(), centerVM.getOrderID(), detailOrder, detailOrder.getFoodId());
+            }else{
+                getView().onStartViewFoodActivity(centerVM.getContext(), centerVM.getOrderID(), null, detailOrder.getFoodId());
+            }
+        }
     }
 
     public void onClickPrepareButton() {
