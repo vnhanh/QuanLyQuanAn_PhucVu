@@ -1166,7 +1166,7 @@ public class WaiterSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.
     public void onRequestUpdateDetailOrderStatus(String detailOrderID, int status) {
         if (orderInfoView != null) {
             orderInfoView.openConfirmDialog(R.string.title_confirm_order,
-                    R.string.ask_confirm_remove_detail_order, new GetCallback<Void>() {
+                    R.string.ask_confirm_preapre_detail_order, new GetCallback<Void>() {
                         @Override
                         public void onFinish(Void aVoid) {
                             updateDetailOrderStatus(detailOrderID, status);
