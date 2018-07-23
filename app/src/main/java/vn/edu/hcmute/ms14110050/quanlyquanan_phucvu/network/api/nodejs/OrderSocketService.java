@@ -46,8 +46,8 @@ public class OrderSocketService extends BaseSocketService {
         listenEvent(SOCKET_EVENT_CREATE_DETAIL_ORDER, callback, new TypeToken<UpdateDetailOrderSocketData>(){}.getType());
     }
 
-    public void onEventRemoveDetailOrder(final GetCallback<UpdateDetailOrderSocketData> callback) {
-        listenEvent(SOCKET_EVENT_REMOVE_DETAIL_ORDER, callback, new TypeToken<UpdateDetailOrderSocketData>(){}.getType());
+    public void onEventRemoveDetailOrder(final GetCallback<RemoveDetailOrderSocketData> callback) {
+        listenEvent(SOCKET_EVENT_REMOVE_DETAIL_ORDER, callback, new TypeToken<RemoveDetailOrderSocketData>(){}.getType());
     }
 
     public void onEventUpdateStatusDetailOrder(final GetCallback<UpdateStatusDetailOrderSocketData> callback) {

@@ -65,9 +65,9 @@ public class ListOrdersSocketListener {
                 }
             }
         });
-        service.onEventRemoveDetailOrder(new GetCallback<UpdateDetailOrderSocketData>() {
+        service.onEventRemoveDetailOrder(new GetCallback<RemoveDetailOrderSocketData>() {
             @Override
-            public void onFinish(UpdateDetailOrderSocketData data) {
+            public void onFinish(RemoveDetailOrderSocketData data) {
                 if (constributor != null) {
                     constributor.onDetailOrderRemoved(data);
                 }

@@ -342,12 +342,12 @@ public class ChefOrdersConstributor implements TabLayout.OnTabSelectedListener {
     }
 
     // Chi tiết hóa đơn bị hủy
-    public void onDetailOrderRemoved(UpdateDetailOrderSocketData data) {
-        if (data == null || data.getOrderID() == null || data.getDetailOrder() == null) {
+    public void onDetailOrderRemoved(RemoveDetailOrderSocketData data) {
+        if (data == null) {
             return;
         }
         String orderID = data.getOrderID();
-        String detailOrderID = data.getDetailOrder().getId();
+        String detailOrderID = data.getDetailOrderID();
         if (orderID == null || detailOrderID == null) {
             return;
         }

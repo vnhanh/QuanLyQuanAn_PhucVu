@@ -50,9 +50,9 @@ public class OrderSocketListener {
                 }
             }
         });
-        service.onEventRemoveDetailOrder(new GetCallback<UpdateDetailOrderSocketData>() {
+        service.onEventRemoveDetailOrder(new GetCallback<RemoveDetailOrderSocketData>() {
             @Override
-            public void onFinish(UpdateDetailOrderSocketData data) {
+            public void onFinish(RemoveDetailOrderSocketData data) {
                 // TODO
             }
         });
