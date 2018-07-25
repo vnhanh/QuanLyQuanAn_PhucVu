@@ -72,6 +72,8 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
 
     private OrderRequestApi orderRM;
 
+    private boolean FLAG_LOADED_FOOD = false;
+
     /*
     * Property
     * */
@@ -197,7 +199,7 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
     }
 
     private void showFoodImage() {
-        if (food != null && imageFoodWidth > 0) {
+        if (FLAG_LOADED_FOOD && imageFoodWidth > 0) {
             int height = getResources().getDimensionPixelOffset(R.dimen.height_image_view_food);
             RectangleImageTransform transform =
                     new RectangleImageTransform(imageFoodWidth, height, 0, ScaleType.CENTER_CROP);
@@ -257,6 +259,7 @@ public class WaiterViewFoodModel extends BaseNetworkViewModel<IViewFood> impleme
             }
         }else{
             food = response.getFood();
+            FLAG_LOADED_FOOD = true;
             showFood();
         }
     }

@@ -5,8 +5,10 @@ package vn.edu.hcmute.ms14110050.quanlyquanan_phucvu.common.constant;
  */
 
 public class SOCKET {
-    public static String SERVER_IP = "192.168.103.2";
-    public static String BASE_URL = "http://"+SERVER_IP+":8080/";
+//    public static String SERVER_IP = "192.168.103.2";
+    public static String SERVER_IP = "qlnh.herokuapp.com";
+//    public static String BASE_URL = "http://"+SERVER_IP+":8080/";
+    public static String BASE_URL = "https://"+SERVER_IP+"/";
 
     public static String SOCKET_SERVER_DISCONNECT = "disconnect";
 

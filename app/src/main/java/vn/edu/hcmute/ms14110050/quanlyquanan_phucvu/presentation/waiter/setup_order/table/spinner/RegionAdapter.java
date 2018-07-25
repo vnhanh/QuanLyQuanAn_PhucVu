@@ -216,8 +216,13 @@ public class RegionAdapter extends ArrayAdapter implements ISpinnerDataListener<
             if (_index == size) {
                 Log.d("LOG", getClass().getSimpleName() + ":onResetSelectItem():current item just change");
                 isChangeItem = true;
-                currentRegionID = "";
+                index = 0;
+                currentRegionID = (regions != null && regions.size() > 0) ? regions.get(0).getId() : "";
             }
+        }else{
+            isChangeItem = true;
+            index = 0;
+            currentRegionID = (regions != null && regions.size() > 0) ? regions.get(0).getId() : "";
         }
         // kết thúc việc xử lý khi dữ liệu thay đổi
         viewListener.onEndProcessDataChanged();
