@@ -98,8 +98,8 @@ public class ChefDetailOrderAdapter extends BaseAdapter<ChefItemOrderVH, DetailO
             list.add(item);
             runNotifyDataSetChanged();
         }else{
-            list.add(0, item);
-            notifyItemInserted(0);
+            list.add(item);
+            notifyItemInserted(list.size()-1);
         }
     }
 

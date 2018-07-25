@@ -1094,8 +1094,22 @@ public class WaiterSetupOrderViewModel extends BaseNetworkViewModel<ISetupOrder.
         int status = order.getStatusFlag();
 
         if (status >= OrderFlag.COOKING && status <= OrderFlag.EATING) {
-            onClickPayOrder();
-        }else{
+            boolean available = false;
+            ArrayList<DetailOrder> details = order.getDetailOrders();
+            for (DetailOrder detail : details) {
+                int _status = detail.getStatusFlag();
+                if (_status <= OrderFlag.PENDING) {
+                    available = true;
+                    break;
+                }
+            }
+            if (!available) {
+                showMessage(R.string.has_food_not_cooked_yet, Constant.COLOR_ERROR);
+            }else{
+                onClickPayOrder();
+            }
+        }
+        else{
             showMessage(R.string.msg_cant_pay_order, Constant.COLOR_ERROR);
         }
     }

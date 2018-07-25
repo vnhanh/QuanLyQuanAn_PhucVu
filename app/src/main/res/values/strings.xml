@@ -284,5 +284,6 @@
     <string name="title_confirm">XÁC NHẬN</string>
     <string name="ask_confirm_reprocess_order">Bạn muốn xác nhận lại hóa đơn ?</string>
     <string name="ask_confirm_preapre_detail_order">Xác nhận đã dọn xong món ?</string>
+    <string name="has_food_not_cooked_yet">Không thể thanh toán hóa đơn này. Hãy hủy đặt các món chưa được nấu !</string>
 
 </resources>
